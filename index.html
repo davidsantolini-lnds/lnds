@@ -3,14 +3,287 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>LNDS</title>
+    <title>Mon Amour</title>
     <style>
-      body { font-family: system-ui, Arial, sans-serif; padding: 40px; }
-      h1 { font-size: 48px; }
+      :root{
+        --text: rgba(255,255,255,.92);
+        --muted: rgba(255,255,255,.70);
+        --card: rgba(0,0,0,.35);
+        --stroke: rgba(255,255,255,.18);
+        --shadow: 0 24px 80px rgba(0,0,0,.45);
+      }
+
+      * { box-sizing: border-box; }
+      html, body { height: 100%; }
+      body{
+        margin:0;
+        font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+        color: var(--text);
+        overflow: hidden;
+      }
+
+      /* Background photo */
+      .photo{
+        position: fixed;
+        inset: 0;
+        background:
+          linear-gradient(180deg, rgba(0,0,0,.55), rgba(0,0,0,.55)),
+          url("nous.jpg") center/cover no-repeat;
+        transform: scale(1.03);
+        filter: saturate(1.05);
+      }
+
+      /* Soft blur overlay for readability */
+      .veil{
+        position: fixed;
+        inset: 0;
+        background: radial-gradient(900px 600px at 50% 30%, rgba(255,255,255,.10), transparent 60%);
+        backdrop-filter: blur(2px);
+        -webkit-backdrop-filter: blur(2px);
+      }
+
+      .wrap{
+        position: relative;
+        height: 100%;
+        display: grid;
+        place-items: center;
+        padding: 22px;
+      }
+
+      .card{
+        width: min(820px, 94vw);
+        border-radius: 28px;
+        background: var(--card);
+        border: 1px solid var(--stroke);
+        box-shadow: var(--shadow);
+        backdrop-filter: blur(14px);
+        -webkit-backdrop-filter: blur(14px);
+        padding: clamp(20px, 4vw, 38px);
+        animation: in .9s ease-out forwards;
+      }
+
+      @keyframes in{
+        from{ opacity: 0; transform: translateY(18px) scale(.98); }
+        to{ opacity: 1; transform: translateY(0) scale(1); }
+      }
+
+      .top{
+        display:flex;
+        align-items:center;
+        justify-content: space-between;
+        gap: 16px;
+        flex-wrap: wrap;
+      }
+
+      .badge{
+        display:inline-flex;
+        align-items:center;
+        gap:10px;
+        padding: 8px 12px;
+        border-radius: 999px;
+        border: 1px solid rgba(255,255,255,.22);
+        background: rgba(255,255,255,.08);
+        color: var(--muted);
+        font-size: 14px;
+      }
+
+      .mini{
+        width: 54px;
+        height: 54px;
+        border-radius: 16px;
+        border: 1px solid rgba(255,255,255,.20);
+        overflow:hidden;
+        flex: 0 0 auto;
+        box-shadow: 0 14px 40px rgba(0,0,0,.35);
+      }
+      .mini img{
+        width:100%;
+        height:100%;
+        object-fit: cover;
+        display:block;
+      }
+
+      h1{
+        margin: 18px 0 10px;
+        font-size: clamp(34px, 5vw, 60px);
+        letter-spacing: -0.02em;
+        line-height: 1.05;
+      }
+
+      .sub{
+        margin: 0 0 22px;
+        color: var(--muted);
+        font-size: clamp(15px, 1.7vw, 18px);
+        line-height: 1.6;
+      }
+
+      .countdown{
+        display:grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 12px;
+        margin-top: 18px;
+      }
+
+      .box{
+        border-radius: 18px;
+        border: 1px solid rgba(255,255,255,.18);
+        background: rgba(255,255,255,.08);
+        padding: 14px 12px;
+        text-align: center;
+      }
+
+      .num{
+        font-size: clamp(26px, 4vw, 42px);
+        font-weight: 800;
+        letter-spacing: -0.02em;
+      }
+      .lbl{
+        margin-top: 6px;
+        font-size: 13px;
+        color: rgba(255,255,255,.72);
+        letter-spacing: .06em;
+        text-transform: uppercase;
+      }
+
+      .note{
+        margin-top: 16px;
+        font-size: 14px;
+        color: rgba(255,255,255,.68);
+      }
+
+      .line{
+        height:1px;
+        background: rgba(255,255,255,.16);
+        margin: 18px 0;
+      }
+
+      button{
+        appearance:none;
+        border: 1px solid rgba(255,255,255,.22);
+        background: rgba(255,255,255,.10);
+        color: var(--text);
+        padding: 12px 14px;
+        border-radius: 14px;
+        font-weight: 650;
+        cursor: pointer;
+        transition: transform .12s ease, background .12s ease, border-color .12s ease;
+      }
+      button:hover{
+        transform: translateY(-1px);
+        background: rgba(255,255,255,.16);
+        border-color: rgba(255,255,255,.30);
+      }
+      button:active{ transform: translateY(0) scale(.99); }
+
+      @media (max-width: 520px){
+        .countdown{ grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .card { animation: none !important; }
+      }
     </style>
   </head>
+
   <body>
-    <h1>Bonjour mon Amour <3</h1>
-    Ici commence notre aventure...
+    <div class="photo" aria-hidden="true"></div>
+    <div class="veil" aria-hidden="true"></div>
+
+    <div class="wrap">
+      <main class="card">
+        <div class="top">
+          <div class="badge">dd</div>
+          <div class="mini" title="Nous deux">
+            <img src="nous.jpg" alt="Photo de nous deux" />
+          </div>
+        </div>
+
+        <h1>Bonjour mon Amour</h1>
+        <p class="sub" id="subtitle">
+          Dans <strong>exactement</strong> :
+        </p>
+
+        <section class="countdown" aria-label="Compte à rebours">
+          <div class="box">
+            <div class="num" id="d">—</div>
+            <div class="lbl">Jours</div>
+          </div>
+          <div class="box">
+            <div class="num" id="h">—</div>
+            <div class="lbl">Heures</div>
+          </div>
+          <div class="box">
+            <div class="num" id="m">—</div>
+            <div class="lbl">Minutes</div>
+          </div>
+          <div class="box">
+            <div class="num" id="s">—</div>
+            <div class="lbl">Secondes</div>
+          </div>
+        </section>
+
+        <div class="line"></div>
+
+        <button id="btn">Afficher un petit mot</button>
+        <div class="note" id="note">Je t’aime. Voilà. (Et oui, c’est une preuve numérique.)</div>
+      </main>
+    </div>
+
+    <script>
+      // 1er mars à 00:00 (heure de Paris)
+      // IMPORTANT: les dates JS sans timezone utilisent l'heure locale du navigateur.
+      // Donc si elle est en France, c'est parfait.
+      const target = new Date("2026-03-01T00:00:00");
+
+      const elD = document.getElementById("d");
+      const elH = document.getElementById("h");
+      const elM = document.getElementById("m");
+      const elS = document.getElementById("s");
+      const subtitle = document.getElementById("subtitle");
+      const note = document.getElementById("note");
+
+      function pad(n){ return String(n).padStart(2, "0"); }
+
+      function tick(){
+        const now = new Date();
+        let diff = target - now;
+
+        if (diff <= 0){
+          elD.textContent = "0";
+          elH.textContent = "00";
+          elM.textContent = "00";
+          elS.textContent = "00";
+          subtitle.innerHTML = "C’est <strong>aujourd’hui</strong> 🎉";
+          note.textContent = "Joyeux anniversaire mon amour. ❤️";
+          return;
+        }
+
+        const sec = Math.floor(diff / 1000);
+        const days = Math.floor(sec / 86400);
+        const hours = Math.floor((sec % 86400) / 3600);
+        const mins = Math.floor((sec % 3600) / 60);
+        const secs = sec % 60;
+
+        elD.textContent = String(days);
+        elH.textContent = pad(hours);
+        elM.textContent = pad(mins);
+        elS.textContent = pad(secs);
+      }
+
+      tick();
+      setInterval(tick, 1000);
+
+      const messages = [
+        "Tu es mon endroit préféré.",
+        "Je pense à toi, même quand je fais genre je suis sérieux.",
+        "Toi + moi = évidence.",
+        "J’ai hâte de te serrer fort.",
+        "Ton sourire devrait être coté en bourse."
+      ];
+
+      document.getElementById("btn").addEventListener("click", () => {
+        note.textContent = messages[Math.floor(Math.random() * messages.length)];
+      });
+    </script>
   </body>
 </html>
