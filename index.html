@@ -3,516 +3,540 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Mon Amour</title>
-
-    <!-- Optional: a modern variable font (safe fallback if it fails) -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300..800&display=swap" rel="stylesheet">
-
+    <title>Lettre d'Amour 2026</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;500;700;800&family=Playfair+Display:wght@600;700&display=swap"
+      rel="stylesheet"
+    />
     <style>
-      :root{
-        --bg0: #070A12;
-        --bg1: #0B0F1F;
-        --text: rgba(255,255,255,.92);
-        --muted: rgba(255,255,255,.72);
-        --faint: rgba(255,255,255,.55);
-
-        --card: rgba(255,255,255,.08);
-        --card2: rgba(0,0,0,.28);
-        --stroke: rgba(255,255,255,.14);
-        --stroke2: rgba(255,255,255,.22);
-
-        --shadow: 0 24px 90px rgba(0,0,0,.55);
-        --shadow2: 0 16px 60px rgba(0,0,0,.45);
-
-        --r: 26px;
+      :root {
+        --bg: #05050b;
+        --ink: #f7f7ff;
+        --muted: rgba(247, 247, 255, 0.72);
+        --glass: rgba(255, 255, 255, 0.08);
+        --line: rgba(255, 255, 255, 0.2);
+        --pink: #ff7bb8;
+        --violet: #8e7dff;
+        --cyan: #73d9ff;
+        --gold: #ffd88a;
+        --radius: 24px;
       }
 
-      *{ box-sizing: border-box; }
-      html, body{ height: 100%; }
-      body{
-        margin: 0;
+      * { box-sizing: border-box; }
+      html, body { margin: 0; min-height: 100%; }
+
+      body {
         font-family: Manrope, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-        color: var(--text);
-        background: radial-gradient(1200px 700px at 30% 15%, rgba(180,120,255,.18), transparent 60%),
-                    radial-gradient(900px 650px at 80% 10%, rgba(120,210,255,.16), transparent 60%),
-                    linear-gradient(180deg, var(--bg0), var(--bg1));
+        color: var(--ink);
+        background:
+          radial-gradient(circle at 10% 10%, rgba(255, 123, 184, 0.22), transparent 40%),
+          radial-gradient(circle at 90% 5%, rgba(115, 217, 255, 0.18), transparent 35%),
+          radial-gradient(circle at 60% 90%, rgba(142, 125, 255, 0.2), transparent 45%),
+          var(--bg);
         overflow-x: hidden;
       }
 
-      /* ===== Hero background photo ===== */
-      .hero-bg{
+      .space {
         position: fixed;
         inset: 0;
-        z-index: -3;
-        background:
-          radial-gradient(1200px 800px at 50% 30%, rgba(0,0,0,.20), rgba(0,0,0,.72)),
-          url("nous.jpg") center/cover no-repeat;
-        transform: scale(1.03);
-        filter: saturate(1.05) contrast(1.02);
-      }
-      .hero-noise{
-        position: fixed;
-        inset: -40%;
-        z-index: -2;
         pointer-events: none;
-        opacity: .10;
-        mix-blend-mode: overlay;
-        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23n)' opacity='.25'/%3E%3C/svg%3E");
-        transform: rotate(10deg);
+        z-index: -2;
+        background-image:
+          radial-gradient(2px 2px at 20% 30%, rgba(255,255,255,0.45), transparent),
+          radial-gradient(2px 2px at 70% 20%, rgba(255,255,255,0.35), transparent),
+          radial-gradient(2px 2px at 80% 80%, rgba(255,255,255,0.35), transparent),
+          radial-gradient(3px 3px at 45% 60%, rgba(255,255,255,0.25), transparent);
+        animation: drift 22s linear infinite;
       }
-      .hero-vignette{
-        position: fixed;
-        inset: 0;
-        z-index: -1;
-        pointer-events:none;
-        background: radial-gradient(1200px 800px at 50% 20%, transparent 35%, rgba(0,0,0,.55) 80%);
+      @keyframes drift {
+        0% { transform: translateY(0); }
+        50% { transform: translateY(-24px); }
+        100% { transform: translateY(0); }
       }
 
-      /* ===== Layout ===== */
-      header{
-        position: sticky;
-        top: 0;
-        z-index: 10;
-        padding: 14px 16px;
-        backdrop-filter: blur(14px);
-        -webkit-backdrop-filter: blur(14px);
-        background: rgba(0,0,0,.22);
-        border-bottom: 1px solid rgba(255,255,255,.10);
+      .wrapper {
+        width: min(1150px, 94vw);
+        margin: 26px auto 60px;
+        perspective: 1600px;
       }
-      .nav{
-        max-width: 1100px;
-        margin: 0 auto;
-        display:flex;
-        align-items:center;
+
+      .topbar {
+        display: flex;
         justify-content: space-between;
+        align-items: center;
         gap: 12px;
+        margin-bottom: 18px;
       }
-      .brand{
-        display:flex;
-        align-items:center;
+
+      .brand {
+        display: inline-flex;
+        align-items: center;
         gap: 10px;
-        min-width: 0;
-      }
-      .dot{
-        width: 10px; height: 10px; border-radius: 999px;
-        background: rgba(255,255,255,.85);
-        box-shadow: 0 0 0 6px rgba(255,255,255,.08);
-        flex: 0 0 auto;
-      }
-      .brand span{
-        font-weight: 800;
-        letter-spacing: -0.02em;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-      }
-      .chip{
-        display:inline-flex;
-        align-items:center;
-        gap: 8px;
-        padding: 8px 10px;
+        padding: 10px 14px;
+        border: 1px solid var(--line);
         border-radius: 999px;
-        border: 1px solid rgba(255,255,255,.16);
-        background: rgba(255,255,255,.06);
+        background: var(--glass);
+        backdrop-filter: blur(12px);
+      }
+
+      .pulse {
+        width: 10px;
+        height: 10px;
+        border-radius: 999px;
+        background: linear-gradient(135deg, var(--pink), var(--violet));
+        box-shadow: 0 0 0 0 rgba(255,123,184,0.7);
+        animation: pulse 2.3s infinite;
+      }
+      @keyframes pulse {
+        0% { box-shadow: 0 0 0 0 rgba(255,123,184,0.7); }
+        70% { box-shadow: 0 0 0 14px rgba(255,123,184,0); }
+        100% { box-shadow: 0 0 0 0 rgba(255,123,184,0); }
+      }
+
+      .chip {
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        padding: 10px 14px;
+        background: rgba(0,0,0,0.35);
         color: var(--muted);
-        font-size: 13px;
-        flex: 0 0 auto;
+        font-weight: 600;
       }
 
-      main{
-        max-width: 1100px;
-        margin: 0 auto;
-        padding: 26px 16px 90px;
-      }
-
-      section{
-        margin: 18px 0 34px;
-      }
-
-      .card{
-        border-radius: var(--r);
-        background: rgba(255,255,255,.08);
-        border: 1px solid var(--stroke);
-        box-shadow: var(--shadow2);
-        backdrop-filter: blur(14px);
-        -webkit-backdrop-filter: blur(14px);
-      }
-
-      /* ===== Hero block ===== */
-      .hero{
-        padding: clamp(18px, 3.5vw, 34px);
-        overflow: hidden;
+      .letter-shell {
         position: relative;
-      }
-      .hero::before{
-        content:"";
-        position:absolute; inset: 0;
-        background: radial-gradient(900px 500px at 15% 10%, rgba(255,255,255,.10), transparent 60%),
-                    radial-gradient(700px 500px at 90% 20%, rgba(160,120,255,.12), transparent 65%);
-        pointer-events:none;
-      }
-
-      .kicker{
-        display:inline-flex;
-        align-items:center;
-        gap:10px;
-        padding: 8px 12px;
-        border-radius: 999px;
-        border: 1px solid rgba(255,255,255,.16);
-        background: rgba(0,0,0,.18);
-        color: var(--muted);
-        font-size: 13px;
-      }
-      .kicker b{ color: rgba(255,255,255,.88); font-weight: 800; }
-
-      h1{
-        margin: 16px 0 10px;
-        font-size: clamp(42px, 5.8vw, 76px);
-        line-height: 0.98;
-        letter-spacing: -0.04em;
-      }
-      .lead{
-        margin: 0;
-        max-width: 58ch;
-        color: var(--muted);
-        font-size: clamp(15px, 1.7vw, 18px);
-        line-height: 1.65;
+        border-radius: 36px;
+        border: 1px solid rgba(255,255,255,0.18);
+        background: linear-gradient(140deg, rgba(255,255,255,0.1), rgba(255,255,255,0.02));
+        backdrop-filter: blur(20px);
+        box-shadow: 0 35px 120px rgba(0,0,0,0.55);
+        transform-style: preserve-3d;
+        overflow: hidden;
       }
 
-      .grid{
-        display:grid;
-        grid-template-columns: 1.2fr .8fr;
-        gap: 14px;
-        margin-top: 20px;
+      .letter-shell::before,
+      .letter-shell::after {
+        content: "";
+        position: absolute;
+        width: 65%;
+        height: 180px;
+        filter: blur(35px);
+        opacity: 0.55;
+        z-index: 0;
       }
-      @media (max-width: 880px){
-        .grid{ grid-template-columns: 1fr; }
+      .letter-shell::before {
+        background: rgba(255,123,184,0.35);
+        top: -80px;
+        left: -80px;
+      }
+      .letter-shell::after {
+        background: rgba(115,217,255,0.25);
+        bottom: -100px;
+        right: -40px;
       }
 
-      /* ===== Countdown ===== */
-      .countdown{
-        padding: 18px;
-        background: rgba(0,0,0,.24);
-        border: 1px solid rgba(255,255,255,.14);
-        border-radius: 22px;
+      .letter-fold {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        z-index: 1;
       }
-      .cd-title{
-        display:flex;
-        align-items:center;
-        justify-content: space-between;
-        gap: 10px;
-        color: var(--muted);
-        font-size: 13px;
-        letter-spacing: .06em;
-        text-transform: uppercase;
+      .fold {
+        position: absolute;
+        background: linear-gradient(135deg, rgba(255,255,255,0.15), rgba(255,255,255,0.03));
+        border: 1px solid rgba(255,255,255,0.15);
       }
-      .cd-title .mini{
-        width: 40px; height: 40px;
-        border-radius: 14px;
-        overflow:hidden;
-        border: 1px solid rgba(255,255,255,.16);
-        box-shadow: 0 14px 40px rgba(0,0,0,.35);
-        flex: 0 0 auto;
+      .fold.left {
+        left: -16%;
+        top: 8%;
+        width: 38%;
+        height: 84%;
+        transform-origin: right center;
+        transform: rotateY(38deg);
+        border-radius: 28px;
       }
-      .cd-title img{ width:100%; height:100%; object-fit: cover; display:block; }
+      .fold.right {
+        right: -16%;
+        top: 8%;
+        width: 38%;
+        height: 84%;
+        transform-origin: left center;
+        transform: rotateY(-38deg);
+        border-radius: 28px;
+      }
 
-      .cd-grid{
-        display:grid;
+      .content {
+        position: relative;
+        z-index: 2;
+        padding: clamp(18px, 3vw, 30px);
+      }
+
+      .hero {
+        display: grid;
+        grid-template-columns: 1.2fr 0.8fr;
+        gap: 16px;
+      }
+      @media (max-width: 940px) {
+        .hero { grid-template-columns: 1fr; }
+      }
+
+      .card {
+        border-radius: var(--radius);
+        border: 1px solid rgba(255,255,255,0.16);
+        background: rgba(0,0,0,0.28);
+        padding: clamp(16px, 2.5vw, 24px);
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.15);
+      }
+
+      h1 {
+        font-family: "Playfair Display", serif;
+        font-size: clamp(40px, 6vw, 78px);
+        line-height: 0.95;
+        margin: 10px 0 8px;
+      }
+
+      .lead { color: var(--muted); max-width: 60ch; line-height: 1.65; }
+
+      .menu {
+        display: grid;
         grid-template-columns: repeat(4, minmax(0, 1fr));
         gap: 10px;
-        margin-top: 12px;
+        margin: 16px 0 0;
       }
-      .box{
-        border-radius: 18px;
-        border: 1px solid rgba(255,255,255,.14);
-        background: rgba(255,255,255,.06);
-        padding: 14px 12px;
-        text-align: center;
-      }
-      .num{
-        font-size: clamp(24px, 4vw, 40px);
-        font-weight: 850;
-        letter-spacing: -0.03em;
-      }
-      .lbl{
-        margin-top: 6px;
-        font-size: 12px;
-        color: rgba(255,255,255,.70);
-        letter-spacing: .08em;
-        text-transform: uppercase;
-      }
-      @media (max-width: 520px){
-        .cd-grid{ grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      @media (max-width: 840px) {
+        .menu { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       }
 
-      /* ===== Scroll sections ===== */
-      .panel{
-        padding: clamp(18px, 3vw, 28px);
-      }
-      .title{
-        margin: 0 0 10px;
-        font-size: clamp(20px, 2.2vw, 26px);
-        letter-spacing: -0.02em;
-      }
-      .p{
-        margin: 0;
-        color: var(--muted);
-        line-height: 1.7;
-      }
-
-      .facts{
-        display:grid;
-        grid-template-columns: repeat(3, minmax(0,1fr));
-        gap: 12px;
-        margin-top: 14px;
-      }
-      @media (max-width: 880px){
-        .facts{ grid-template-columns: 1fr; }
-      }
-      .fact{
-        border-radius: 20px;
-        border: 1px solid rgba(255,255,255,.14);
-        background: rgba(255,255,255,.06);
-        padding: 14px 14px;
-      }
-      .fact .k{ color: rgba(255,255,255,.85); font-weight: 800; }
-      .fact .v{ color: var(--muted); margin-top: 6px; line-height: 1.6; }
-
-      .ctaRow{
-        display:flex;
-        flex-wrap: wrap;
-        gap: 10px;
-        margin-top: 14px;
-      }
-      button{
-        appearance:none;
-        border: 1px solid rgba(255,255,255,.16);
-        background: rgba(255,255,255,.08);
-        color: var(--text);
-        padding: 12px 14px;
-        border-radius: 16px;
-        font-weight: 750;
+      .menu button {
+        border: 1px solid rgba(255,255,255,0.2);
+        background: rgba(255,255,255,0.08);
+        color: var(--ink);
+        border-radius: 14px;
+        padding: 11px 8px;
+        font-weight: 700;
         cursor: pointer;
-        transition: transform .12s ease, background .12s ease, border-color .12s ease;
       }
-      button:hover{
-        transform: translateY(-1px);
-        background: rgba(255,255,255,.14);
-        border-color: rgba(255,255,255,.24);
-      }
-      button:active{ transform: translateY(0) scale(.99); }
-
-      .divider{
-        height: 1px;
-        background: rgba(255,255,255,.10);
-        margin: 16px 0;
+      .menu button.active {
+        background: linear-gradient(120deg, rgba(255,123,184,0.35), rgba(142,125,255,0.35));
       }
 
-      /* ===== Reveal on scroll ===== */
-      .reveal{
-        opacity: 0;
-        transform: translateY(14px);
-        transition: opacity .7s ease, transform .7s ease;
+      .countdown-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
       }
-      .reveal.is-visible{
-        opacity: 1;
-        transform: translateY(0);
+      .count-box {
+        border-radius: 16px;
+        padding: 14px;
+        text-align: center;
+        background: rgba(255,255,255,0.06);
+        border: 1px solid rgba(255,255,255,0.18);
+      }
+      .count-box .n { font-size: clamp(26px, 4vw, 40px); font-weight: 800; }
+      .count-box .l { color: var(--muted); font-size: 13px; }
+
+      .panels { margin-top: 16px; }
+      .panel {
+        display: none;
+        animation: rise .4s ease;
+      }
+      .panel.active { display: block; }
+      @keyframes rise {
+        from { opacity: 0; transform: translateY(8px); }
+        to { opacity: 1; transform: translateY(0); }
       }
 
-      /* ===== Footer ===== */
-      footer{
-        margin-top: 44px;
-        text-align:center;
-        color: rgba(255,255,255,.55);
-        font-size: 13px;
+      .section-title { margin: 4px 0 14px; font-size: 24px; }
+      .grid-2 {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+      }
+      @media (max-width: 760px) {
+        .grid-2 { grid-template-columns: 1fr; }
       }
 
-      @media (prefers-reduced-motion: reduce){
-        .reveal{ opacity: 1; transform:none; transition:none; }
+      .item {
+        border-radius: 18px;
+        border: 1px solid rgba(255,255,255,0.14);
+        padding: 14px;
+        background: rgba(255,255,255,0.03);
+      }
+
+      .idea-list, .memory-list { display: grid; gap: 10px; margin-top: 12px; }
+
+      .row {
+        display: flex;
+        gap: 10px;
+      }
+      .row input, .row textarea {
+        width: 100%;
+        border: 1px solid rgba(255,255,255,0.24);
+        background: rgba(0,0,0,0.36);
+        color: var(--ink);
+        border-radius: 12px;
+        padding: 11px;
+        font-family: inherit;
+      }
+
+      .row button {
+        border: 0;
+        border-radius: 12px;
+        padding: 11px 14px;
+        font-weight: 700;
+        background: linear-gradient(120deg, var(--pink), var(--violet));
+        color: #fff;
+        cursor: pointer;
+      }
+
+      .gallery {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 12px;
+      }
+      .photo {
+        border-radius: 16px;
+        overflow: hidden;
+        border: 1px solid rgba(255,255,255,0.18);
+        background: rgba(255,255,255,0.03);
+      }
+      .photo img { width: 100%; height: 140px; object-fit: cover; display: block; }
+      .photo span { display: block; padding: 8px; color: var(--muted); font-size: 13px; }
+
+      .footer {
+        text-align: center;
+        margin-top: 20px;
+        color: rgba(247,247,255,0.55);
       }
     </style>
   </head>
-
   <body>
-    <div class="hero-bg" aria-hidden="true"></div>
-    <div class="hero-noise" aria-hidden="true"></div>
-    <div class="hero-vignette" aria-hidden="true"></div>
+    <div class="space" aria-hidden="true"></div>
 
-    <header>
-      <div class="nav">
-        <div class="brand">
-          <div class="dot"></div>
-          <span>Bonjour mon Amour</span>
-        </div>
+    <div class="wrapper">
+      <div class="topbar">
+        <div class="brand"><span class="pulse"></span> Lettre d'amour 2026</div>
         <div class="chip" id="chip">⏳ Vers le 1er mars</div>
       </div>
-    </header>
 
-    <main>
-      <!-- HERO -->
-      <section class="card hero reveal">
-        <div class="kicker">❤️ <b>Amour</b> — une page juste pour toi</div>
-        <h1>Bonjour</br>mon Amour ❤️</h1>
-        <p class="lead">
-          Une page à scroller.
-        </p>
+      <section class="letter-shell">
+        <div class="letter-fold" aria-hidden="true">
+          <div class="fold left"></div>
+          <div class="fold right"></div>
+        </div>
 
-        <div class="grid">
-          <div class="countdown">
-            <div class="cd-title">
-              <span>Compte à rebours anniversaire</span>
-              <span class="mini"><img src="nous.jpg" alt="Nous deux"></span>
-            </div>
+        <div class="content">
+          <div class="hero">
+            <article class="card">
+              <span style="color:var(--gold); font-weight:700;">❤️ Pour ma chérie</span>
+              <h1>Joyeux anniversaire,<br/>mon Amour.</h1>
+              <p class="lead">
+                Ce site est notre lettre interactive : un coin pour rêver, garder nos souvenirs,
+                noter nos envies de voyages et construire de nouvelles aventures à deux.
+              </p>
+              <div class="menu" role="tablist" aria-label="Sections">
+                <button class="active" data-panel="panel-vision">Vision</button>
+                <button data-panel="panel-voyage">Voyages</button>
+                <button data-panel="panel-souvenirs">Souvenirs</button>
+                <button data-panel="panel-idees">Idées folles</button>
+              </div>
+            </article>
 
-            <div class="cd-grid" aria-label="Compte à rebours">
-              <div class="box"><div class="num" id="d">—</div><div class="lbl">Jours</div></div>
-              <div class="box"><div class="num" id="h">—</div><div class="lbl">Heures</div></div>
-              <div class="box"><div class="num" id="m">—</div><div class="lbl">Minutes</div></div>
-              <div class="box"><div class="num" id="s">—</div><div class="lbl">Secondes</div></div>
-            </div>
+            <aside class="card">
+              <p style="margin-top:0; color: var(--muted);">Compte à rebours vers ton jour</p>
+              <div class="countdown-grid" aria-label="Compte à rebours">
+                <div class="count-box"><div class="n" id="d">—</div><div class="l">Jours</div></div>
+                <div class="count-box"><div class="n" id="h">—</div><div class="l">Heures</div></div>
+                <div class="count-box"><div class="n" id="m">—</div><div class="l">Minutes</div></div>
+                <div class="count-box"><div class="n" id="s">—</div><div class="l">Secondes</div></div>
+              </div>
+            </aside>
           </div>
 
-          <div class="panel card" style="background: rgba(0,0,0,.22); border-color: rgba(255,255,255,.12);">
-            <h2 class="title">Le programme</h2>
-            <p class="p">
-              Tu scrolles, et la page te dévoile quelques petits clins d’œil.
-              Rien de foufou, juste du beau, du doux, du “nous”.
-            </p>
-            <div class="divider"></div>
-            <div class="ctaRow">
-              <button id="scrollNext">Voir la suite</button>
-              <button id="surprise">Ou un petit mot avant de continuer</button>
-            </div>
-            <p class="p" id="note" style="margin-top:12px; color: rgba(255,255,255,.66);">
-              PS : le bouton “Voir la suite” descend proprement, si tu as la flemme de scroller...
-            </p>
+          <div class="panels">
+            <section class="panel active card" id="panel-vision">
+              <h2 class="section-title">Notre vision 2026</h2>
+              <div class="grid-2">
+                <div class="item">✨ Une année de douceur, de rires, de projets et de moments qu'on n'oublie pas.</div>
+                <div class="item">🚀 Un site qui évolue avec nous : on ajoute des photos, des idées, des plans.</div>
+                <div class="item">💌 Une lettre qui s'ouvre comme un dépliant, pour te rappeler combien je t'aime.</div>
+                <div class="item" id="dayj">🎁 Le jour J, ce message devient une vraie surprise personnalisée.</div>
+              </div>
+            </section>
+
+            <section class="panel card" id="panel-voyage">
+              <h2 class="section-title">Nos idées de voyage</h2>
+              <div class="row">
+                <input id="tripInput" placeholder="Ex: Week-end à Rome, Bali, Kyoto, Lisbonne..." />
+                <button id="addTrip">Ajouter</button>
+              </div>
+              <div class="idea-list" id="tripList"></div>
+            </section>
+
+            <section class="panel card" id="panel-souvenirs">
+              <h2 class="section-title">Galerie souvenirs</h2>
+              <p style="color:var(--muted)">Ajoute vos photos favorites dans la galerie locale du navigateur.</p>
+              <div class="row">
+                <input id="photoLabel" placeholder="Légende de la photo" />
+                <input id="photoInput" type="file" accept="image/*" />
+                <button id="addPhoto">Importer</button>
+              </div>
+              <div class="gallery" id="gallery"></div>
+            </section>
+
+            <section class="panel card" id="panel-idees">
+              <h2 class="section-title">Idées folles à réaliser ensemble</h2>
+              <div class="row">
+                <textarea id="memoryInput" rows="2" placeholder="Ex: dormir sous les étoiles, dîner surprise, roadtrip improvisé..."></textarea>
+                <button id="addMemory">Ajouter</button>
+              </div>
+              <div class="memory-list" id="memoryList"></div>
+            </section>
           </div>
+
+          <div class="footer">Fait avec amour, pour la plus belle de toutes. ❤️</div>
         </div>
       </section>
-
-      <!-- SECTION 2 -->
-      <section class="card panel reveal" id="sec2">
-        <h2 class="title">Quelques vérités simples</h2>
-        <p class="p">
-          La charte 2026 c’est : clair, minimal, un peu futuriste, et surtout lisible.
-          Donc voilà : trois blocs, trois évidences.
-        </p>
-
-        <div class="facts">
-          <div class="fact">
-            <div class="k">Toi</div>
-            <div class="v">Celle qui rend tout le reste moins bruyant.</div>
-          </div>
-          <div class="fact">
-            <div class="k">Nous</div>
-            <div class="v">A-Team. Pas parfaite, mais vraie. Et franchement stylée.</div>
-          </div>
-          <div class="fact">
-            <div class="k">Bientôt</div>
-            <div class="v">Le 1er mars. Surprise</div>
-          </div>
-        </div>
-      </section>
-
-      <!-- SECTION 3 -->
-      <section class="card panel reveal" id="sec3">
-        <h2 class="title">Mini timeline</h2>
-        <p class="p">
-          Une page, c’est un peu comme une histoire : on avance, on découvre, on sourit.
-        </p>
-
-        <div class="facts" style="grid-template-columns: repeat(2, minmax(0,1fr));">
-          <div class="fact">
-            <div class="k">Maintenant</div>
-            <div class="v">Tu lis ceci. Donc j’ai réussi à te faire arriver ici. Mission accomplie. Et ce site n'est pas (trop) une daube.</div>
-          </div>
-          <div class="fact">
-            <div class="k">Le jour J</div>
-            <div class="v" id="dayj">Dès le début de ton week-end anniversaire, ce site t'orientera... garde le précieusement en favori !</div>
-          </div>
-        </div>
-
-        <div class="ctaRow" style="margin-top: 14px;">
-          <button id="top">Remonter en haut</button>
-        </div>
-      </section>
-
-      <footer class="reveal">
-        Fait avec ❤️
-      </footer>
-    </main>
+    </div>
 
     <script>
-      // ===== Countdown: 1er mars 2026 à 00:00 (heure locale du navigateur) =====
-      // Si vous êtes en France, c'est l'heure de Paris.
       const target = new Date("2026-03-01T00:00:00");
-
-      const elD = document.getElementById("d");
-      const elH = document.getElementById("h");
-      const elM = document.getElementById("m");
-      const elS = document.getElementById("s");
       const chip = document.getElementById("chip");
       const dayj = document.getElementById("dayj");
 
-      function pad(n){ return String(n).padStart(2, "0"); }
+      const d = document.getElementById("d");
+      const h = document.getElementById("h");
+      const m = document.getElementById("m");
+      const s = document.getElementById("s");
 
-      function tick(){
-        const now = new Date();
-        let diff = target - now;
-
-        if (diff <= 0){
-          elD.textContent = "0";
-          elH.textContent = "00";
-          elM.textContent = "00";
-          elS.textContent = "00";
-          chip.textContent = "🎉 Joyeux anniversaire";
-          dayj.textContent = "C’est aujourd’hui. Et oui : je t’aime très fort. ❤️";
+      const pad = (n) => String(n).padStart(2, "0");
+      function tick() {
+        const diff = target - new Date();
+        if (diff <= 0) {
+          d.textContent = "0";
+          h.textContent = "00";
+          m.textContent = "00";
+          s.textContent = "00";
+          chip.textContent = "🎉 Joyeux anniversaire mon amour";
+          dayj.textContent = "🎉 Aujourd'hui, ton sourire est officiellement ma plus belle destination.";
           return;
         }
 
         const sec = Math.floor(diff / 1000);
         const days = Math.floor(sec / 86400);
-        const hours = Math.floor((sec % 86400) / 3600);
+        const hrs = Math.floor((sec % 86400) / 3600);
         const mins = Math.floor((sec % 3600) / 60);
         const secs = sec % 60;
-
-        elD.textContent = String(days);
-        elH.textContent = pad(hours);
-        elM.textContent = pad(mins);
-        elS.textContent = pad(secs);
-
-        chip.textContent = "⏳ " + days + "j " + pad(hours) + ":" + pad(mins) + ":" + pad(secs);
+        d.textContent = String(days);
+        h.textContent = pad(hrs);
+        m.textContent = pad(mins);
+        s.textContent = pad(secs);
+        chip.textContent = `⏳ ${days}j ${pad(hrs)}:${pad(mins)}:${pad(secs)}`;
       }
       tick();
       setInterval(tick, 1000);
 
-      // ===== Reveal on scroll (IntersectionObserver) =====
-      const els = document.querySelectorAll(".reveal");
-      const io = new IntersectionObserver((entries) => {
-        for (const e of entries){
-          if (e.isIntersecting) e.target.classList.add("is-visible");
+      const tabs = document.querySelectorAll(".menu button");
+      const panels = document.querySelectorAll(".panel");
+      tabs.forEach((tab) => {
+        tab.addEventListener("click", () => {
+          tabs.forEach((t) => t.classList.remove("active"));
+          panels.forEach((p) => p.classList.remove("active"));
+          tab.classList.add("active");
+          document.getElementById(tab.dataset.panel).classList.add("active");
+        });
+      });
+
+      const tripInput = document.getElementById("tripInput");
+      const tripList = document.getElementById("tripList");
+      const memoryInput = document.getElementById("memoryInput");
+      const memoryList = document.getElementById("memoryList");
+      const photoInput = document.getElementById("photoInput");
+      const photoLabel = document.getElementById("photoLabel");
+      const gallery = document.getElementById("gallery");
+
+      const state = {
+        trips: JSON.parse(localStorage.getItem("loveTrips") || "[]"),
+        memories: JSON.parse(localStorage.getItem("loveMemories") || "[]"),
+        photos: JSON.parse(localStorage.getItem("lovePhotos") || "[]")
+      };
+
+      function save() {
+        localStorage.setItem("loveTrips", JSON.stringify(state.trips));
+        localStorage.setItem("loveMemories", JSON.stringify(state.memories));
+        localStorage.setItem("lovePhotos", JSON.stringify(state.photos));
+      }
+
+      function renderTrips() {
+        tripList.innerHTML = state.trips.map((t, i) =>
+          `<div class="item">🌍 ${t} <button data-del-trip="${i}" style="float:right">Supprimer</button></div>`
+        ).join("") || '<div class="item">Ajoute votre première destination de rêve ✈️</div>';
+      }
+
+      function renderMemories() {
+        memoryList.innerHTML = state.memories.map((t, i) =>
+          `<div class="item">💡 ${t} <button data-del-memory="${i}" style="float:right">Supprimer</button></div>`
+        ).join("") || '<div class="item">Écris ici vos prochaines folies 💫</div>';
+      }
+
+      function renderPhotos() {
+        gallery.innerHTML = state.photos.map((p, i) =>
+          `<figure class="photo"><img src="${p.data}" alt="Souvenir"/><span>${p.label || "Notre moment"} <button data-del-photo="${i}" style="float:right">X</button></span></figure>`
+        ).join("") || '<div class="item">Importe vos premières photos souvenirs 📸</div>';
+      }
+
+      document.getElementById("addTrip").addEventListener("click", () => {
+        if (!tripInput.value.trim()) return;
+        state.trips.unshift(tripInput.value.trim());
+        tripInput.value = "";
+        save();
+        renderTrips();
+      });
+
+      document.getElementById("addMemory").addEventListener("click", () => {
+        if (!memoryInput.value.trim()) return;
+        state.memories.unshift(memoryInput.value.trim());
+        memoryInput.value = "";
+        save();
+        renderMemories();
+      });
+
+      document.getElementById("addPhoto").addEventListener("click", () => {
+        const file = photoInput.files?.[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = () => {
+          state.photos.unshift({
+            label: photoLabel.value.trim(),
+            data: reader.result
+          });
+          photoInput.value = "";
+          photoLabel.value = "";
+          save();
+          renderPhotos();
+        };
+        reader.readAsDataURL(file);
+      });
+
+      document.body.addEventListener("click", (e) => {
+        const tripI = e.target.getAttribute("data-del-trip");
+        const memoryI = e.target.getAttribute("data-del-memory");
+        const photoI = e.target.getAttribute("data-del-photo");
+        if (tripI !== null) state.trips.splice(Number(tripI), 1);
+        if (memoryI !== null) state.memories.splice(Number(memoryI), 1);
+        if (photoI !== null) state.photos.splice(Number(photoI), 1);
+        if (tripI !== null || memoryI !== null || photoI !== null) {
+          save();
+          renderTrips();
+          renderMemories();
+          renderPhotos();
         }
-      }, { threshold: 0.18 });
-      els.forEach(el => io.observe(el));
-
-      // ===== Buttons =====
-      const messages = [
-        "Amouuuuuuuuuuuuur.",
-      ];
-      document.getElementById("surprise").addEventListener("click", () => {
-        document.getElementById("note").textContent =
-          messages[Math.floor(Math.random() * messages.length)];
       });
 
-      document.getElementById("scrollNext").addEventListener("click", () => {
-        document.getElementById("sec2").scrollIntoView({ behavior: "smooth", block: "start" });
-      });
-
-      document.getElementById("top").addEventListener("click", () => {
-        window.scrollTo({ top: 0, behavior: "smooth" });
-      });
+      renderTrips();
+      renderMemories();
+      renderPhotos();
     </script>
   </body>
 </html>
