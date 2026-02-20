@@ -3,516 +3,149 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Mon Amour</title>
-
-    <!-- Optional: a modern variable font (safe fallback if it fails) -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300..800&display=swap" rel="stylesheet">
-
-    <style>
-      :root{
-        --bg0: #070A12;
-        --bg1: #0B0F1F;
-        --text: rgba(255,255,255,.92);
-        --muted: rgba(255,255,255,.72);
-        --faint: rgba(255,255,255,.55);
-
-        --card: rgba(255,255,255,.08);
-        --card2: rgba(0,0,0,.28);
-        --stroke: rgba(255,255,255,.14);
-        --stroke2: rgba(255,255,255,.22);
-
-        --shadow: 0 24px 90px rgba(0,0,0,.55);
-        --shadow2: 0 16px 60px rgba(0,0,0,.45);
-
-        --r: 26px;
-      }
-
-      *{ box-sizing: border-box; }
-      html, body{ height: 100%; }
-      body{
-        margin: 0;
-        font-family: Manrope, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-        color: var(--text);
-        background: radial-gradient(1200px 700px at 30% 15%, rgba(180,120,255,.18), transparent 60%),
-                    radial-gradient(900px 650px at 80% 10%, rgba(120,210,255,.16), transparent 60%),
-                    linear-gradient(180deg, var(--bg0), var(--bg1));
-        overflow-x: hidden;
-      }
-
-      /* ===== Hero background photo ===== */
-      .hero-bg{
-        position: fixed;
-        inset: 0;
-        z-index: -3;
-        background:
-          radial-gradient(1200px 800px at 50% 30%, rgba(0,0,0,.20), rgba(0,0,0,.72)),
-          url("nous.jpg") center/cover no-repeat;
-        transform: scale(1.03);
-        filter: saturate(1.05) contrast(1.02);
-      }
-      .hero-noise{
-        position: fixed;
-        inset: -40%;
-        z-index: -2;
-        pointer-events: none;
-        opacity: .10;
-        mix-blend-mode: overlay;
-        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23n)' opacity='.25'/%3E%3C/svg%3E");
-        transform: rotate(10deg);
-      }
-      .hero-vignette{
-        position: fixed;
-        inset: 0;
-        z-index: -1;
-        pointer-events:none;
-        background: radial-gradient(1200px 800px at 50% 20%, transparent 35%, rgba(0,0,0,.55) 80%);
-      }
-
-      /* ===== Layout ===== */
-      header{
-        position: sticky;
-        top: 0;
-        z-index: 10;
-        padding: 14px 16px;
-        backdrop-filter: blur(14px);
-        -webkit-backdrop-filter: blur(14px);
-        background: rgba(0,0,0,.22);
-        border-bottom: 1px solid rgba(255,255,255,.10);
-      }
-      .nav{
-        max-width: 1100px;
-        margin: 0 auto;
-        display:flex;
-        align-items:center;
-        justify-content: space-between;
-        gap: 12px;
-      }
-      .brand{
-        display:flex;
-        align-items:center;
-        gap: 10px;
-        min-width: 0;
-      }
-      .dot{
-        width: 10px; height: 10px; border-radius: 999px;
-        background: rgba(255,255,255,.85);
-        box-shadow: 0 0 0 6px rgba(255,255,255,.08);
-        flex: 0 0 auto;
-      }
-      .brand span{
-        font-weight: 800;
-        letter-spacing: -0.02em;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-      }
-      .chip{
-        display:inline-flex;
-        align-items:center;
-        gap: 8px;
-        padding: 8px 10px;
-        border-radius: 999px;
-        border: 1px solid rgba(255,255,255,.16);
-        background: rgba(255,255,255,.06);
-        color: var(--muted);
-        font-size: 13px;
-        flex: 0 0 auto;
-      }
-
-      main{
-        max-width: 1100px;
-        margin: 0 auto;
-        padding: 26px 16px 90px;
-      }
-
-      section{
-        margin: 18px 0 34px;
-      }
-
-      .card{
-        border-radius: var(--r);
-        background: rgba(255,255,255,.08);
-        border: 1px solid var(--stroke);
-        box-shadow: var(--shadow2);
-        backdrop-filter: blur(14px);
-        -webkit-backdrop-filter: blur(14px);
-      }
-
-      /* ===== Hero block ===== */
-      .hero{
-        padding: clamp(18px, 3.5vw, 34px);
-        overflow: hidden;
-        position: relative;
-      }
-      .hero::before{
-        content:"";
-        position:absolute; inset: 0;
-        background: radial-gradient(900px 500px at 15% 10%, rgba(255,255,255,.10), transparent 60%),
-                    radial-gradient(700px 500px at 90% 20%, rgba(160,120,255,.12), transparent 65%);
-        pointer-events:none;
-      }
-
-      .kicker{
-        display:inline-flex;
-        align-items:center;
-        gap:10px;
-        padding: 8px 12px;
-        border-radius: 999px;
-        border: 1px solid rgba(255,255,255,.16);
-        background: rgba(0,0,0,.18);
-        color: var(--muted);
-        font-size: 13px;
-      }
-      .kicker b{ color: rgba(255,255,255,.88); font-weight: 800; }
-
-      h1{
-        margin: 16px 0 10px;
-        font-size: clamp(42px, 5.8vw, 76px);
-        line-height: 0.98;
-        letter-spacing: -0.04em;
-      }
-      .lead{
-        margin: 0;
-        max-width: 58ch;
-        color: var(--muted);
-        font-size: clamp(15px, 1.7vw, 18px);
-        line-height: 1.65;
-      }
-
-      .grid{
-        display:grid;
-        grid-template-columns: 1.2fr .8fr;
-        gap: 14px;
-        margin-top: 20px;
-      }
-      @media (max-width: 880px){
-        .grid{ grid-template-columns: 1fr; }
-      }
-
-      /* ===== Countdown ===== */
-      .countdown{
-        padding: 18px;
-        background: rgba(0,0,0,.24);
-        border: 1px solid rgba(255,255,255,.14);
-        border-radius: 22px;
-      }
-      .cd-title{
-        display:flex;
-        align-items:center;
-        justify-content: space-between;
-        gap: 10px;
-        color: var(--muted);
-        font-size: 13px;
-        letter-spacing: .06em;
-        text-transform: uppercase;
-      }
-      .cd-title .mini{
-        width: 40px; height: 40px;
-        border-radius: 14px;
-        overflow:hidden;
-        border: 1px solid rgba(255,255,255,.16);
-        box-shadow: 0 14px 40px rgba(0,0,0,.35);
-        flex: 0 0 auto;
-      }
-      .cd-title img{ width:100%; height:100%; object-fit: cover; display:block; }
-
-      .cd-grid{
-        display:grid;
-        grid-template-columns: repeat(4, minmax(0, 1fr));
-        gap: 10px;
-        margin-top: 12px;
-      }
-      .box{
-        border-radius: 18px;
-        border: 1px solid rgba(255,255,255,.14);
-        background: rgba(255,255,255,.06);
-        padding: 14px 12px;
-        text-align: center;
-      }
-      .num{
-        font-size: clamp(24px, 4vw, 40px);
-        font-weight: 850;
-        letter-spacing: -0.03em;
-      }
-      .lbl{
-        margin-top: 6px;
-        font-size: 12px;
-        color: rgba(255,255,255,.70);
-        letter-spacing: .08em;
-        text-transform: uppercase;
-      }
-      @media (max-width: 520px){
-        .cd-grid{ grid-template-columns: repeat(2, minmax(0, 1fr)); }
-      }
-
-      /* ===== Scroll sections ===== */
-      .panel{
-        padding: clamp(18px, 3vw, 28px);
-      }
-      .title{
-        margin: 0 0 10px;
-        font-size: clamp(20px, 2.2vw, 26px);
-        letter-spacing: -0.02em;
-      }
-      .p{
-        margin: 0;
-        color: var(--muted);
-        line-height: 1.7;
-      }
-
-      .facts{
-        display:grid;
-        grid-template-columns: repeat(3, minmax(0,1fr));
-        gap: 12px;
-        margin-top: 14px;
-      }
-      @media (max-width: 880px){
-        .facts{ grid-template-columns: 1fr; }
-      }
-      .fact{
-        border-radius: 20px;
-        border: 1px solid rgba(255,255,255,.14);
-        background: rgba(255,255,255,.06);
-        padding: 14px 14px;
-      }
-      .fact .k{ color: rgba(255,255,255,.85); font-weight: 800; }
-      .fact .v{ color: var(--muted); margin-top: 6px; line-height: 1.6; }
-
-      .ctaRow{
-        display:flex;
-        flex-wrap: wrap;
-        gap: 10px;
-        margin-top: 14px;
-      }
-      button{
-        appearance:none;
-        border: 1px solid rgba(255,255,255,.16);
-        background: rgba(255,255,255,.08);
-        color: var(--text);
-        padding: 12px 14px;
-        border-radius: 16px;
-        font-weight: 750;
-        cursor: pointer;
-        transition: transform .12s ease, background .12s ease, border-color .12s ease;
-      }
-      button:hover{
-        transform: translateY(-1px);
-        background: rgba(255,255,255,.14);
-        border-color: rgba(255,255,255,.24);
-      }
-      button:active{ transform: translateY(0) scale(.99); }
-
-      .divider{
-        height: 1px;
-        background: rgba(255,255,255,.10);
-        margin: 16px 0;
-      }
-
-      /* ===== Reveal on scroll ===== */
-      .reveal{
-        opacity: 0;
-        transform: translateY(14px);
-        transition: opacity .7s ease, transform .7s ease;
-      }
-      .reveal.is-visible{
-        opacity: 1;
-        transform: translateY(0);
-      }
-
-      /* ===== Footer ===== */
-      footer{
-        margin-top: 44px;
-        text-align:center;
-        color: rgba(255,255,255,.55);
-        font-size: 13px;
-      }
-
-      @media (prefers-reduced-motion: reduce){
-        .reveal{ opacity: 1; transform:none; transition:none; }
-      }
-    </style>
+    <title>Lettre d'Amour 2026</title>
+    <meta
+      name="description"
+      content="Une lettre 3D interactive pour l'anniversaire de mon amour, avec souvenirs, idées voyages et promesses pour la suite."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@300..800&family=Playfair+Display:wght@500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="assets/css/styles.css" />
   </head>
-
   <body>
-    <div class="hero-bg" aria-hidden="true"></div>
-    <div class="hero-noise" aria-hidden="true"></div>
-    <div class="hero-vignette" aria-hidden="true"></div>
+    <div class="bg-layer"></div>
+    <div class="sparkles" aria-hidden="true"></div>
 
-    <header>
-      <div class="nav">
-        <div class="brand">
-          <div class="dot"></div>
-          <span>Bonjour mon Amour</span>
-        </div>
-        <div class="chip" id="chip">⏳ Vers le 1er mars</div>
+    <header class="topbar">
+      <div class="brand">
+        <span class="glow-dot"></span>
+        <strong>Pour mon Amour</strong>
       </div>
+      <div class="badge" id="countdownChip">⏳ Vers le 1er mars</div>
     </header>
 
-    <main>
-      <!-- HERO -->
-      <section class="card hero reveal">
-        <div class="kicker">❤️ <b>Amour</b> — une page juste pour toi</div>
-        <h1>Bonjour</br>mon Amour ❤️</h1>
-        <p class="lead">
-          Une page à scroller.
-        </p>
-
-        <div class="grid">
-          <div class="countdown">
-            <div class="cd-title">
-              <span>Compte à rebours anniversaire</span>
-              <span class="mini"><img src="nous.jpg" alt="Nous deux"></span>
-            </div>
-
-            <div class="cd-grid" aria-label="Compte à rebours">
-              <div class="box"><div class="num" id="d">—</div><div class="lbl">Jours</div></div>
-              <div class="box"><div class="num" id="h">—</div><div class="lbl">Heures</div></div>
-              <div class="box"><div class="num" id="m">—</div><div class="lbl">Minutes</div></div>
-              <div class="box"><div class="num" id="s">—</div><div class="lbl">Secondes</div></div>
-            </div>
-          </div>
-
-          <div class="panel card" style="background: rgba(0,0,0,.22); border-color: rgba(255,255,255,.12);">
-            <h2 class="title">Le programme</h2>
-            <p class="p">
-              Tu scrolles, et la page te dévoile quelques petits clins d’œil.
-              Rien de foufou, juste du beau, du doux, du “nous”.
+    <main class="layout">
+      <section class="letter-stage reveal">
+        <article class="letter-3d" id="letter3d">
+          <div class="letter-face letter-front">
+            <p class="tag">Edition anniversaire · 2026</p>
+            <h1>Tu ouvres cette lettre,<br />et c'est déjà un souvenir.</h1>
+            <p>
+              J'ai voulu un site comme un dépliant du futur : beau, vivant, intime.
+              Une petite capsule de nous deux, à enrichir avec nos voyages, nos
+              photos, nos idées et nos rêves.
             </p>
-            <div class="divider"></div>
-            <div class="ctaRow">
-              <button id="scrollNext">Voir la suite</button>
-              <button id="surprise">Ou un petit mot avant de continuer</button>
+            <div class="hero-actions">
+              <button class="btn primary" id="openLetter">Déplier la lettre</button>
+              <button class="btn ghost" id="goIdeas">Voir nos idées</button>
             </div>
-            <p class="p" id="note" style="margin-top:12px; color: rgba(255,255,255,.66);">
-              PS : le bouton “Voir la suite” descend proprement, si tu as la flemme de scroller...
-            </p>
           </div>
+
+          <div class="letter-face letter-panel left-panel">
+            <h2>Escapades rêveuses</h2>
+            <p>Nos destinations à cocher ensemble (et vite).</p>
+            <ul class="idea-list">
+              <li>🇯🇵 Tokyo de nuit + sakuras au printemps</li>
+              <li>🇮🇸 Aurores boréales sous une bulle de verre</li>
+              <li>🇮🇹 Week-end à Florence, gelato et couchers de soleil</li>
+              <li>🇲🇦 Riad secret à Marrakech + hammam duo</li>
+            </ul>
+          </div>
+
+          <div class="letter-face letter-panel right-panel">
+            <h2>Nos moments signature</h2>
+            <p>Ce qui fait notre style, notre vibe, notre "nous".</p>
+            <ul class="idea-list">
+              <li>Petit-déj en terrasse + playlist love jazz</li>
+              <li>Session photos spontanées dans la rue</li>
+              <li>Roadtrip sans plan précis, juste toi et moi</li>
+              <li>Dîner maison en mode resto étoilé perso</li>
+            </ul>
+          </div>
+        </article>
+      </section>
+
+      <section class="panel reveal" id="menus">
+        <div class="panel-heading">
+          <h2>Le menu de notre univers</h2>
+          <p>Ajoute, modifie, enrichis : ce site est notre base secrète.</p>
+        </div>
+
+        <div class="menu-grid">
+          <details open>
+            <summary>✈️ Idées voyage</summary>
+            <div class="content">
+              <p>Quand on veut s'évader :</p>
+              <ul>
+                <li>Week-end spa + montagne</li>
+                <li>Ville romantique avec rooftop</li>
+                <li>Plage turquoise hors saison</li>
+              </ul>
+            </div>
+          </details>
+
+          <details>
+            <summary>📸 Photos souvenirs</summary>
+            <div class="content gallery">
+              <figure>
+                <img src="nous.jpg" alt="Nous deux" />
+                <figcaption>Notre photo, version éternelle.</figcaption>
+              </figure>
+              <figure class="placeholder">
+                <div>+</div>
+                <figcaption>Ici, ajoute votre prochain souvenir.</figcaption>
+              </figure>
+            </div>
+          </details>
+
+          <details>
+            <summary>💡 Liste d'idées folles</summary>
+            <div class="content">
+              <ul>
+                <li>Créer une capsule vidéo de chaque mois ensemble</li>
+                <li>Un dîner surprise à thème, chacun son tour</li>
+                <li>Un carnet de "premières fois" à remplir</li>
+              </ul>
+            </div>
+          </details>
+
+          <details>
+            <summary>🎁 Coin surprises</summary>
+            <div class="content">
+              <p id="surpriseText">
+                Clique sur le bouton magique juste en dessous pour une surprise.
+              </p>
+              <button class="btn primary" id="surpriseBtn">Activer une surprise</button>
+            </div>
+          </details>
         </div>
       </section>
 
-      <!-- SECTION 2 -->
-      <section class="card panel reveal" id="sec2">
-        <h2 class="title">Quelques vérités simples</h2>
-        <p class="p">
-          La charte 2026 c’est : clair, minimal, un peu futuriste, et surtout lisible.
-          Donc voilà : trois blocs, trois évidences.
-        </p>
-
-        <div class="facts">
-          <div class="fact">
-            <div class="k">Toi</div>
-            <div class="v">Celle qui rend tout le reste moins bruyant.</div>
-          </div>
-          <div class="fact">
-            <div class="k">Nous</div>
-            <div class="v">A-Team. Pas parfaite, mais vraie. Et franchement stylée.</div>
-          </div>
-          <div class="fact">
-            <div class="k">Bientôt</div>
-            <div class="v">Le 1er mars. Surprise</div>
-          </div>
+      <section class="panel reveal" id="timeline">
+        <h2>Timeline de notre anniversaire</h2>
+        <div class="timeline">
+          <article>
+            <span>Maintenant</span>
+            <p>Tu découvres cette lettre 3D et tu souris (j'espère fort).</p>
+          </article>
+          <article>
+            <span>Avant le jour J</span>
+            <p>On remplit ensemble les menus avec nos futurs plans.</p>
+          </article>
+          <article>
+            <span>Jour J</span>
+            <p id="dayMessage">Le site s'illumine et te dit à quel point je t'aime.</p>
+          </article>
         </div>
       </section>
 
-      <!-- SECTION 3 -->
-      <section class="card panel reveal" id="sec3">
-        <h2 class="title">Mini timeline</h2>
-        <p class="p">
-          Une page, c’est un peu comme une histoire : on avance, on découvre, on sourit.
-        </p>
-
-        <div class="facts" style="grid-template-columns: repeat(2, minmax(0,1fr));">
-          <div class="fact">
-            <div class="k">Maintenant</div>
-            <div class="v">Tu lis ceci. Donc j’ai réussi à te faire arriver ici. Mission accomplie. Et ce site n'est pas (trop) une daube.</div>
-          </div>
-          <div class="fact">
-            <div class="k">Le jour J</div>
-            <div class="v" id="dayj">Dès le début de ton week-end anniversaire, ce site t'orientera... garde le précieusement en favori !</div>
-          </div>
-        </div>
-
-        <div class="ctaRow" style="margin-top: 14px;">
-          <button id="top">Remonter en haut</button>
-        </div>
-      </section>
-
-      <footer class="reveal">
-        Fait avec ❤️
-      </footer>
+      <footer class="reveal">Fait avec ❤️ pour toi, aujourd'hui et pour la suite.</footer>
     </main>
 
-    <script>
-      // ===== Countdown: 1er mars 2026 à 00:00 (heure locale du navigateur) =====
-      // Si vous êtes en France, c'est l'heure de Paris.
-      const target = new Date("2026-03-01T00:00:00");
-
-      const elD = document.getElementById("d");
-      const elH = document.getElementById("h");
-      const elM = document.getElementById("m");
-      const elS = document.getElementById("s");
-      const chip = document.getElementById("chip");
-      const dayj = document.getElementById("dayj");
-
-      function pad(n){ return String(n).padStart(2, "0"); }
-
-      function tick(){
-        const now = new Date();
-        let diff = target - now;
-
-        if (diff <= 0){
-          elD.textContent = "0";
-          elH.textContent = "00";
-          elM.textContent = "00";
-          elS.textContent = "00";
-          chip.textContent = "🎉 Joyeux anniversaire";
-          dayj.textContent = "C’est aujourd’hui. Et oui : je t’aime très fort. ❤️";
-          return;
-        }
-
-        const sec = Math.floor(diff / 1000);
-        const days = Math.floor(sec / 86400);
-        const hours = Math.floor((sec % 86400) / 3600);
-        const mins = Math.floor((sec % 3600) / 60);
-        const secs = sec % 60;
-
-        elD.textContent = String(days);
-        elH.textContent = pad(hours);
-        elM.textContent = pad(mins);
-        elS.textContent = pad(secs);
-
-        chip.textContent = "⏳ " + days + "j " + pad(hours) + ":" + pad(mins) + ":" + pad(secs);
-      }
-      tick();
-      setInterval(tick, 1000);
-
-      // ===== Reveal on scroll (IntersectionObserver) =====
-      const els = document.querySelectorAll(".reveal");
-      const io = new IntersectionObserver((entries) => {
-        for (const e of entries){
-          if (e.isIntersecting) e.target.classList.add("is-visible");
-        }
-      }, { threshold: 0.18 });
-      els.forEach(el => io.observe(el));
-
-      // ===== Buttons =====
-      const messages = [
-        "Amouuuuuuuuuuuuur.",
-      ];
-      document.getElementById("surprise").addEventListener("click", () => {
-        document.getElementById("note").textContent =
-          messages[Math.floor(Math.random() * messages.length)];
-      });
-
-      document.getElementById("scrollNext").addEventListener("click", () => {
-        document.getElementById("sec2").scrollIntoView({ behavior: "smooth", block: "start" });
-      });
-
-      document.getElementById("top").addEventListener("click", () => {
-        window.scrollTo({ top: 0, behavior: "smooth" });
-      });
-    </script>
+    <script src="assets/js/main.js"></script>
   </body>
 </html>
