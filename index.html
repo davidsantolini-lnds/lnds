@@ -335,3 +335,933 @@
     </script>
   </body>
 </html>
+ (cd "$(git rev-parse --show-toplevel)" && git apply --3way <<'EOF' 
+diff --git a/index.html b/index.html
+index ba6d3261961d11e1bd533bf6f90101a4ec4f631a..fb851ba15012b2bc83b67179ddaa381f9934ca73 100644
+--- a/index.html
++++ b/index.html
+@@ -1,518 +1,527 @@
+ <!doctype html>
+ <html lang="fr">
+   <head>
+     <meta charset="UTF-8" />
+     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+-    <title>Mon Amour</title>
+-
+-    <!-- Optional: a modern variable font (safe fallback if it fails) -->
+-    <link rel="preconnect" href="https://fonts.googleapis.com">
+-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300..800&display=swap" rel="stylesheet">
+-
++    <title>Mon Amour — Édition Anniversaire</title>
++    <link rel="preconnect" href="https://fonts.googleapis.com" />
++    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
++    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;600;700;800&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet" />
+     <style>
+-      :root{
+-        --bg0: #070A12;
+-        --bg1: #0B0F1F;
+-        --text: rgba(255,255,255,.92);
+-        --muted: rgba(255,255,255,.72);
+-        --faint: rgba(255,255,255,.55);
+-
+-        --card: rgba(255,255,255,.08);
+-        --card2: rgba(0,0,0,.28);
+-        --stroke: rgba(255,255,255,.14);
+-        --stroke2: rgba(255,255,255,.22);
+-
+-        --shadow: 0 24px 90px rgba(0,0,0,.55);
+-        --shadow2: 0 16px 60px rgba(0,0,0,.45);
+-
+-        --r: 26px;
+-      }
+-
+-      *{ box-sizing: border-box; }
+-      html, body{ height: 100%; }
+-      body{
+-        margin: 0;
++      :root {
++        --bg0: #05040b;
++        --bg1: #110d1f;
++        --bg2: #0d1b27;
++        --text: rgba(255, 255, 255, 0.92);
++        --muted: rgba(255, 255, 255, 0.7);
++        --line: rgba(255, 255, 255, 0.16);
++        --card: rgba(255, 255, 255, 0.07);
++        --pink: #ff6cab;
++        --violet: #8f7eff;
++        --cyan: #67d6ff;
++      }
++
++      * { box-sizing: border-box; }
++      html, body { margin: 0; min-height: 100%; }
++      body {
+         font-family: Manrope, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+         color: var(--text);
+-        background: radial-gradient(1200px 700px at 30% 15%, rgba(180,120,255,.18), transparent 60%),
+-                    radial-gradient(900px 650px at 80% 10%, rgba(120,210,255,.16), transparent 60%),
+-                    linear-gradient(180deg, var(--bg0), var(--bg1));
++        background:
++          radial-gradient(1200px 700px at 20% 0%, rgba(255, 108, 171, 0.18), transparent 60%),
++          radial-gradient(900px 600px at 90% 10%, rgba(103, 214, 255, 0.14), transparent 65%),
++          linear-gradient(160deg, var(--bg0), var(--bg1) 45%, var(--bg2));
+         overflow-x: hidden;
+       }
+ 
+-      /* ===== Hero background photo ===== */
+-      .hero-bg{
++      .parallax-bg {
+         position: fixed;
+         inset: 0;
+         z-index: -3;
+-        background:
+-          radial-gradient(1200px 800px at 50% 30%, rgba(0,0,0,.20), rgba(0,0,0,.72)),
+-          url("nous.jpg") center/cover no-repeat;
+-        transform: scale(1.03);
+-        filter: saturate(1.05) contrast(1.02);
++        background: url("nous.jpg") center/cover no-repeat;
++        opacity: 0.2;
++        transform: scale(1.08);
++        filter: saturate(1.12) contrast(1.04);
+       }
+-      .hero-noise{
++
++      .lights {
+         position: fixed;
+-        inset: -40%;
++        inset: -20% -10%;
+         z-index: -2;
+         pointer-events: none;
+-        opacity: .10;
+-        mix-blend-mode: overlay;
+-        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23n)' opacity='.25'/%3E%3C/svg%3E");
+-        transform: rotate(10deg);
+       }
+-      .hero-vignette{
+-        position: fixed;
+-        inset: 0;
+-        z-index: -1;
+-        pointer-events:none;
+-        background: radial-gradient(1200px 800px at 50% 20%, transparent 35%, rgba(0,0,0,.55) 80%);
++      .blob {
++        position: absolute;
++        width: 46vw;
++        height: 46vw;
++        border-radius: 999px;
++        filter: blur(70px);
++        opacity: 0.25;
+       }
++      .b1 { top: -8%; left: -8%; background: var(--pink); }
++      .b2 { top: 25%; right: -10%; background: var(--violet); }
++      .b3 { bottom: -18%; left: 20%; background: var(--cyan); }
+ 
+-      /* ===== Layout ===== */
+-      header{
+-        position: sticky;
++      .top-nav {
++        position: fixed;
+         top: 0;
+-        z-index: 10;
+-        padding: 14px 16px;
++        left: 0;
++        right: 0;
++        z-index: 20;
+         backdrop-filter: blur(14px);
+         -webkit-backdrop-filter: blur(14px);
+-        background: rgba(0,0,0,.22);
+-        border-bottom: 1px solid rgba(255,255,255,.10);
++        background: rgba(5, 5, 10, 0.45);
++        border-bottom: 1px solid var(--line);
+       }
+-      .nav{
+-        max-width: 1100px;
++      .nav-inner {
++        width: min(1160px, 95vw);
+         margin: 0 auto;
+-        display:flex;
+-        align-items:center;
++        display: flex;
++        align-items: center;
+         justify-content: space-between;
+-        gap: 12px;
+-      }
+-      .brand{
+-        display:flex;
+-        align-items:center;
+         gap: 10px;
+-        min-width: 0;
+-      }
+-      .dot{
+-        width: 10px; height: 10px; border-radius: 999px;
+-        background: rgba(255,255,255,.85);
+-        box-shadow: 0 0 0 6px rgba(255,255,255,.08);
+-        flex: 0 0 auto;
++        padding: 12px 0;
+       }
+-      .brand span{
++      .brand {
+         font-weight: 800;
+         letter-spacing: -0.02em;
+-        white-space: nowrap;
+-        overflow: hidden;
+-        text-overflow: ellipsis;
+-      }
+-      .chip{
+-        display:inline-flex;
+-        align-items:center;
++        display: flex;
++        align-items: center;
+         gap: 8px;
+-        padding: 8px 10px;
++      }
++      .dot {
++        width: 10px;
++        height: 10px;
+         border-radius: 999px;
+-        border: 1px solid rgba(255,255,255,.16);
+-        background: rgba(255,255,255,.06);
+-        color: var(--muted);
+-        font-size: 13px;
+-        flex: 0 0 auto;
++        background: linear-gradient(120deg, var(--pink), var(--violet));
++        box-shadow: 0 0 0 8px rgba(255, 255, 255, 0.08);
+       }
+ 
+-      main{
+-        max-width: 1100px;
+-        margin: 0 auto;
+-        padding: 26px 16px 90px;
++      .menu {
++        display: flex;
++        flex-wrap: wrap;
++        gap: 8px;
++        justify-content: flex-end;
+       }
+-
+-      section{
+-        margin: 18px 0 34px;
++      .menu button {
++        border: 1px solid var(--line);
++        background: rgba(255, 255, 255, 0.06);
++        color: var(--text);
++        border-radius: 999px;
++        padding: 8px 12px;
++        font-size: 13px;
++        cursor: pointer;
+       }
+-
+-      .card{
+-        border-radius: var(--r);
+-        background: rgba(255,255,255,.08);
+-        border: 1px solid var(--stroke);
+-        box-shadow: var(--shadow2);
+-        backdrop-filter: blur(14px);
+-        -webkit-backdrop-filter: blur(14px);
++      .menu button.active {
++        background: linear-gradient(120deg, rgba(255, 108, 171, 0.34), rgba(143, 126, 255, 0.34));
+       }
+ 
+-      /* ===== Hero block ===== */
+-      .hero{
+-        padding: clamp(18px, 3.5vw, 34px);
++      .progress-wrap {
++        position: fixed;
++        right: 16px;
++        top: 86px;
++        z-index: 15;
++        width: 8px;
++        height: calc(100vh - 106px);
++        border-radius: 999px;
++        background: rgba(255, 255, 255, 0.12);
+         overflow: hidden;
+-        position: relative;
+       }
+-      .hero::before{
+-        content:"";
+-        position:absolute; inset: 0;
+-        background: radial-gradient(900px 500px at 15% 10%, rgba(255,255,255,.10), transparent 60%),
+-                    radial-gradient(700px 500px at 90% 20%, rgba(160,120,255,.12), transparent 65%);
+-        pointer-events:none;
++      .progress {
++        width: 100%;
++        height: 0;
++        background: linear-gradient(180deg, var(--pink), var(--violet), var(--cyan));
+       }
+ 
+-      .kicker{
+-        display:inline-flex;
+-        align-items:center;
+-        gap:10px;
+-        padding: 8px 12px;
+-        border-radius: 999px;
+-        border: 1px solid rgba(255,255,255,.16);
+-        background: rgba(0,0,0,.18);
+-        color: var(--muted);
+-        font-size: 13px;
++      main {
++        width: min(1120px, 94vw);
++        margin: 0 auto;
++        padding-top: 88px;
++        padding-bottom: 90px;
+       }
+-      .kicker b{ color: rgba(255,255,255,.88); font-weight: 800; }
+ 
+-      h1{
+-        margin: 16px 0 10px;
+-        font-size: clamp(42px, 5.8vw, 76px);
+-        line-height: 0.98;
+-        letter-spacing: -0.04em;
+-      }
+-      .lead{
+-        margin: 0;
+-        max-width: 58ch;
+-        color: var(--muted);
+-        font-size: clamp(15px, 1.7vw, 18px);
+-        line-height: 1.65;
++      section {
++        min-height: 100vh;
++        display: grid;
++        align-content: center;
++        gap: 18px;
++        padding: 42px 0;
+       }
+ 
+-      .grid{
+-        display:grid;
+-        grid-template-columns: 1.2fr .8fr;
+-        gap: 14px;
+-        margin-top: 20px;
+-      }
+-      @media (max-width: 880px){
+-        .grid{ grid-template-columns: 1fr; }
++      .card {
++        border: 1px solid var(--line);
++        border-radius: 24px;
++        background: var(--card);
++        backdrop-filter: blur(10px);
++        -webkit-backdrop-filter: blur(10px);
++        padding: clamp(16px, 2.4vw, 28px);
++        box-shadow: 0 20px 80px rgba(0, 0, 0, 0.45);
+       }
+ 
+-      /* ===== Countdown ===== */
+-      .countdown{
+-        padding: 18px;
+-        background: rgba(0,0,0,.24);
+-        border: 1px solid rgba(255,255,255,.14);
+-        border-radius: 22px;
++      .hero-title {
++        font-family: "Playfair Display", serif;
++        font-size: clamp(38px, 7vw, 84px);
++        line-height: 0.95;
++        letter-spacing: -0.03em;
++        margin: 0;
+       }
+-      .cd-title{
+-        display:flex;
+-        align-items:center;
+-        justify-content: space-between;
+-        gap: 10px;
++      .lead {
++        max-width: 62ch;
+         color: var(--muted);
+-        font-size: 13px;
+-        letter-spacing: .06em;
+-        text-transform: uppercase;
+-      }
+-      .cd-title .mini{
+-        width: 40px; height: 40px;
+-        border-radius: 14px;
+-        overflow:hidden;
+-        border: 1px solid rgba(255,255,255,.16);
+-        box-shadow: 0 14px 40px rgba(0,0,0,.35);
+-        flex: 0 0 auto;
++        line-height: 1.75;
+       }
+-      .cd-title img{ width:100%; height:100%; object-fit: cover; display:block; }
+ 
+-      .cd-grid{
+-        display:grid;
++      .countdown {
++        display: grid;
+         grid-template-columns: repeat(4, minmax(0, 1fr));
+         gap: 10px;
+-        margin-top: 12px;
+       }
+-      .box{
+-        border-radius: 18px;
+-        border: 1px solid rgba(255,255,255,.14);
+-        background: rgba(255,255,255,.06);
+-        padding: 14px 12px;
++      .box {
++        border: 1px solid var(--line);
++        border-radius: 16px;
+         text-align: center;
++        padding: 12px;
++        background: rgba(0, 0, 0, 0.22);
+       }
+-      .num{
+-        font-size: clamp(24px, 4vw, 40px);
+-        font-weight: 850;
+-        letter-spacing: -0.03em;
+-      }
+-      .lbl{
+-        margin-top: 6px;
+-        font-size: 12px;
+-        color: rgba(255,255,255,.70);
+-        letter-spacing: .08em;
+-        text-transform: uppercase;
+-      }
+-      @media (max-width: 520px){
+-        .cd-grid{ grid-template-columns: repeat(2, minmax(0, 1fr)); }
+-      }
++      .num { font-size: clamp(25px, 4vw, 42px); font-weight: 800; }
++      .lbl { color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .08em; }
+ 
+-      /* ===== Scroll sections ===== */
+-      .panel{
+-        padding: clamp(18px, 3vw, 28px);
+-      }
+-      .title{
+-        margin: 0 0 10px;
+-        font-size: clamp(20px, 2.2vw, 26px);
+-        letter-spacing: -0.02em;
++      .grid-2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
++      .grid-3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
++      @media (max-width: 860px) {
++        .grid-2, .grid-3 { grid-template-columns: 1fr; }
++        .countdown { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+       }
+-      .p{
+-        margin: 0;
++
++      .chip {
++        border: 1px solid var(--line);
++        border-radius: 999px;
++        padding: 7px 12px;
++        display: inline-flex;
++        width: fit-content;
++        background: rgba(255, 255, 255, 0.06);
+         color: var(--muted);
+-        line-height: 1.7;
+       }
+ 
+-      .facts{
+-        display:grid;
+-        grid-template-columns: repeat(3, minmax(0,1fr));
++      .timeline {
++        border-left: 2px solid rgba(255, 255, 255, 0.22);
++        padding-left: 16px;
++        display: grid;
+         gap: 12px;
+-        margin-top: 14px;
+       }
+-      @media (max-width: 880px){
+-        .facts{ grid-template-columns: 1fr; }
+-      }
+-      .fact{
+-        border-radius: 20px;
+-        border: 1px solid rgba(255,255,255,.14);
+-        background: rgba(255,255,255,.06);
+-        padding: 14px 14px;
++      .timeline .step { position: relative; }
++      .timeline .step::before {
++        content: "";
++        position: absolute;
++        left: -22px;
++        top: 6px;
++        width: 10px;
++        height: 10px;
++        border-radius: 999px;
++        background: linear-gradient(120deg, var(--pink), var(--violet));
+       }
+-      .fact .k{ color: rgba(255,255,255,.85); font-weight: 800; }
+-      .fact .v{ color: var(--muted); margin-top: 6px; line-height: 1.6; }
+ 
+-      .ctaRow{
+-        display:flex;
+-        flex-wrap: wrap;
+-        gap: 10px;
+-        margin-top: 14px;
++      .gallery {
++        display: grid;
++        grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
++        gap: 12px;
+       }
+-      button{
+-        appearance:none;
+-        border: 1px solid rgba(255,255,255,.16);
+-        background: rgba(255,255,255,.08);
+-        color: var(--text);
+-        padding: 12px 14px;
++      .gallery figure {
++        margin: 0;
+         border-radius: 16px;
+-        font-weight: 750;
+-        cursor: pointer;
+-        transition: transform .12s ease, background .12s ease, border-color .12s ease;
++        overflow: hidden;
++        border: 1px solid var(--line);
++        background: rgba(255, 255, 255, 0.05);
++      }
++      .gallery img { width: 100%; height: 160px; object-fit: cover; display: block; }
++      .gallery figcaption { color: var(--muted); padding: 8px 10px; font-size: 13px; }
++
++      .input-row { display: flex; gap: 10px; flex-wrap: wrap; }
++      .input-row input, .input-row textarea {
++        flex: 1;
++        min-width: 220px;
++        border: 1px solid var(--line);
++        border-radius: 12px;
++        background: rgba(0, 0, 0, 0.26);
++        color: var(--text);
++        padding: 10px;
++        font-family: inherit;
+       }
+-      button:hover{
+-        transform: translateY(-1px);
+-        background: rgba(255,255,255,.14);
+-        border-color: rgba(255,255,255,.24);
++      .input-row button {
++        border: 0;
++        border-radius: 12px;
++        padding: 10px 14px;
++        cursor: pointer;
++        font-weight: 700;
++        color: white;
++        background: linear-gradient(120deg, var(--pink), var(--violet));
+       }
+-      button:active{ transform: translateY(0) scale(.99); }
+ 
+-      .divider{
+-        height: 1px;
+-        background: rgba(255,255,255,.10);
+-        margin: 16px 0;
+-      }
++      .list { display: grid; gap: 10px; margin-top: 12px; }
++      .item { border: 1px solid var(--line); border-radius: 14px; padding: 10px 12px; background: rgba(255, 255, 255, 0.03); }
+ 
+-      /* ===== Reveal on scroll ===== */
+-      .reveal{
++      .reveal {
+         opacity: 0;
+-        transform: translateY(14px);
+-        transition: opacity .7s ease, transform .7s ease;
++        transform: translateY(24px) scale(.98);
++        transition: opacity .75s ease, transform .75s ease;
+       }
+-      .reveal.is-visible{
++      .reveal.is-visible {
+         opacity: 1;
+-        transform: translateY(0);
+-      }
+-
+-      /* ===== Footer ===== */
+-      footer{
+-        margin-top: 44px;
+-        text-align:center;
+-        color: rgba(255,255,255,.55);
+-        font-size: 13px;
++        transform: translateY(0) scale(1);
+       }
+ 
+-      @media (prefers-reduced-motion: reduce){
+-        .reveal{ opacity: 1; transform:none; transition:none; }
++      footer {
++        text-align: center;
++        color: rgba(255, 255, 255, 0.55);
++        padding-top: 20px;
+       }
+     </style>
+   </head>
+-
+   <body>
+-    <div class="hero-bg" aria-hidden="true"></div>
+-    <div class="hero-noise" aria-hidden="true"></div>
+-    <div class="hero-vignette" aria-hidden="true"></div>
+-
+-    <header>
+-      <div class="nav">
+-        <div class="brand">
+-          <div class="dot"></div>
+-          <span>Bonjour mon Amour</span>
+-        </div>
+-        <div class="chip" id="chip">⏳ Vers le 1er mars</div>
++    <div class="parallax-bg" id="parallax"></div>
++    <div class="lights" aria-hidden="true">
++      <div class="blob b1"></div>
++      <div class="blob b2"></div>
++      <div class="blob b3"></div>
++    </div>
++
++    <header class="top-nav">
++      <div class="nav-inner">
++        <div class="brand"><span class="dot"></span> Bonjour mon Amour</div>
++        <nav class="menu" id="menu"></nav>
+       </div>
+     </header>
+ 
+-    <main>
+-      <!-- HERO -->
+-      <section class="card hero reveal">
+-        <div class="kicker">❤️ <b>Amour</b> — une page juste pour toi</div>
+-        <h1>Bonjour</br>mon Amour ❤️</h1>
+-        <p class="lead">
+-          Une page à scroller.
+-        </p>
+-
+-        <div class="grid">
+-          <div class="countdown">
+-            <div class="cd-title">
+-              <span>Compte à rebours anniversaire</span>
+-              <span class="mini"><img src="nous.jpg" alt="Nous deux"></span>
+-            </div>
++    <div class="progress-wrap" aria-hidden="true"><div class="progress" id="progress"></div></div>
+ 
+-            <div class="cd-grid" aria-label="Compte à rebours">
+-              <div class="box"><div class="num" id="d">—</div><div class="lbl">Jours</div></div>
+-              <div class="box"><div class="num" id="h">—</div><div class="lbl">Heures</div></div>
+-              <div class="box"><div class="num" id="m">—</div><div class="lbl">Minutes</div></div>
+-              <div class="box"><div class="num" id="s">—</div><div class="lbl">Secondes</div></div>
+-            </div>
++    <main>
++      <section id="hero" data-title="Accueil" class="reveal">
++        <div class="card">
++          <div class="chip" id="chip">⏳ Vers le 1er mars</div>
++          <h1 class="hero-title">Joyeux anniversaire<br />mon Amour ❤️</h1>
++          <p class="lead">
++            Je voulais une page qui se découvre doucement, en scrollant, comme une histoire.
++            Ici, on garde nos rêves, nos photos, nos projets de voyage et nos idées les plus folles.
++          </p>
++          <div class="countdown" aria-label="Compte à rebours anniversaire">
++            <div class="box"><div class="num" id="d">—</div><div class="lbl">Jours</div></div>
++            <div class="box"><div class="num" id="h">—</div><div class="lbl">Heures</div></div>
++            <div class="box"><div class="num" id="m">—</div><div class="lbl">Minutes</div></div>
++            <div class="box"><div class="num" id="s">—</div><div class="lbl">Secondes</div></div>
+           </div>
++        </div>
++      </section>
+ 
+-          <div class="panel card" style="background: rgba(0,0,0,.22); border-color: rgba(255,255,255,.12);">
+-            <h2 class="title">Le programme</h2>
+-            <p class="p">
+-              Tu scrolles, et la page te dévoile quelques petits clins d’œil.
+-              Rien de foufou, juste du beau, du doux, du “nous”.
+-            </p>
+-            <div class="divider"></div>
+-            <div class="ctaRow">
+-              <button id="scrollNext">Voir la suite</button>
+-              <button id="surprise">Ou un petit mot avant de continuer</button>
++      <section id="vision" data-title="Notre Histoire" class="reveal">
++        <div class="grid-2">
++          <article class="card">
++            <h2>Notre histoire en quelques chapitres</h2>
++            <div class="timeline">
++              <div class="step"><b>Chapitre 1 :</b> Le début de nous, là où tout a changé.</div>
++              <div class="step"><b>Chapitre 2 :</b> Les fous rires, les galères, les victoires main dans la main.</div>
++              <div class="step"><b>Chapitre 3 :</b> L'année 2026, version encore plus belle.</div>
+             </div>
+-            <p class="p" id="note" style="margin-top:12px; color: rgba(255,255,255,.66);">
+-              PS : le bouton “Voir la suite” descend proprement, si tu as la flemme de scroller...
+-            </p>
+-          </div>
++          </article>
++          <article class="card" id="dayj">
++            <h2>Le jour J</h2>
++            <p class="lead">Quand le compteur arrive à zéro, ce bloc se transforme en message d'anniversaire spécial.</p>
++          </article>
+         </div>
+       </section>
+ 
+-      <!-- SECTION 2 -->
+-      <section class="card panel reveal" id="sec2">
+-        <h2 class="title">Quelques vérités simples</h2>
+-        <p class="p">
+-          La charte 2026 c’est : clair, minimal, un peu futuriste, et surtout lisible.
+-          Donc voilà : trois blocs, trois évidences.
+-        </p>
+-
+-        <div class="facts">
+-          <div class="fact">
+-            <div class="k">Toi</div>
+-            <div class="v">Celle qui rend tout le reste moins bruyant.</div>
++      <section id="voyages" data-title="Voyages" class="reveal">
++        <article class="card">
++          <h2>Nos idées de voyages</h2>
++          <p class="lead">Une wishlist en duo : écris toutes vos destinations de rêve.</p>
++          <div class="input-row">
++            <input id="tripInput" placeholder="Ex: Kyoto au printemps, roadtrip en Italie..." />
++            <button id="addTrip">Ajouter</button>
+           </div>
+-          <div class="fact">
+-            <div class="k">Nous</div>
+-            <div class="v">A-Team. Pas parfaite, mais vraie. Et franchement stylée.</div>
+-          </div>
+-          <div class="fact">
+-            <div class="k">Bientôt</div>
+-            <div class="v">Le 1er mars. Surprise</div>
+-          </div>
+-        </div>
++          <div class="list" id="tripList"></div>
++        </article>
+       </section>
+ 
+-      <!-- SECTION 3 -->
+-      <section class="card panel reveal" id="sec3">
+-        <h2 class="title">Mini timeline</h2>
+-        <p class="p">
+-          Une page, c’est un peu comme une histoire : on avance, on découvre, on sourit.
+-        </p>
+-
+-        <div class="facts" style="grid-template-columns: repeat(2, minmax(0,1fr));">
+-          <div class="fact">
+-            <div class="k">Maintenant</div>
+-            <div class="v">Tu lis ceci. Donc j’ai réussi à te faire arriver ici. Mission accomplie. Et ce site n'est pas (trop) une daube.</div>
++      <section id="souvenirs" data-title="Souvenirs" class="reveal">
++        <article class="card">
++          <h2>Galerie souvenirs</h2>
++          <p class="lead">Ajoute vos photos souvenirs directement depuis ton téléphone ou ordi.</p>
++          <div class="input-row">
++            <input id="photoLabel" placeholder="Légende (ex: Week-end à la mer)" />
++            <input id="photoInput" type="file" accept="image/*" />
++            <button id="addPhoto">Importer</button>
+           </div>
+-          <div class="fact">
+-            <div class="k">Le jour J</div>
+-            <div class="v" id="dayj">Dès le début de ton week-end anniversaire, ce site t'orientera... garde le précieusement en favori !</div>
++          <div class="gallery" id="gallery"></div>
++        </article>
++      </section>
++
++      <section id="idees" data-title="Idées folles" class="reveal">
++        <article class="card">
++          <h2>Nos idées folles</h2>
++          <p class="lead">Des idées de date, activités et surprises à réaliser ensemble.</p>
++          <div class="input-row">
++            <textarea id="ideaInput" rows="2" placeholder="Ex: nuit étoilée, pique-nique au lever du soleil..."></textarea>
++            <button id="addIdea">Ajouter</button>
+           </div>
+-        </div>
++          <div class="list" id="ideaList"></div>
++        </article>
++      </section>
+ 
+-        <div class="ctaRow" style="margin-top: 14px;">
+-          <button id="top">Remonter en haut</button>
++      <section id="final" data-title="Final" class="reveal">
++        <div class="grid-3">
++          <article class="card"><h3>Toi</h3><p class="lead">La plus belle partie de toutes mes journées.</p></article>
++          <article class="card"><h3>Nous</h3><p class="lead">Une team solide, sincère, douce et ambitieuse.</p></article>
++          <article class="card"><h3>Demain</h3><p class="lead">Encore plus de souvenirs, d'amour, et de voyages.</p></article>
+         </div>
+       </section>
+ 
+-      <footer class="reveal">
+-        Fait avec ❤️
+-      </footer>
++      <footer>Fait avec ❤️ — et encore plus à venir.</footer>
+     </main>
+ 
+     <script>
+-      // ===== Countdown: 1er mars 2026 à 00:00 (heure locale du navigateur) =====
+-      // Si vous êtes en France, c'est l'heure de Paris.
+-      const target = new Date("2026-03-01T00:00:00");
++      const sections = [...document.querySelectorAll("main section")];
++      const menu = document.getElementById("menu");
++      const progress = document.getElementById("progress");
++      const parallax = document.getElementById("parallax");
++
++      menu.innerHTML = sections
++        .map((s) => `<button data-to="${s.id}">${s.dataset.title}</button>`)
++        .join("");
++
++      menu.addEventListener("click", (e) => {
++        const btn = e.target.closest("button[data-to]");
++        if (!btn) return;
++        document.getElementById(btn.dataset.to).scrollIntoView({ behavior: "smooth", block: "start" });
++      });
+ 
+-      const elD = document.getElementById("d");
+-      const elH = document.getElementById("h");
+-      const elM = document.getElementById("m");
+-      const elS = document.getElementById("s");
++      const io = new IntersectionObserver((entries) => {
++        entries.forEach((entry) => {
++          if (entry.isIntersecting) entry.target.classList.add("is-visible");
++        });
++      }, { threshold: 0.2 });
++      document.querySelectorAll(".reveal").forEach((el) => io.observe(el));
++
++      const spy = new IntersectionObserver((entries) => {
++        entries.forEach((entry) => {
++          if (!entry.isIntersecting) return;
++          const id = entry.target.id;
++          [...menu.querySelectorAll("button")].forEach((b) => b.classList.toggle("active", b.dataset.to === id));
++        });
++      }, { threshold: 0.55 });
++      sections.forEach((s) => spy.observe(s));
++
++      window.addEventListener("scroll", () => {
++        const top = window.scrollY;
++        const max = document.documentElement.scrollHeight - window.innerHeight;
++        const ratio = max > 0 ? (top / max) * 100 : 0;
++        progress.style.height = ratio + "%";
++        parallax.style.transform = `scale(1.08) translateY(${top * -0.05}px)`;
++      }, { passive: true });
++
++      const target = new Date("2026-03-01T00:00:00");
+       const chip = document.getElementById("chip");
+       const dayj = document.getElementById("dayj");
+-
+-      function pad(n){ return String(n).padStart(2, "0"); }
+-
+-      function tick(){
+-        const now = new Date();
+-        let diff = target - now;
+-
+-        if (diff <= 0){
+-          elD.textContent = "0";
+-          elH.textContent = "00";
+-          elM.textContent = "00";
+-          elS.textContent = "00";
+-          chip.textContent = "🎉 Joyeux anniversaire";
+-          dayj.textContent = "C’est aujourd’hui. Et oui : je t’aime très fort. ❤️";
++      const d = document.getElementById("d");
++      const h = document.getElementById("h");
++      const m = document.getElementById("m");
++      const s = document.getElementById("s");
++      const pad = (n) => String(n).padStart(2, "0");
++
++      function tick() {
++        const diff = target - new Date();
++        if (diff <= 0) {
++          d.textContent = "0"; h.textContent = "00"; m.textContent = "00"; s.textContent = "00";
++          chip.textContent = "🎉 Joyeux anniversaire mon Amour";
++          dayj.innerHTML = "<h2>Le jour J est arrivé 🎉</h2><p class='lead'>Aujourd'hui, c'est toi la reine. Je t'aime fort, fort, fort. ❤️</p>";
+           return;
+         }
+-
+         const sec = Math.floor(diff / 1000);
+         const days = Math.floor(sec / 86400);
+-        const hours = Math.floor((sec % 86400) / 3600);
++        const hrs = Math.floor((sec % 86400) / 3600);
+         const mins = Math.floor((sec % 3600) / 60);
+         const secs = sec % 60;
+-
+-        elD.textContent = String(days);
+-        elH.textContent = pad(hours);
+-        elM.textContent = pad(mins);
+-        elS.textContent = pad(secs);
+-
+-        chip.textContent = "⏳ " + days + "j " + pad(hours) + ":" + pad(mins) + ":" + pad(secs);
++        d.textContent = String(days);
++        h.textContent = pad(hrs);
++        m.textContent = pad(mins);
++        s.textContent = pad(secs);
++        chip.textContent = `⏳ ${days}j ${pad(hrs)}:${pad(mins)}:${pad(secs)}`;
+       }
+       tick();
+       setInterval(tick, 1000);
+ 
+-      // ===== Reveal on scroll (IntersectionObserver) =====
+-      const els = document.querySelectorAll(".reveal");
+-      const io = new IntersectionObserver((entries) => {
+-        for (const e of entries){
+-          if (e.isIntersecting) e.target.classList.add("is-visible");
+-        }
+-      }, { threshold: 0.18 });
+-      els.forEach(el => io.observe(el));
+-
+-      // ===== Buttons =====
+-      const messages = [
+-        "Amouuuuuuuuuuuuur.",
+-      ];
+-      document.getElementById("surprise").addEventListener("click", () => {
+-        document.getElementById("note").textContent =
+-          messages[Math.floor(Math.random() * messages.length)];
++      const tripInput = document.getElementById("tripInput");
++      const tripList = document.getElementById("tripList");
++      const ideaInput = document.getElementById("ideaInput");
++      const ideaList = document.getElementById("ideaList");
++      const photoInput = document.getElementById("photoInput");
++      const photoLabel = document.getElementById("photoLabel");
++      const gallery = document.getElementById("gallery");
++
++      const state = {
++        trips: JSON.parse(localStorage.getItem("loveTrips") || "[]"),
++        ideas: JSON.parse(localStorage.getItem("loveIdeas") || "[]"),
++        photos: JSON.parse(localStorage.getItem("lovePhotos") || "[]")
++      };
++
++      function save() {
++        localStorage.setItem("loveTrips", JSON.stringify(state.trips));
++        localStorage.setItem("loveIdeas", JSON.stringify(state.ideas));
++        localStorage.setItem("lovePhotos", JSON.stringify(state.photos));
++      }
++
++      function renderTrips() {
++        tripList.innerHTML = state.trips.map((v, i) =>
++          `<div class='item'>🌍 ${v} <button data-del-trip='${i}' style='float:right'>Supprimer</button></div>`
++        ).join("") || "<div class='item'>Ajoute votre première destination ✈️</div>";
++      }
++      function renderIdeas() {
++        ideaList.innerHTML = state.ideas.map((v, i) =>
++          `<div class='item'>💡 ${v} <button data-del-idea='${i}' style='float:right'>Supprimer</button></div>`
++        ).join("") || "<div class='item'>Ajoute votre première idée folle 🌙</div>";
++      }
++      function renderPhotos() {
++        gallery.innerHTML = state.photos.map((p, i) =>
++          `<figure><img src='${p.data}' alt='Souvenir'><figcaption>${p.label || "Notre souvenir"} <button data-del-photo='${i}' style='float:right'>X</button></figcaption></figure>`
++        ).join("") || "<div class='item'>Importe vos premières photos 📸</div>";
++      }
++
++      document.getElementById("addTrip").addEventListener("click", () => {
++        if (!tripInput.value.trim()) return;
++        state.trips.unshift(tripInput.value.trim());
++        tripInput.value = "";
++        save(); renderTrips();
+       });
+-
+-      document.getElementById("scrollNext").addEventListener("click", () => {
+-        document.getElementById("sec2").scrollIntoView({ behavior: "smooth", block: "start" });
++      document.getElementById("addIdea").addEventListener("click", () => {
++        if (!ideaInput.value.trim()) return;
++        state.ideas.unshift(ideaInput.value.trim());
++        ideaInput.value = "";
++        save(); renderIdeas();
++      });
++      document.getElementById("addPhoto").addEventListener("click", () => {
++        const file = photoInput.files?.[0];
++        if (!file) return;
++        const reader = new FileReader();
++        reader.onload = () => {
++          state.photos.unshift({ label: photoLabel.value.trim(), data: reader.result });
++          photoInput.value = "";
++          photoLabel.value = "";
++          save(); renderPhotos();
++        };
++        reader.readAsDataURL(file);
+       });
+ 
+-      document.getElementById("top").addEventListener("click", () => {
+-        window.scrollTo({ top: 0, behavior: "smooth" });
++      document.body.addEventListener("click", (e) => {
++        const t = e.target;
++        const iTrip = t.getAttribute("data-del-trip");
++        const iIdea = t.getAttribute("data-del-idea");
++        const iPhoto = t.getAttribute("data-del-photo");
++        if (iTrip !== null) state.trips.splice(Number(iTrip), 1);
++        if (iIdea !== null) state.ideas.splice(Number(iIdea), 1);
++        if (iPhoto !== null) state.photos.splice(Number(iPhoto), 1);
++        if (iTrip !== null || iIdea !== null || iPhoto !== null) { save(); renderTrips(); renderIdeas(); renderPhotos(); }
+       });
++
++      renderTrips();
++      renderIdeas();
++      renderPhotos();
+     </script>
+   </body>
+ </html>
+ 
+EOF
+)
