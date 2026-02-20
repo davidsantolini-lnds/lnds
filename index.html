@@ -4,243 +4,457 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Mon Amour</title>
+
+    <!-- Optional: a modern variable font (safe fallback if it fails) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300..800&display=swap" rel="stylesheet">
+
     <style>
       :root{
+        --bg0: #070A12;
+        --bg1: #0B0F1F;
         --text: rgba(255,255,255,.92);
-        --muted: rgba(255,255,255,.70);
-        --card: rgba(0,0,0,.35);
-        --stroke: rgba(255,255,255,.18);
-        --shadow: 0 24px 80px rgba(0,0,0,.45);
+        --muted: rgba(255,255,255,.72);
+        --faint: rgba(255,255,255,.55);
+
+        --card: rgba(255,255,255,.08);
+        --card2: rgba(0,0,0,.28);
+        --stroke: rgba(255,255,255,.14);
+        --stroke2: rgba(255,255,255,.22);
+
+        --shadow: 0 24px 90px rgba(0,0,0,.55);
+        --shadow2: 0 16px 60px rgba(0,0,0,.45);
+
+        --r: 26px;
       }
 
-      * { box-sizing: border-box; }
-      html, body { height: 100%; }
+      *{ box-sizing: border-box; }
+      html, body{ height: 100%; }
       body{
-        margin:0;
-        font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+        margin: 0;
+        font-family: Manrope, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
         color: var(--text);
-        overflow: hidden;
+        background: radial-gradient(1200px 700px at 30% 15%, rgba(180,120,255,.18), transparent 60%),
+                    radial-gradient(900px 650px at 80% 10%, rgba(120,210,255,.16), transparent 60%),
+                    linear-gradient(180deg, var(--bg0), var(--bg1));
+        overflow-x: hidden;
       }
 
-      /* Background photo */
-      .photo{
+      /* ===== Hero background photo ===== */
+      .hero-bg{
         position: fixed;
         inset: 0;
+        z-index: -3;
         background:
-          linear-gradient(180deg, rgba(0,0,0,.55), rgba(0,0,0,.55)),
+          radial-gradient(1200px 800px at 50% 30%, rgba(0,0,0,.20), rgba(0,0,0,.72)),
           url("nous.jpg") center/cover no-repeat;
         transform: scale(1.03);
-        filter: saturate(1.05);
+        filter: saturate(1.05) contrast(1.02);
       }
-
-      /* Soft blur overlay for readability */
-      .veil{
+      .hero-noise{
+        position: fixed;
+        inset: -40%;
+        z-index: -2;
+        pointer-events: none;
+        opacity: .10;
+        mix-blend-mode: overlay;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23n)' opacity='.25'/%3E%3C/svg%3E");
+        transform: rotate(10deg);
+      }
+      .hero-vignette{
         position: fixed;
         inset: 0;
-        background: radial-gradient(900px 600px at 50% 30%, rgba(255,255,255,.10), transparent 60%);
-        backdrop-filter: blur(2px);
-        -webkit-backdrop-filter: blur(2px);
+        z-index: -1;
+        pointer-events:none;
+        background: radial-gradient(1200px 800px at 50% 20%, transparent 35%, rgba(0,0,0,.55) 80%);
       }
 
-      .wrap{
-        position: relative;
-        height: 100%;
-        display: grid;
-        place-items: center;
-        padding: 22px;
-      }
-
-      .card{
-        width: min(820px, 94vw);
-        border-radius: 28px;
-        background: var(--card);
-        border: 1px solid var(--stroke);
-        box-shadow: var(--shadow);
+      /* ===== Layout ===== */
+      header{
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        padding: 14px 16px;
         backdrop-filter: blur(14px);
         -webkit-backdrop-filter: blur(14px);
-        padding: clamp(20px, 4vw, 38px);
-        animation: in .9s ease-out forwards;
+        background: rgba(0,0,0,.22);
+        border-bottom: 1px solid rgba(255,255,255,.10);
       }
-
-      @keyframes in{
-        from{ opacity: 0; transform: translateY(18px) scale(.98); }
-        to{ opacity: 1; transform: translateY(0) scale(1); }
-      }
-
-      .top{
+      .nav{
+        max-width: 1100px;
+        margin: 0 auto;
         display:flex;
         align-items:center;
         justify-content: space-between;
-        gap: 16px;
-        flex-wrap: wrap;
+        gap: 12px;
+      }
+      .brand{
+        display:flex;
+        align-items:center;
+        gap: 10px;
+        min-width: 0;
+      }
+      .dot{
+        width: 10px; height: 10px; border-radius: 999px;
+        background: rgba(255,255,255,.85);
+        box-shadow: 0 0 0 6px rgba(255,255,255,.08);
+        flex: 0 0 auto;
+      }
+      .brand span{
+        font-weight: 800;
+        letter-spacing: -0.02em;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .chip{
+        display:inline-flex;
+        align-items:center;
+        gap: 8px;
+        padding: 8px 10px;
+        border-radius: 999px;
+        border: 1px solid rgba(255,255,255,.16);
+        background: rgba(255,255,255,.06);
+        color: var(--muted);
+        font-size: 13px;
+        flex: 0 0 auto;
       }
 
-      .badge{
+      main{
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 26px 16px 90px;
+      }
+
+      section{
+        margin: 18px 0 34px;
+      }
+
+      .card{
+        border-radius: var(--r);
+        background: rgba(255,255,255,.08);
+        border: 1px solid var(--stroke);
+        box-shadow: var(--shadow2);
+        backdrop-filter: blur(14px);
+        -webkit-backdrop-filter: blur(14px);
+      }
+
+      /* ===== Hero block ===== */
+      .hero{
+        padding: clamp(18px, 3.5vw, 34px);
+        overflow: hidden;
+        position: relative;
+      }
+      .hero::before{
+        content:"";
+        position:absolute; inset: 0;
+        background: radial-gradient(900px 500px at 15% 10%, rgba(255,255,255,.10), transparent 60%),
+                    radial-gradient(700px 500px at 90% 20%, rgba(160,120,255,.12), transparent 65%);
+        pointer-events:none;
+      }
+
+      .kicker{
         display:inline-flex;
         align-items:center;
         gap:10px;
         padding: 8px 12px;
         border-radius: 999px;
-        border: 1px solid rgba(255,255,255,.22);
-        background: rgba(255,255,255,.08);
+        border: 1px solid rgba(255,255,255,.16);
+        background: rgba(0,0,0,.18);
         color: var(--muted);
-        font-size: 14px;
+        font-size: 13px;
       }
-
-      .mini{
-        width: 54px;
-        height: 54px;
-        border-radius: 16px;
-        border: 1px solid rgba(255,255,255,.20);
-        overflow:hidden;
-        flex: 0 0 auto;
-        box-shadow: 0 14px 40px rgba(0,0,0,.35);
-      }
-      .mini img{
-        width:100%;
-        height:100%;
-        object-fit: cover;
-        display:block;
-      }
+      .kicker b{ color: rgba(255,255,255,.88); font-weight: 800; }
 
       h1{
-        margin: 18px 0 10px;
-        font-size: clamp(34px, 5vw, 60px);
-        letter-spacing: -0.02em;
-        line-height: 1.05;
+        margin: 16px 0 10px;
+        font-size: clamp(42px, 5.8vw, 76px);
+        line-height: 0.98;
+        letter-spacing: -0.04em;
       }
-
-      .sub{
-        margin: 0 0 22px;
+      .lead{
+        margin: 0;
+        max-width: 58ch;
         color: var(--muted);
         font-size: clamp(15px, 1.7vw, 18px);
-        line-height: 1.6;
+        line-height: 1.65;
       }
 
-      .countdown{
+      .grid{
         display:grid;
-        grid-template-columns: repeat(4, minmax(0, 1fr));
-        gap: 12px;
-        margin-top: 18px;
+        grid-template-columns: 1.2fr .8fr;
+        gap: 14px;
+        margin-top: 20px;
+      }
+      @media (max-width: 880px){
+        .grid{ grid-template-columns: 1fr; }
       }
 
-      .box{
-        border-radius: 18px;
-        border: 1px solid rgba(255,255,255,.18);
-        background: rgba(255,255,255,.08);
-        padding: 14px 12px;
-        text-align: center;
+      /* ===== Countdown ===== */
+      .countdown{
+        padding: 18px;
+        background: rgba(0,0,0,.24);
+        border: 1px solid rgba(255,255,255,.14);
+        border-radius: 22px;
       }
-
-      .num{
-        font-size: clamp(26px, 4vw, 42px);
-        font-weight: 800;
-        letter-spacing: -0.02em;
-      }
-      .lbl{
-        margin-top: 6px;
+      .cd-title{
+        display:flex;
+        align-items:center;
+        justify-content: space-between;
+        gap: 10px;
+        color: var(--muted);
         font-size: 13px;
-        color: rgba(255,255,255,.72);
         letter-spacing: .06em;
         text-transform: uppercase;
       }
+      .cd-title .mini{
+        width: 40px; height: 40px;
+        border-radius: 14px;
+        overflow:hidden;
+        border: 1px solid rgba(255,255,255,.16);
+        box-shadow: 0 14px 40px rgba(0,0,0,.35);
+        flex: 0 0 auto;
+      }
+      .cd-title img{ width:100%; height:100%; object-fit: cover; display:block; }
 
-      .note{
-        margin-top: 16px;
-        font-size: 14px;
-        color: rgba(255,255,255,.68);
+      .cd-grid{
+        display:grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 10px;
+        margin-top: 12px;
+      }
+      .box{
+        border-radius: 18px;
+        border: 1px solid rgba(255,255,255,.14);
+        background: rgba(255,255,255,.06);
+        padding: 14px 12px;
+        text-align: center;
+      }
+      .num{
+        font-size: clamp(24px, 4vw, 40px);
+        font-weight: 850;
+        letter-spacing: -0.03em;
+      }
+      .lbl{
+        margin-top: 6px;
+        font-size: 12px;
+        color: rgba(255,255,255,.70);
+        letter-spacing: .08em;
+        text-transform: uppercase;
+      }
+      @media (max-width: 520px){
+        .cd-grid{ grid-template-columns: repeat(2, minmax(0, 1fr)); }
       }
 
-      .line{
-        height:1px;
-        background: rgba(255,255,255,.16);
-        margin: 18px 0;
+      /* ===== Scroll sections ===== */
+      .panel{
+        padding: clamp(18px, 3vw, 28px);
+      }
+      .title{
+        margin: 0 0 10px;
+        font-size: clamp(20px, 2.2vw, 26px);
+        letter-spacing: -0.02em;
+      }
+      .p{
+        margin: 0;
+        color: var(--muted);
+        line-height: 1.7;
       }
 
+      .facts{
+        display:grid;
+        grid-template-columns: repeat(3, minmax(0,1fr));
+        gap: 12px;
+        margin-top: 14px;
+      }
+      @media (max-width: 880px){
+        .facts{ grid-template-columns: 1fr; }
+      }
+      .fact{
+        border-radius: 20px;
+        border: 1px solid rgba(255,255,255,.14);
+        background: rgba(255,255,255,.06);
+        padding: 14px 14px;
+      }
+      .fact .k{ color: rgba(255,255,255,.85); font-weight: 800; }
+      .fact .v{ color: var(--muted); margin-top: 6px; line-height: 1.6; }
+
+      .ctaRow{
+        display:flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 14px;
+      }
       button{
         appearance:none;
-        border: 1px solid rgba(255,255,255,.22);
-        background: rgba(255,255,255,.10);
+        border: 1px solid rgba(255,255,255,.16);
+        background: rgba(255,255,255,.08);
         color: var(--text);
         padding: 12px 14px;
-        border-radius: 14px;
-        font-weight: 650;
+        border-radius: 16px;
+        font-weight: 750;
         cursor: pointer;
         transition: transform .12s ease, background .12s ease, border-color .12s ease;
       }
       button:hover{
         transform: translateY(-1px);
-        background: rgba(255,255,255,.16);
-        border-color: rgba(255,255,255,.30);
+        background: rgba(255,255,255,.14);
+        border-color: rgba(255,255,255,.24);
       }
       button:active{ transform: translateY(0) scale(.99); }
 
-      @media (max-width: 520px){
-        .countdown{ grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .divider{
+        height: 1px;
+        background: rgba(255,255,255,.10);
+        margin: 16px 0;
       }
 
-      @media (prefers-reduced-motion: reduce) {
-        .card { animation: none !important; }
+      /* ===== Reveal on scroll ===== */
+      .reveal{
+        opacity: 0;
+        transform: translateY(14px);
+        transition: opacity .7s ease, transform .7s ease;
+      }
+      .reveal.is-visible{
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      /* ===== Footer ===== */
+      footer{
+        margin-top: 44px;
+        text-align:center;
+        color: rgba(255,255,255,.55);
+        font-size: 13px;
+      }
+
+      @media (prefers-reduced-motion: reduce){
+        .reveal{ opacity: 1; transform:none; transition:none; }
       }
     </style>
   </head>
 
   <body>
-    <div class="photo" aria-hidden="true"></div>
-    <div class="veil" aria-hidden="true"></div>
+    <div class="hero-bg" aria-hidden="true"></div>
+    <div class="hero-noise" aria-hidden="true"></div>
+    <div class="hero-vignette" aria-hidden="true"></div>
 
-    <div class="wrap">
-      <main class="card">
-        <div class="top">
-          <div class="badge">dd</div>
-          <div class="mini" title="Nous deux">
-            <img src="nous.jpg" alt="Photo de nous deux" />
+    <header>
+      <div class="nav">
+        <div class="brand">
+          <div class="dot"></div>
+          <span>Bonjour mon Amour</span>
+        </div>
+        <div class="chip" id="chip">⏳ Vers le 1er mars</div>
+      </div>
+    </header>
+
+    <main>
+      <!-- HERO -->
+      <section class="card hero reveal">
+        <div class="kicker">❤️ <b>Amour</b> — une page juste pour toi</div>
+        <h1>Bonjour</br>mon Amour ❤️</h1>
+        <p class="lead">
+          Une page à scroller.
+        </p>
+
+        <div class="grid">
+          <div class="countdown">
+            <div class="cd-title">
+              <span>Compte à rebours anniversaire</span>
+              <span class="mini"><img src="nous.jpg" alt="Nous deux"></span>
+            </div>
+
+            <div class="cd-grid" aria-label="Compte à rebours">
+              <div class="box"><div class="num" id="d">—</div><div class="lbl">Jours</div></div>
+              <div class="box"><div class="num" id="h">—</div><div class="lbl">Heures</div></div>
+              <div class="box"><div class="num" id="m">—</div><div class="lbl">Minutes</div></div>
+              <div class="box"><div class="num" id="s">—</div><div class="lbl">Secondes</div></div>
+            </div>
+          </div>
+
+          <div class="panel card" style="background: rgba(0,0,0,.22); border-color: rgba(255,255,255,.12);">
+            <h2 class="title">Le programme</h2>
+            <p class="p">
+              Tu scrolles, et la page te dévoile quelques petits clins d’œil.
+              Rien de foufou, juste du beau, du doux, du “nous”.
+            </p>
+            <div class="divider"></div>
+            <div class="ctaRow">
+              <button id="scrollNext">Voir la suite</button>
+              <button id="surprise">Ou un petit mot avant de continuer</button>
+            </div>
+            <p class="p" id="note" style="margin-top:12px; color: rgba(255,255,255,.66);">
+              PS : le bouton “Voir la suite” descend proprement, si tu as la flemme de scroller...
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION 2 -->
+      <section class="card panel reveal" id="sec2">
+        <h2 class="title">Quelques vérités simples</h2>
+        <p class="p">
+          La charte 2026 c’est : clair, minimal, un peu futuriste, et surtout lisible.
+          Donc voilà : trois blocs, trois évidences.
+        </p>
+
+        <div class="facts">
+          <div class="fact">
+            <div class="k">Toi</div>
+            <div class="v">Celle qui rend tout le reste moins bruyant.</div>
+          </div>
+          <div class="fact">
+            <div class="k">Nous</div>
+            <div class="v">A-Team. Pas parfaite, mais vraie. Et franchement stylée.</div>
+          </div>
+          <div class="fact">
+            <div class="k">Bientôt</div>
+            <div class="v">Le 1er mars. Surprise</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION 3 -->
+      <section class="card panel reveal" id="sec3">
+        <h2 class="title">Mini timeline</h2>
+        <p class="p">
+          Une page, c’est un peu comme une histoire : on avance, on découvre, on sourit.
+        </p>
+
+        <div class="facts" style="grid-template-columns: repeat(2, minmax(0,1fr));">
+          <div class="fact">
+            <div class="k">Maintenant</div>
+            <div class="v">Tu lis ceci. Donc j’ai réussi à te faire arriver ici. Mission accomplie. Et ce site n'est pas (trop) une daube.</div>
+          </div>
+          <div class="fact">
+            <div class="k">Le jour J</div>
+            <div class="v" id="dayj">Dès le début de ton week-end anniversaire, ce site t'orientera... garde le précieusement en favori !</div>
           </div>
         </div>
 
-        <h1>Bonjour mon Amour</h1>
-        <p class="sub" id="subtitle">
-          Dans <strong>exactement</strong> :
-        </p>
+        <div class="ctaRow" style="margin-top: 14px;">
+          <button id="top">Remonter en haut</button>
+        </div>
+      </section>
 
-        <section class="countdown" aria-label="Compte à rebours">
-          <div class="box">
-            <div class="num" id="d">—</div>
-            <div class="lbl">Jours</div>
-          </div>
-          <div class="box">
-            <div class="num" id="h">—</div>
-            <div class="lbl">Heures</div>
-          </div>
-          <div class="box">
-            <div class="num" id="m">—</div>
-            <div class="lbl">Minutes</div>
-          </div>
-          <div class="box">
-            <div class="num" id="s">—</div>
-            <div class="lbl">Secondes</div>
-          </div>
-        </section>
-
-        <div class="line"></div>
-
-        <button id="btn">Afficher un petit mot</button>
-        <div class="note" id="note">Je t’aime. Voilà. (Et oui, c’est une preuve numérique.)</div>
-      </main>
-    </div>
+      <footer class="reveal">
+        Fait avec ❤️
+      </footer>
+    </main>
 
     <script>
-      // 1er mars à 00:00 (heure de Paris)
-      // IMPORTANT: les dates JS sans timezone utilisent l'heure locale du navigateur.
-      // Donc si elle est en France, c'est parfait.
+      // ===== Countdown: 1er mars 2026 à 00:00 (heure locale du navigateur) =====
+      // Si vous êtes en France, c'est l'heure de Paris.
       const target = new Date("2026-03-01T00:00:00");
 
       const elD = document.getElementById("d");
       const elH = document.getElementById("h");
       const elM = document.getElementById("m");
       const elS = document.getElementById("s");
-      const subtitle = document.getElementById("subtitle");
-      const note = document.getElementById("note");
+      const chip = document.getElementById("chip");
+      const dayj = document.getElementById("dayj");
 
       function pad(n){ return String(n).padStart(2, "0"); }
 
@@ -253,8 +467,8 @@
           elH.textContent = "00";
           elM.textContent = "00";
           elS.textContent = "00";
-          subtitle.innerHTML = "C’est <strong>aujourd’hui</strong> 🎉";
-          note.textContent = "Joyeux anniversaire mon amour. ❤️";
+          chip.textContent = "🎉 Joyeux anniversaire";
+          dayj.textContent = "C’est aujourd’hui. Et oui : je t’aime très fort. ❤️";
           return;
         }
 
@@ -268,21 +482,36 @@
         elH.textContent = pad(hours);
         elM.textContent = pad(mins);
         elS.textContent = pad(secs);
-      }
 
+        chip.textContent = "⏳ " + days + "j " + pad(hours) + ":" + pad(mins) + ":" + pad(secs);
+      }
       tick();
       setInterval(tick, 1000);
 
-      const messages = [
-        "Tu es mon endroit préféré.",
-        "Je pense à toi, même quand je fais genre je suis sérieux.",
-        "Toi + moi = évidence.",
-        "J’ai hâte de te serrer fort.",
-        "Ton sourire devrait être coté en bourse."
-      ];
+      // ===== Reveal on scroll (IntersectionObserver) =====
+      const els = document.querySelectorAll(".reveal");
+      const io = new IntersectionObserver((entries) => {
+        for (const e of entries){
+          if (e.isIntersecting) e.target.classList.add("is-visible");
+        }
+      }, { threshold: 0.18 });
+      els.forEach(el => io.observe(el));
 
-      document.getElementById("btn").addEventListener("click", () => {
-        note.textContent = messages[Math.floor(Math.random() * messages.length)];
+      // ===== Buttons =====
+      const messages = [
+        "Amouuuuuuuuuuuuur.",
+      ];
+      document.getElementById("surprise").addEventListener("click", () => {
+        document.getElementById("note").textContent =
+          messages[Math.floor(Math.random() * messages.length)];
+      });
+
+      document.getElementById("scrollNext").addEventListener("click", () => {
+        document.getElementById("sec2").scrollIntoView({ behavior: "smooth", block: "start" });
+      });
+
+      document.getElementById("top").addEventListener("click", () => {
+        window.scrollTo({ top: 0, behavior: "smooth" });
       });
     </script>
   </body>
