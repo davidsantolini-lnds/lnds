@@ -1,880 +1,689 @@
- (cd "$(git rev-parse --show-toplevel)" && git apply --3way <<'EOF' 
-diff --git a/index.html b/index.html
-index 71faf514e216ca2fc2cc604bda5a1da42b233d60..623d6ce908f79a67cbfdc5086b4d2ac0f1ae61e4 100644
---- a/index.html
-+++ b/index.html
-@@ -3,51 +3,51 @@
- <head>
-   <meta charset="UTF-8" />
-   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-   <title>Mission : Hélène ✨</title>
- 
-   <style>
-     :root{
-       --bg0:#050505;
-       --bg1:#0b0713;
-       --pink:#ff6bd6;
-       --rose:#ff9a9e;
-       --pearl:#fecfef;
-       --mint:#75f3c6;
-       --ink:#0b0b10;
-       --glass:rgba(255,255,255,.07);
-       --glass2:rgba(255,255,255,.10);
-       --stroke:rgba(255, 107, 214, .28);
-       --shadow:0 30px 90px rgba(0,0,0,.55);
-       --soft:0 0 60px rgba(255, 107, 214, .20);
-     }
- 
-     *{box-sizing:border-box;}
-     html,body{height:100%;}
-     body{
-       margin:0;
--      height:780vh; /* beaucoup de scroll = “film” */
-+      height:900vh; /* beaucoup de scroll = “film” */
-       background:var(--bg0);
-       color:#fff;
-       font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial;
-       overflow-x:hidden;
-     }
- 
-     /* HUD */
-     .hud{
-       position:fixed;
-       top:14px;
-       left:14px;
-       right:14px;
-       z-index:50;
-       display:flex;
-       gap:12px;
-       align-items:center;
-       pointer-events:none;
-     }
-     .chip{
-       pointer-events:none;
-       display:flex;
-       align-items:center;
-       gap:10px;
-       padding:10px 12px;
-       border-radius:999px;
-@@ -74,50 +74,143 @@
-       pointer-events:none;
-     }
-     .bar > i{
-       display:block;height:100%;
-       width:0%;
-       background:linear-gradient(90deg, var(--rose), var(--pink), var(--mint));
-       box-shadow: var(--soft);
-     }
- 
-     /* Viewport 3D */
-     .viewport{
-       position:fixed;
-       inset:0;
-       perspective:1100px;
-       overflow:hidden;
-       background:
-         radial-gradient(circle at 50% 40%, #1a1025 0%, #000 65%),
-         linear-gradient(180deg, #000, #06030c);
-     }
-     .camera{
-       position:absolute;
-       inset:0;
-       transform-style:preserve-3d;
-       will-change:transform;
-     }
-+    .sceneBackdrop{
-+      position:absolute;
-+      inset:0;
-+      z-index:0;
-+      transition: background 700ms ease, filter 700ms ease;
-+      background: radial-gradient(circle at 50% 35%, #1f1440 0%, #07060d 70%);
-+    }
-+    .scene-space{
-+      background: radial-gradient(circle at 50% 32%, #2d1d5c 0%, #05040a 70%);
-+    }
-+    .scene-summit{
-+      background: linear-gradient(180deg, #bdd7ff 0%, #7ca1d6 30%, #35507b 70%, #111a29 100%);
-+      filter: saturate(1.15);
-+    }
-+    .scene-ridge{
-+      background: linear-gradient(180deg, #9ac0ea 0%, #5a7da8 35%, #24384f 70%, #101a28 100%);
-+    }
-+    .scene-sea{
-+      background: linear-gradient(180deg, #7cd0ff 0%, #2f8ac4 40%, #0e4b79 72%, #08253c 100%);
-+    }
-+    .snow{
-+      position:absolute;
-+      inset:-20% 0 0;
-+      pointer-events:none;
-+      z-index:1;
-+      opacity:0;
-+      transition:opacity 500ms ease;
-+      background-image: radial-gradient(circle, rgba(255,255,255,.9) 1px, transparent 1.8px);
-+      background-size: 26px 26px;
-+      animation: snowfall 7s linear infinite;
-+    }
-+    @keyframes snowfall{
-+      to{ transform: translateY(120px) translateX(-20px); }
-+    }
-+    .snow.on{opacity:.65;}
-+
-+    .slope{
-+      margin-top:16px;
-+      border-radius:20px;
-+      min-height:220px;
-+      border:1px solid rgba(255,255,255,.2);
-+      background:
-+        linear-gradient(170deg, rgba(255,255,255,.95) 0%, rgba(225,240,255,.88) 45%, rgba(177,209,235,.72) 100%);
-+      position:relative;
-+      overflow:hidden;
-+      box-shadow:inset 0 0 60px rgba(255,255,255,.45), 0 20px 60px rgba(0,0,0,.3);
-+    }
-+    .slope:before{
-+      content:"";
-+      position:absolute;
-+      inset:0;
-+      background: repeating-linear-gradient(145deg, rgba(255,255,255,.35) 0 14px, rgba(255,255,255,.05) 14px 28px);
-+      mix-blend-mode:soft-light;
-+      opacity:.5;
-+    }
-+    .gate{
-+      position:absolute;
-+      width:120px;
-+      padding:8px 10px;
-+      border-radius:12px;
-+      color:#fff;
-+      font-size:.78rem;
-+      font-weight:700;
-+      text-align:center;
-+      letter-spacing:.2px;
-+      text-shadow:0 1px 2px rgba(0,0,0,.45);
-+      box-shadow:0 8px 20px rgba(0,0,0,.25);
-+    }
-+    .gate:before,.gate:after{
-+      content:"";
-+      position:absolute;
-+      top:-8px;
-+      width:4px;
-+      height:42px;
-+      background:rgba(255,255,255,.95);
-+      border-radius:3px;
-+    }
-+    .gate:before{left:8px}
-+    .gate:after{right:8px}
-+    .gate.red{background:linear-gradient(145deg,#ff5c76,#e12446)}
-+    .gate.blue{background:linear-gradient(145deg,#59a6ff,#1b67dc)}
-+    .finishBadge{
-+      display:inline-flex;
-+      gap:8px;
-+      align-items:center;
-+      margin-top:12px;
-+      padding:10px 14px;
-+      border-radius:999px;
-+      background:rgba(117,243,198,.16);
-+      border:1px solid rgba(117,243,198,.5);
-+      color:#d8fff2;
-+      font-weight:700;
-+    }
- 
-     /* Stars */
-     .particles{
-       position:absolute;
-       inset:0;
-       transform-style:preserve-3d;
-       pointer-events:none;
-       filter: drop-shadow(0 0 12px rgba(255,255,255,.12));
-     }
-     .particle{
-       position:absolute;
-       border-radius:50%;
-       box-shadow:0 0 12px currentColor;
-       opacity:.85;
-     }
-     .streak{
-       position:absolute;
-       width:140px;
-       height:2px;
-       transform-origin:left center;
-       background:linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,.8), rgba(255,255,255,0));
-       opacity:.0;
-       pointer-events:none;
-       filter: blur(.2px);
-     }
-@@ -388,479 +481,500 @@
-       font-size:1.35rem;
-       display:block;
-     }
-     .portal .txt span{
-       display:block;
-       margin-top:8px;
-       color:rgba(255,255,255,.70);
-     }
- 
-     /* Confetti canvas */
-     canvas#fx{
-       position:fixed;
-       inset:0;
-       pointer-events:none;
-       z-index:60;
-     }
- 
-     /* Small helper text */
-     .mono{
-       font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
-       font-size:.9rem;
-       color:rgba(255,255,255,.68);
-       margin-top:10px;
-       opacity:.95;
-     }
-+
-+
-+    .poem{
-+      margin-top:16px;
-+      font-size:1rem;
-+      color:rgba(255,255,255,.86);
-+      min-height:1.6em;
-+      letter-spacing:.2px;
-+      text-shadow:0 0 16px rgba(255,107,214,.18);
-+    }
-+
-+    .journeyTrack{
-+      margin-top:16px;
-+      display:grid;
-+      gap:10px;
-+    }
-+    .journeyStop{
-+      position:relative;
-+      padding:14px 14px 14px 44px;
-+      border-radius:16px;
-+      border:1px solid rgba(255,255,255,.12);
-+      background:rgba(0,0,0,.22);
-+    }
-+    .journeyStop:before{
-+      content:"";
-+      position:absolute;
-+      left:16px;
-+      top:17px;
-+      width:14px;
-+      height:14px;
-+      border-radius:999px;
-+      background:linear-gradient(135deg,var(--mint),var(--rose));
-+      box-shadow:0 0 16px rgba(117,243,198,.4);
-+    }
-+    .journeyStop b{display:block; font-size:1rem;}
-+    .journeyStop span{color:rgba(255,255,255,.72); font-size:.92rem;}
-+
-+    .postcardWall{
-+      margin-top:16px;
-+      display:grid;
-+      grid-template-columns:repeat(3,minmax(0,1fr));
-+      gap:12px;
-+    }
-+    .postcard{
-+      padding:12px;
-+      border-radius:16px;
-+      border:1px solid rgba(255,255,255,.14);
-+      background:linear-gradient(160deg, rgba(255,255,255,.12), rgba(255,255,255,.03));
-+      min-height:132px;
-+    }
-+    .postcard h4{margin:0;font-size:1rem;}
-+    .postcard p{margin-top:8px;font-size:.92rem;line-height:1.45;}
-+    @media (max-width:900px){
-+      .postcardWall{grid-template-columns:1fr;}
-+    }
-   </style>
- </head>
- 
- <body>
-   <canvas id="fx"></canvas>
- 
-   <div class="hud">
-     <div class="chip">
-       <i class="dot"></i>
-       <div>
--        <strong id="hudTitle">Navigation : séquence 0/6</strong><br/>
-+        <strong id="hudTitle">Navigation : séquence 0/7</strong><br/>
-         <span id="hudSub">Scrolle — le plan se dévoile.</span>
-       </div>
-     </div>
-     <div class="bar"><i id="prog"></i></div>
-     <div class="chip" style="min-width:220px;justify-content:space-between;">
-       <div>
-         <strong id="parisClock">Paris</strong><br/>
-         <span id="parisTz">Europe/Paris</span>
-       </div>
-       <span class="pill" id="heartbeat">LIVE</span>
-     </div>
-   </div>
- 
-   <div class="viewport">
-+    <div class="sceneBackdrop scene-space" id="sceneBackdrop"></div>
-+    <div class="snow" id="snow"></div>
-     <div class="camera" id="camera">
-       <div class="particles" id="particles"></div>
-       <div class="streak" id="streak"></div>
- 
-       <!-- LAYER 0 -->
-       <div class="layer" style="transform: translate(-50%,-50%) translateZ(0px);">
-         <div class="panel">
--          <span class="kicker"><b>PROJET SECRET</b> · Transmission chiffrée</span>
--          <h1>Hélène, j’ai une proposition.</h1>
--          <h2>Un voyage. Un vrai. Et un site qui le prouve.</h2>
--          <p>
--            Scrolle : tu traverses un “tunnel” et tu débloques des indices.
--            À la fin… tu tombes sur le plan complet.
--          </p>
--          <div class="scrollHint">
--            <div class="arrow">↓</div>
--            <div>Plonge. Je gère le reste.</div>
-+          <span class="kicker"><b>SLALOM MODE</b> · Anniversaire A-Team</span>
-+          <h1>On chausse les skis, Amour.</h1>
-+          <h2>Scroll = descente de slalom, avec portes rouges et bleues.</h2>
-+          <p>Chaque porte te motive vers l’arrivée. Tout en bas: compteur jusqu’au 01/03/2026 à 00:00 (Paris), avec rappel de la première surprise le samedi 20h.</p>
-+          <div class="scrollHint"><div class="arrow">↓</div><div>Pousse et descends la piste.</div></div>
-+          <p class="poem" id="poemLine">✦ A-Team sur la piste, full Amour jusqu’à l’arrivée.</p>
-+          <div class="slope">
-+            <div class="gate red" style="top:18px;left:9%;">Porte 1 · Respire ❤️</div>
-+            <div class="gate blue" style="top:86px;right:14%;">Porte 2 · Tu gères 💙</div>
-+            <div class="gate red" style="top:152px;left:28%;">Porte 3 · Toujours ensemble</div>
-           </div>
--          <div class="mono">Astuce : souris = léger vertige (cinéma, pas manège).</div>
-         </div>
-       </div>
- 
-       <!-- LAYER 1 -->
-       <div class="layer" style="transform: translate(-50%,-50%) translateZ(-1300px);">
-         <div class="panel">
--          <span class="kicker"><b>INDICE #1</b> · Ce n’est pas un resto</span>
--          <h1>Je veux t’emmener là où le temps ralentit.</h1>
--          <p>
--            Un endroit où tu peux être brillante, fonceuse, et… incroyablement tranquille en même temps.
--            Spoiler : il y aura de l’eau, des ruelles, du soleil, et une cuisine qui attaque directement la dopamine.
--          </p>
--          <div class="portal">
--            <div class="txt">
--              <b>Portail en cours d’ouverture…</b>
--              <span>Destination encore masquée</span>
--            </div>
-+          <span class="kicker"><b>PORTE ROUGE</b> · Focus</span>
-+          <h1>Virage gauche, propre et fluide.</h1>
-+          <p>Message sur la porte: <b>« Amour, continue, t’es magnifique »</b>. Le tracé est clair, on garde le rythme.</p>
-+          <div class="slope">
-+            <div class="gate red" style="top:30px;left:12%;">Amour, continue 🌹</div>
-+            <div class="gate blue" style="top:116px;right:8%;">A-Team précision</div>
-           </div>
-         </div>
-       </div>
- 
-       <!-- LAYER 2 -->
-       <div class="layer" style="transform: translate(-50%,-50%) translateZ(-2600px);">
-         <div class="panel">
--          <span class="kicker"><b>INDICE #2</b> · Niveau “carte postale”</span>
--          <h1>Une ville vivante. Vraie. Un peu folle.</h1>
--          <p>
--            Une ville qui te ressemble : élégante, intense, pas tiède.
--            Et autour… des îles et une côte à faire taire n’importe quel PowerPoint.
--          </p>
--          <div class="grid">
--            <div class="card">
--              <h3>Ce que je vise <span class="pill">expérience</span></h3>
--              <ul class="list">
--                <li><i class="tick"></i> Matins doux (café + vue)</li>
--                <li><i class="tick"></i> Une île “hors du monde”</li>
--                <li><i class="tick"></i> Un coucher de soleil niveau cinéma</li>
--                <li><i class="tick"></i> Zéro logistique dans ta tête</li>
--              </ul>
--            </div>
--            <div class="card">
--              <h3>Ce que je promets <span class="pill">anti-stress</span></h3>
--              <ul class="list">
--                <li><i class="tick"></i> Plan clair</li>
--                <li><i class="tick"></i> Rythme respirable</li>
--                <li><i class="tick"></i> Une surprise “wow”</li>
--              </ul>
--            </div>
-+          <span class="kicker"><b>PORTE BLEUE</b> · Relance</span>
-+          <h1>On reprend de la vitesse dans la neige.</h1>
-+          <p>Message sur la porte: <b>« Encore 3 portes, je suis avec toi »</b>. Tout reste lisible: piste blanche, portes nettes, objectif visible.</p>
-+          <div class="slope">
-+            <div class="gate blue" style="top:22px;left:20%;">Encore 3 portes 💙</div>
-+            <div class="gate red" style="top:98px;right:17%;">A-Team au top</div>
-+            <div class="gate blue" style="top:160px;left:40%;">On descend ensemble</div>
-           </div>
-         </div>
-       </div>
- 
-       <!-- LAYER 3 -->
-       <div class="layer" style="transform: translate(-50%,-50%) translateZ(-3900px);">
-         <div class="panel">
--          <span class="kicker"><b>RÉVÉLATION</b> · Destination dévoilée</span>
--          <h1>Naples + Procida + Côte Amalfitaine.</h1>
--          <h2>Un trip intense, beau, et parfaitement orchestré.</h2>
--          <p>
--            Naples pour l’énergie (et la meilleure pizza du système solaire),
--            Procida pour le calme coloré, et la côte pour la magie.
--          </p>
--
--          <div class="grid">
--            <div class="card">
--              <h3>Itinéraire “ciné” <span class="pill">4 jours</span></h3>
--              <ul class="list">
--                <li><i class="tick"></i> J1 · Arrivée + ruelles + dîner “wow”</li>
--                <li><i class="tick"></i> J2 · Procida (slow-life + couleurs)</li>
--                <li><i class="tick"></i> J3 · Amalfi / Positano (vue + dolce vita)</li>
--                <li><i class="tick"></i> J4 · Musée / shopping + retour</li>
--              </ul>
--            </div>
--            <div class="card">
--              <h3>Le moment signature <span class="pill">surprise</span></h3>
--              <p style="margin-top:10px;">
--                Une table réservée au bon endroit, au bon timing,
--                avec une vue qui fait bugger la rationalité.
--              </p>
--              <p class="fine">
--                (Oui : j’ai déjà des idées précises. Non : je ne spoil pas ici.)
--              </p>
--            </div>
-+          <span class="kicker"><b>PORTE ROUGE</b> · Mental fort</span>
-+          <h1>Slalom engagé: droite, gauche, droite.</h1>
-+          <p>Message sur la porte: <b>« Plus que deux, championne »</b>. Le style 2026: clean, lumineux, efficace.</p>
-+          <div class="slope">
-+            <div class="gate red" style="top:28px;right:14%;">Plus que deux ✨</div>
-+            <div class="gate blue" style="top:108px;left:14%;">Tu voles sur la piste</div>
-           </div>
-+        </div>
-+      </div>
- 
--          <div class="portal">
--            <div class="txt">
--              <b>Portail stabilisé ✅</b>
--              <span>Tu viens de débloquer le plan.</span>
--            </div>
-+      <!-- LAYER 4 -->
-+      <div class="layer" style="transform: translate(-50%,-50%) translateZ(-5200px);">
-+        <div class="panel">
-+          <span class="kicker"><b>DERNIÈRE PORTE</b> · Finale</span>
-+          <h1>Dernier appui, dernière porte.</h1>
-+          <p>Message: <b>« À l’arrivée, je t’attends avec Amour »</b>. Prochaine section: ligne d’arrivée + compteur.</p>
-+          <div class="slope">
-+            <div class="gate blue" style="top:30px;left:22%;">Dernière porte 🔵</div>
-+            <div class="gate red" style="top:120px;right:22%;">Je t’attends ❤️</div>
-           </div>
-         </div>
-       </div>
- 
--      <!-- LAYER 4 : Countdown + accept -->
--      <div class="layer" style="transform: translate(-50%,-50%) translateZ(-5200px);">
-+      <!-- LAYER 5 -->
-+      <div class="layer" style="transform: translate(-50%,-50%) translateZ(-6500px);">
-         <div class="panel">
--          <span class="kicker"><b>OBJECTIF</b> · 1er mars (heure de Paris)</span>
--          <h1 id="title">🎉 Compte à rebours 🎉</h1>
--          <p>Parce que certaines dates méritent un dispositif complet.</p>
-+          <span class="kicker"><b>LIGNE D’ARRIVÉE</b> · Timing officiel</span>
-+          <h1 id="title">⏱️ Compteur vers minuit</h1>
-+          <p>Arrivée franchie. Compteur jusqu’au <b>01/03/2026 à 00:00 (heure de Paris)</b>.</p>
-+          <div class="finishBadge">🏁 Première surprise: samedi soir à 20h</div>
- 
-           <div class="countdown" id="countdown">
-             <div class="timebox"><span class="num" id="days">00</span><span class="lab">Jours</span></div>
-             <div class="timebox"><span class="num" id="hours">00</span><span class="lab">Heures</span></div>
-             <div class="timebox"><span class="num" id="minutes">00</span><span class="lab">Minutes</span></div>
-             <div class="timebox"><span class="num" id="seconds">00</span><span class="lab">Secondes</span></div>
-           </div>
- 
-           <div class="ctaRow">
--            <button class="btn" id="acceptBtn">✅ J’accepte la mission</button>
--            <button class="btn secondary" id="icsBtn">📅 Ajouter au calendrier</button>
--            <button class="btn secondary" id="copyBtn">📨 Copier l’invitation</button>
--          </div>
--
--          <div class="fine" id="fineText">
--            PS : si tu appuies sur “J’accepte”, il se passe un truc. Oui, j’ai codé l’ego.
-+            <button class="btn" id="acceptBtn">✅ A-Team: ligne validée</button>
-+            <button class="btn secondary" id="icsBtn">📅 Ajouter à l’agenda</button>
-+            <button class="btn secondary" id="copyBtn">📨 Copier le plan</button>
-           </div>
-+          <div class="fine" id="fineText">Rappel: première surprise à 20h samedi, puis cap sur minuit.</div>
-         </div>
-       </div>
- 
--      <!-- LAYER 5 : “Boarding pass” -->
--      <div class="layer" style="transform: translate(-50%,-50%) translateZ(-6500px);">
-+      <!-- LAYER 6 -->
-+      <div class="layer" style="transform: translate(-50%,-50%) translateZ(-7800px);">
-         <div class="panel">
--          <span class="kicker"><b>BOARDING PASS</b> · version romantique</span>
--          <h1>Billet de voyage : délivré.</h1>
--          <h2>Destination : Naples / Procida / Amalfi</h2>
--          <div class="grid">
--            <div class="card">
--              <h3>Détails <span class="pill">propre</span></h3>
--              <ul class="list">
--                <li><i class="tick"></i> Mode : “zéro charge mentale”</li>
--                <li><i class="tick"></i> Rythme : intense + doux</li>
--                <li><i class="tick"></i> KPI : ton sourire (100%)</li>
--              </ul>
--              <p class="fine">Ce site est la preuve matérielle que je suis déjà dans l’exécution.</p>
--            </div>
--            <div class="card">
--              <h3>Dernière question <span class="pill">simple</span></h3>
--              <p style="margin-top:10px;">
--                Tu préfères que je révèle la surprise “signature” avant…
--                ou seulement au moment où tu la vis ?
--              </p>
--              <p class="fine">
--                (Ne réponds pas ici. Réponds en me regardant. C’est mieux.)
--              </p>
--            </div>
--          </div>
-+          <span class="kicker"><b>APRÈS-COURSE</b> · Smile</span>
-+          <h1>Run terminé, Amour.</h1>
-+          <p>Tu viens de traverser toute la piste. Maintenant: on laisse le compteur tourner jusqu’au moment parfait.</p>
-         </div>
-       </div>
- 
-     </div>
-   </div>
- 
- <script>
- /* =========================
-    1) 3D CAMERA (bon sens)
- ========================= */
- const camera = document.getElementById("camera");
--const DEPTH = 6500; // profondeur max de la séquence (dernier layer z=-6500)
-+const DEPTH = 7800; // profondeur max de la séquence (dernier layer z=-7800)
-+const sceneBackdrop = document.getElementById("sceneBackdrop");
-+const snow = document.getElementById("snow");
- let targetZ = 0, currentZ = 0;
- let targetRot = 0, currentRot = 0;
- 
- let mouseX = 0, mouseY = 0;
- window.addEventListener("mousemove", (e) => {
-   mouseX = (e.clientX / innerWidth) * 2 - 1;
-   mouseY = (e.clientY / innerHeight) * 2 - 1;
- }, { passive:true });
- 
- window.addEventListener("scroll", () => {
-   const maxScroll = document.body.scrollHeight - innerHeight;
-   const frac = maxScroll > 0 ? (scrollY / maxScroll) : 0;
- 
-   // “avance” dans le tunnel : caméra en Z positif => rapproche les layers négatifs
-   targetZ = frac * DEPTH;
-   targetRot = -frac * 8;
- }, { passive:true });
- 
- function tickCam(){
-   currentZ += (targetZ - currentZ) * 0.075;
-   currentRot += (targetRot - currentRot) * 0.075;
- 
-   const tiltX = mouseY * 2.2;
-   const tiltY = mouseX * 2.2;
-+  const frac = Math.max(0, Math.min(1, currentZ / DEPTH));
-+  const turn = Math.sin(frac * Math.PI * 5) * 9;
-+  const drift = Math.sin(frac * Math.PI * 7) * 120;
- 
-   camera.style.transform = `
-+    translateX(${drift}px)
-     translateZ(${currentZ}px)
--    rotateZ(${currentRot}deg)
--    rotateX(${tiltX}deg)
--    rotateY(${tiltY}deg)
-+    rotateZ(${currentRot + turn * 0.25}deg)
-+    rotateX(${tiltX + 1.6}deg)
-+    rotateY(${tiltY + turn}deg)
-   `;
- 
-   requestAnimationFrame(tickCam);
- }
- tickCam();
- 
- /* =========================
-    2) HUD progress + “chapters”
- ========================= */
- const prog = document.getElementById("prog");
- const hudTitle = document.getElementById("hudTitle");
- const hudSub = document.getElementById("hudSub");
- 
- function updateHud(){
-   const maxScroll = document.body.scrollHeight - innerHeight;
-   const frac = maxScroll > 0 ? (scrollY / maxScroll) : 0;
-   prog.style.width = (frac * 100).toFixed(1) + "%";
- 
--  // 6 séquences
--  const chapter = Math.min(6, Math.max(0, Math.floor(frac * 6.2)));
--  hudTitle.textContent = `Navigation : séquence ${chapter}/6`;
-+  // 7 séquences
-+  const chapter = Math.min(7, Math.max(0, Math.floor(frac * 7.2)));
-+  hudTitle.textContent = `Navigation : séquence ${chapter}/7`;
-   const subs = [
--    "Scrolle — le plan se dévoile.",
--    "Indice #1 : on quitte le quotidien.",
--    "Indice #2 : on vise l’exception.",
--    "Révélation : destination trouvée.",
--    "Objectif : date verrouillée.",
--    "Boarding pass : prêt à décoller.",
--    "Fin : ça commence pour de vrai."
-+    "Départ: on chausse les skis.",
-+    "Porte rouge: reste fluide.",
-+    "Porte bleue: garde la ligne.",
-+    "Slalom: droite-gauche propre.",
-+    "Dernière porte: focus total.",
-+    "Arrivée: compteur et agenda.",
-+    "Après-course: cap sur minuit."
-   ];
-+
-+  sceneBackdrop.className = "sceneBackdrop " + (
-+    frac < 0.2 ? "scene-summit" :
-+    frac < 0.58 ? "scene-ridge" :
-+    "scene-sea"
-+  );
-+  snow.classList.toggle("on", frac < 0.68);
-   hudSub.textContent = subs[chapter] || subs[0];
- 
-   requestAnimationFrame(updateHud);
- }
- updateHud();
- 
- /* =========================
-    3) Paris clock (petit détail “pro”)
- ========================= */
- const parisClock = document.getElementById("parisClock");
- function updateParisTime(){
-   const fmt = new Intl.DateTimeFormat("fr-FR", {
-     timeZone: "Europe/Paris",
-     weekday:"short", hour:"2-digit", minute:"2-digit"
-   });
-   parisClock.textContent = `Paris · ${fmt.format(new Date())}`;
-   setTimeout(updateParisTime, 5000);
- }
- updateParisTime();
- 
-+const poemLines = [
-+  "✦ A-Team sur la piste, full Amour jusqu’à l’arrivée.",
-+  "✦ Porte après porte, on garde la bonne ligne.",
-+  "✦ Première surprise samedi à 20h, puis cap sur minuit.",
-+  "✦ Style 2026: net, beau, lisible, efficace."
-+];
-+const poemEl = document.getElementById("poemLine");
-+let poemIndex = 0;
-+setInterval(() => {
-+  poemIndex = (poemIndex + 1) % poemLines.length;
-+  poemEl.animate([{ opacity: 0.2, transform: "translateY(4px)" }, { opacity: 1, transform: "translateY(0)" }], { duration: 420, easing: "ease-out" });
-+  poemEl.textContent = poemLines[poemIndex];
-+}, 3200);
-+
- /* =========================
-    4) Particles + streak
- ========================= */
- const particles = document.getElementById("particles");
- const streak = document.getElementById("streak");
- const colors = ["#ffffff", "#ff9a9e", "#fecfef", "#75f3c6"];
- 
- for(let i=0;i<220;i++){
-   const p = document.createElement("div");
-   p.className = "particle";
-   const s = Math.random()*3 + 1.8;
-   p.style.width = s + "px";
-   p.style.height = s + "px";
-   p.style.left = (Math.random()*200 - 50) + "vw";
-   p.style.top  = (Math.random()*200 - 50) + "vh";
-   p.style.transform = `translateZ(${Math.random()*-7200 + 900}px)`;
-   p.style.color = colors[(Math.random()*colors.length)|0];
-   p.style.opacity = (Math.random()*0.55 + 0.25).toFixed(2);
-   particles.appendChild(p);
- }
- 
- // streak random (mini “étoile filante”)
- function fireStreak(){
-   streak.style.left = (Math.random()*110 - 10) + "vw";
-   streak.style.top  = (Math.random()*80 + 10) + "vh";
-   const ang = (Math.random()*60 - 30);
-   streak.style.transform = `rotate(${ang}deg)`;
-   streak.style.opacity = "0.0";
- 
-   // fade-in/out
-   streak.animate([
-     { opacity: 0, transform:`rotate(${ang}deg) translateX(0px)`},
-     { opacity: .85, transform:`rotate(${ang}deg) translateX(220px)`},
-     { opacity: 0, transform:`rotate(${ang}deg) translateX(360px)`},
-   ], { duration: 900, easing:"cubic-bezier(.2,.7,.2,1)" });
- 
-   setTimeout(fireStreak, 1200 + Math.random()*2600);
- }
- fireStreak();
- 
- /* =========================
--   5) Countdown FIXÉ Europe/Paris (minuit 1er mars 2026)
-+   5) Countdown FIXÉ Europe/Paris (1er mars 2026 à 00h00)
- ========================= */
- function getZonedTimestamp({ year, monthIndex, day, hour=0, minute=0, second=0, timeZone }) {
-   const utcGuess = Date.UTC(year, monthIndex, day, hour, minute, second);
- 
-   const dtf = new Intl.DateTimeFormat("en-US", {
-     timeZone,
-     hour12:false,
-     year:"numeric", month:"2-digit", day:"2-digit",
-     hour:"2-digit", minute:"2-digit", second:"2-digit"
-   });
- 
-   function partsInZone(ms){
-     const parts = dtf.formatToParts(new Date(ms));
-     const get = (t) => +parts.find(p => p.type === t).value;
-     return { y:get("year"), m:get("month"), d:get("day"), hh:get("hour"), mm:get("minute"), ss:get("second") };
-   }
- 
-   let corrected = utcGuess;
-   for(let i=0;i<2;i++){
-     const p = partsInZone(corrected);
-     const asIfUTC = Date.UTC(p.y, p.m-1, p.d, p.hh, p.mm, p.ss);
-     const desired = Date.UTC(year, monthIndex, day, hour, minute, second);
-     corrected -= (asIfUTC - desired);
-   }
-   return corrected;
- }
- 
- const targetDate = getZonedTimestamp({
-   year: 2026, monthIndex: 2, day: 1, hour:0, minute:0, second:0, timeZone:"Europe/Paris"
- });
- 
- const pad2 = (n) => String(n).padStart(2,"0");
- 
- const timer = setInterval(()=>{
-   const now = Date.now();
-   const d = targetDate - now;
- 
-   if(d <= 0){
-     clearInterval(timer);
--    document.getElementById("title").textContent = "🎂 C’est le jour J ! 🎂";
-+    document.getElementById("title").textContent = "🎉 Minuit atteint : anniversaire en plein vol";
-     document.getElementById("countdown").innerHTML = `<p style="margin-top:14px;font-size:1.15rem;color:rgba(255,255,255,.85)">
--      Aujourd’hui, c’est toi la priorité absolue. ❤️
-+      Minuit est là. Et on garde le secret avec style. ❤️
-     </p>`;
-     return;
-   }
- 
-   const days = Math.floor(d / (1000*60*60*24));
-   const hours = Math.floor((d % (1000*60*60*24)) / (1000*60*60));
-   const minutes = Math.floor((d % (1000*60*60)) / (1000*60));
-   const seconds = Math.floor((d % (1000*60)) / 1000);
- 
-   document.getElementById("days").textContent = pad2(days);
-   document.getElementById("hours").textContent = pad2(hours);
-   document.getElementById("minutes").textContent = pad2(minutes);
-   document.getElementById("seconds").textContent = pad2(seconds);
- }, 1000);
- 
- /* =========================
-    6) ICS download + copy invite
- ========================= */
- function toICSDateUTC(ms){
-   const d = new Date(ms);
-   const p = (n)=>String(n).padStart(2,"0");
-   return d.getUTCFullYear() + p(d.getUTCMonth()+1) + p(d.getUTCDate()) + "T" +
-          p(d.getUTCHours()) + p(d.getUTCMinutes()) + p(d.getUTCSeconds()) + "Z";
- }
- 
- document.getElementById("icsBtn").addEventListener("click", () => {
-   const dtStart = targetDate;
-   const dtEnd = targetDate + 60*60*1000;
- 
-   const uid = (crypto.randomUUID ? crypto.randomUUID() : (Date.now()+"@mission"));
-   const ics =
- `BEGIN:VCALENDAR
- VERSION:2.0
- CALSCALE:GREGORIAN
- PRODID:-//Mission Helene//FR
- BEGIN:VEVENT
- UID:${uid}
- DTSTAMP:${toICSDateUTC(Date.now())}
- DTSTART:${toICSDateUTC(dtStart)}
- DTEND:${toICSDateUTC(dtEnd)}
--SUMMARY:🎉 Objectif 1er Mars
--DESCRIPTION:Déploiement surprise (Europe/Paris).
-+SUMMARY:🎿 Ligne d'arrivée - Anniversaire 01/03 00:00
-+DESCRIPTION:Compte à rebours vers 01/03/2026 00:00 (Paris). Première surprise samedi 20h.
- END:VEVENT
- END:VCALENDAR`;
- 
-   const blob = new Blob([ics], { type: "text/calendar;charset=utf-8" });
-   const url = URL.createObjectURL(blob);
-   const a = document.createElement("a");
-   a.href = url;
--  a.download = "objectif-1er-mars.ics";
-+  a.download = "arrivee-anniversaire-01-mars-0000.ics";
-   a.click();
-   URL.revokeObjectURL(url);
- });
- 
- document.getElementById("copyBtn").addEventListener("click", async () => {
-   const msg =
- `Hélène ❤️
- 
--J’ai une proposition : Naples + Procida + Côte Amalfitaine.
--4 jours : énergie, douceur, vue, et une surprise “signature”.
--
--Tu acceptes la mission ? ✨`;
-+Ligne d'arrivée validée: compte à rebours vers le 01/03/2026 à 00:00 (Paris).
-+Première surprise prévue samedi soir à 20h.
-+A-Team + Amour, tout est prêt. ✨`;
- 
-   try{
-     await navigator.clipboard.writeText(msg);
-     pulseText("Invitation copiée ✅");
-   }catch(e){
-     pulseText("Copie bloquée — sélectionne et copie manuellement.");
-     alert(msg);
-   }
- });
- 
- function pulseText(text){
-   const el = document.getElementById("fineText");
-   const old = el.textContent;
-   el.textContent = text;
-   el.animate([{opacity:.3},{opacity:1}],{duration:450,easing:"ease-out"});
-   setTimeout(()=>{ el.textContent = old; }, 2200);
- }
- 
- /* =========================
-    7) “Accept” => confetti + micro-cinéma
- ========================= */
- const fx = document.getElementById("fx");
- const ctx = fx.getContext("2d");
- let W=0,H=0;
- function resize(){
-@@ -906,30 +1020,30 @@ function drawConfetti(){
-     ctx.translate(p.x, p.y);
-     ctx.rotate(p.r);
-     ctx.globalAlpha = Math.max(0, Math.min(1, p.life/220));
-     ctx.fillStyle = p.c;
-     ctx.fillRect(-p.s/2, -p.s/2, p.s, p.s*0.7);
-     ctx.restore();
-   }
-   confetti = confetti.filter(p => p.life > 0 && p.y < innerHeight + 80);
-   if(confetti.length) requestAnimationFrame(drawConfetti);
-   else ctx.clearRect(0,0,innerWidth,innerHeight);
- }
- 
- document.getElementById("acceptBtn").addEventListener("click", () => {
-   spawnConfetti();
-   drawConfetti();
- 
-   // Petit twist : on "boost" le scroll vers la fin (effet "signature")
-   window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
- 
-   // Un message qui fait “novateur”
-   const hb = document.getElementById("heartbeat");
-   hb.textContent = "ACCEPTÉ";
-   hb.style.background = "rgba(117,243,198,.15)";
-   hb.style.borderColor = "rgba(117,243,198,.35)";
- 
--  pulseText("Mission validée. Prochaine étape : la surprise. ✨");
-+  pulseText("A-Team validée. Cap sur minuit + surprise 20h. ✨");
- });
- </script>
- </body>
- </html>
- 
-EOF
-)
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mission : Hélène ✨</title>
+
+  <style>
+    :root{
+      --bg0:#050505;
+      --bg1:#0b0713;
+      --pink:#ff6bd6;
+      --rose:#ff9a9e;
+      --pearl:#fecfef;
+      --mint:#75f3c6;
+      --ink:#0b0b10;
+      --glass:rgba(255,255,255,.07);
+      --glass2:rgba(255,255,255,.10);
+      --stroke:rgba(255, 107, 214, .28);
+      --shadow:0 30px 90px rgba(0,0,0,.55);
+      --soft:0 0 60px rgba(255, 107, 214, .20);
+    }
+
+    *{box-sizing:border-box;}
+    html,body{height:100%;}
+    body{
+      margin:0;
+      height:900vh; /* beaucoup de scroll = “film” */
+      background:var(--bg0);
+      color:#fff;
+      font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial;
+      overflow-x:hidden;
+    }
+
+    /* HUD */
+    .hud{
+      position:fixed;
+      top:14px;
+      left:14px;
+      right:14px;
+      z-index:50;
+      display:flex;
+      gap:12px;
+      align-items:center;
+      pointer-events:none;
+    }
+    .chip{
+      pointer-events:none;
+      display:flex;
+      align-items:center;
+      gap:10px;
+      padding:10px 12px;
+      border-radius:999px;
+      background:rgba(0,0,0,.35);
+      border:1px solid rgba(255,255,255,.09);
+      backdrop-filter: blur(12px);
+      box-shadow: 0 15px 50px rgba(0,0,0,.35);
+      min-width: 180px;
+    }
+    .dot{
+      width:10px;height:10px;border-radius:50%;
+      background:var(--mint);
+      box-shadow:0 0 12px var(--mint);
+    }
+    .hud strong{font-size:.92rem;}
+    .hud span{font-size:.82rem;color:rgba(255,255,255,.65)}
+    .bar{
+      flex:1;
+      height:10px;
+      border-radius:999px;
+      background:rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.08);
+      overflow:hidden;
+      pointer-events:none;
+    }
+    .bar > i{
+      display:block;height:100%;
+      width:0%;
+      background:linear-gradient(90deg, var(--rose), var(--pink), var(--mint));
+      box-shadow: var(--soft);
+    }
+
+    /* Viewport 3D */
+    .viewport{
+      position:fixed;
+      inset:0;
+      perspective:1100px;
+      overflow:hidden;
+      background:
+        radial-gradient(circle at 50% 40%, #1a1025 0%, #000 65%),
+        linear-gradient(180deg, #000, #06030c);
+    }
+    .camera{
+      position:absolute;
+      inset:0;
+      transform-style:preserve-3d;
+      will-change:transform;
+    }
+    .sceneBackdrop{
+      position:absolute;
+      inset:0;
+      z-index:0;
+      transition: background 700ms ease, filter 700ms ease;
+      background: linear-gradient(180deg, #dcecff 0%, #8bb4dc 45%, #3f6587 100%);
+    }
+    .scene-start{
+      background: linear-gradient(180deg, #eff6ff 0%, #b9d2ef 45%, #5d7ea1 100%);
+    }
+    .scene-mid{
+      background: linear-gradient(180deg, #d8ebff 0%, #8eb2d4 38%, #456582 100%);
+    }
+    .scene-lower{
+      background: linear-gradient(180deg, #c7e0f7 0%, #7ea6c9 35%, #2f587a 100%);
+    }
+    .scene-finish{
+      background: linear-gradient(180deg, #a8d5ff 0%, #5ea0cf 40%, #18507e 100%);
+    }
+    .snow{
+      position:absolute;
+      inset:-20% 0 0;
+      pointer-events:none;
+      z-index:1;
+      opacity:.48;
+      transition:opacity 500ms ease;
+      background-image: radial-gradient(circle, rgba(255,255,255,.92) 1px, transparent 1.8px);
+      background-size: 26px 26px;
+      animation: snowfall 7s linear infinite;
+    }
+    @keyframes snowfall{
+      to{ transform: translateY(120px) translateX(-20px); }
+    }
+    .snow.soft{opacity:.2;}
+
+    .slope{
+      position:absolute;
+      inset:0;
+      z-index:1;
+      pointer-events:none;
+      display:grid;
+      place-items:center;
+    }
+    .slope:before{
+      content:"";
+      width:min(58vw, 680px);
+      height:100%;
+      background:linear-gradient(180deg, rgba(255,255,255,.85), rgba(225,240,255,.70));
+      clip-path:polygon(47% 0%, 53% 0%, 69% 100%, 31% 100%);
+      box-shadow:inset 0 0 40px rgba(255,255,255,.35);
+      opacity:.42;
+    }
+
+    /* Stars */
+    .particles{
+      position:absolute;
+      inset:0;
+      transform-style:preserve-3d;
+      pointer-events:none;
+      filter: drop-shadow(0 0 12px rgba(255,255,255,.12));
+    }
+    .particle{
+      position:absolute;
+      border-radius:50%;
+      box-shadow:0 0 12px currentColor;
+      opacity:.85;
+    }
+    .streak{
+      position:absolute;
+      width:140px;
+      height:2px;
+      transform-origin:left center;
+      background:linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,.8), rgba(255,255,255,0));
+      opacity:.0;
+      pointer-events:none;
+      filter: blur(.2px);
+    }
+
+
+    .gates{
+      position:absolute;
+      inset:0;
+      z-index:2;
+      pointer-events:none;
+      transform-style:preserve-3d;
+    }
+    .gate3d{
+      position:absolute;
+      left:50%;
+      width:360px;
+      height:120px;
+      transform-style:preserve-3d;
+      transform:translateX(-50%);
+    }
+    .pole{
+      position:absolute;
+      width:8px;
+      height:110px;
+      border-radius:8px;
+      top:0;
+      box-shadow:0 0 20px rgba(0,0,0,.25);
+    }
+    .pole.left{left:16px;}
+    .pole.right{right:16px;}
+    .pole.red{background:#ff4f7c;}
+    .pole.blue{background:#5ab3ff;}
+    .gate-msg{
+      position:absolute;
+      left:50%;
+      top:22px;
+      transform:translateX(-50%);
+      padding:8px 14px;
+      border-radius:999px;
+      font-size:.84rem;
+      color:white;
+      background:rgba(7,13,24,.72);
+      border:1px solid rgba(255,255,255,.22);
+      white-space:nowrap;
+      backdrop-filter:blur(8px);
+    }
+
+    /* Layers */
+    .layer{
+      position:absolute;
+      top:50%;
+      left:50%;
+      width:min(1100px, 92vw);
+      transform-style:preserve-3d;
+      transform: translate(-50%,-50%);
+    }
+
+    .panel{
+      position:relative;
+      background: linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.05));
+      border:1px solid rgba(255,255,255,.12);
+      border-radius:28px;
+      padding:26px 24px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(14px);
+      overflow:hidden;
+    }
+    .panel:before{
+      content:"";
+      position:absolute;
+      inset:-2px;
+      background: radial-gradient(circle at 25% 20%, rgba(255,107,214,.25), transparent 45%),
+                  radial-gradient(circle at 75% 70%, rgba(117,243,198,.20), transparent 46%),
+                  radial-gradient(circle at 50% 110%, rgba(255,154,158,.18), transparent 55%);
+      opacity:.9;
+      z-index:0;
+      pointer-events:none;
+    }
+    .panel > *{position:relative; z-index:1;}
+
+    .kicker{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      padding:8px 12px;
+      border-radius:999px;
+      background: rgba(0,0,0,.25);
+      border:1px solid rgba(255,255,255,.10);
+      font-size:.85rem;
+      color:rgba(255,255,255,.75);
+      letter-spacing:.3px;
+    }
+    .kicker b{
+      color:#fff;
+      font-weight:800;
+    }
+
+    h1{
+      margin:14px 0 6px;
+      font-size: clamp(2.2rem, 4vw, 3.3rem);
+      line-height:1.05;
+      text-shadow:0 0 26px rgba(255,107,214,.22);
+    }
+    h2{
+      margin:10px 0 0;
+      font-size: clamp(1.35rem, 2.3vw, 2rem);
+      color: var(--pearl);
+      text-shadow:0 0 20px rgba(255,154,158,.22);
+    }
+    p{
+      margin:12px 0 0;
+      color: rgba(255,255,255,.78);
+      font-size:1.05rem;
+      line-height:1.55;
+    }
+
+    .scrollHint{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      margin-top:16px;
+      color:rgba(255,255,255,.70);
+      font-size:.95rem;
+    }
+    .arrow{
+      width:34px;height:34px;border-radius:12px;
+      display:grid;place-items:center;
+      background:rgba(255,255,255,.08);
+      border:1px solid rgba(255,255,255,.10);
+      animation:bob 1.8s infinite;
+    }
+    @keyframes bob{
+      0%,20%,50%,80%,100%{transform:translateY(0);}
+      40%{transform:translateY(8px);}
+      60%{transform:translateY(4px);}
+    }
+
+    /* Cards */
+    .grid{
+      margin-top:18px;
+      display:grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap:14px;
+    }
+    @media (max-width: 900px){
+      .grid{grid-template-columns:1fr;}
+    }
+    .card{
+      background: rgba(0,0,0,.18);
+      border:1px solid rgba(255,255,255,.10);
+      border-radius:22px;
+      padding:18px 16px;
+      box-shadow: 0 20px 70px rgba(0,0,0,.35);
+    }
+    .card h3{
+      margin:0;
+      font-size:1.05rem;
+      letter-spacing:.2px;
+      display:flex;
+      gap:10px;
+      align-items:center;
+    }
+    .pill{
+      padding:4px 10px;
+      border-radius:999px;
+      background:rgba(255,255,255,.08);
+      border:1px solid rgba(255,255,255,.10);
+      font-size:.78rem;
+      color:rgba(255,255,255,.72);
+    }
+    .list{
+      margin:10px 0 0;
+      padding:0;
+      list-style:none;
+      display:grid;
+      gap:10px;
+    }
+    .list li{
+      display:flex;
+      gap:10px;
+      align-items:flex-start;
+      color:rgba(255,255,255,.80);
+      font-size:.98rem;
+      line-height:1.35;
+    }
+    .tick{
+      width:18px;height:18px;border-radius:6px;
+      margin-top:2px;
+      background:linear-gradient(135deg,var(--rose),var(--pink));
+      box-shadow:0 0 18px rgba(255,107,214,.22);
+      flex:0 0 auto;
+    }
+
+    /* Countdown / CTA */
+    .countdown{
+      margin-top:16px;
+      display:flex;
+      gap:14px;
+      flex-wrap:wrap;
+      justify-content:flex-start;
+    }
+    .timebox{
+      background: rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.12);
+      border-radius:20px;
+      padding:16px 16px;
+      min-width:120px;
+      box-shadow: var(--soft);
+      backdrop-filter: blur(12px);
+    }
+    .num{
+      font-size:2.35rem;
+      font-weight:900;
+      background:linear-gradient(90deg, var(--rose), var(--pearl));
+      -webkit-background-clip:text;
+      -webkit-text-fill-color:transparent;
+      display:block;
+      line-height:1;
+    }
+    .lab{
+      margin-top:6px;
+      display:block;
+      font-size:.8rem;
+      letter-spacing:2px;
+      text-transform:uppercase;
+      color:rgba(255,255,255,.60);
+    }
+
+    .ctaRow{
+      margin-top:16px;
+      display:flex;
+      gap:12px;
+      flex-wrap:wrap;
+      align-items:center;
+    }
+    .btn{
+      cursor:pointer;
+      border:none;
+      padding:12px 16px;
+      border-radius:16px;
+      color:#fff;
+      font-weight:800;
+      letter-spacing:.2px;
+      background:linear-gradient(90deg, var(--pink), var(--rose), var(--mint));
+      box-shadow:0 25px 80px rgba(255,107,214,.20);
+      border:1px solid rgba(255,255,255,.16);
+      transform: translateZ(0);
+      transition: transform .15s ease, filter .15s ease;
+    }
+    .btn:hover{transform: translateY(-1px); filter:brightness(1.06);}
+    .btn.secondary{
+      background: rgba(0,0,0,.20);
+      border:1px solid rgba(255,255,255,.14);
+      box-shadow:none;
+      font-weight:700;
+      color:rgba(255,255,255,.86);
+    }
+    .fine{
+      color:rgba(255,255,255,.62);
+      font-size:.88rem;
+      line-height:1.45;
+      margin-top:10px;
+    }
+
+    /* Portal */
+    .portal{
+      margin-top:14px;
+      height:260px;
+      border-radius:26px;
+      border:1px solid rgba(255,255,255,.12);
+      overflow:hidden;
+      background:
+        radial-gradient(circle at 60% 40%, rgba(255,107,214,.35), transparent 50%),
+        radial-gradient(circle at 30% 70%, rgba(117,243,198,.25), transparent 52%),
+        linear-gradient(135deg, rgba(255,154,158,.15), rgba(0,0,0,.25));
+      position:relative;
+      box-shadow: var(--shadow);
+    }
+    .portal:before{
+      content:"";
+      position:absolute;
+      inset:-40%;
+      background: conic-gradient(from 180deg, rgba(255,107,214,.0), rgba(255,107,214,.35), rgba(117,243,198,.25), rgba(255,154,158,.35), rgba(255,107,214,.0));
+      filter: blur(20px);
+      animation: spin 7s linear infinite;
+      opacity:.9;
+    }
+    .portal:after{
+      content:"";
+      position:absolute;
+      inset:16px;
+      border-radius:22px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.25);
+      backdrop-filter: blur(10px);
+    }
+    @keyframes spin{
+      from{transform:rotate(0deg);}
+      to{transform:rotate(360deg);}
+    }
+    .portal .txt{
+      position:absolute;
+      inset:0;
+      display:grid;
+      place-items:center;
+      z-index:3;
+      text-align:center;
+      padding:24px;
+    }
+    .portal .txt b{
+      font-size:1.35rem;
+      display:block;
+    }
+    .portal .txt span{
+      display:block;
+      margin-top:8px;
+      color:rgba(255,255,255,.70);
+    }
+
+    /* Confetti canvas */
+    canvas#fx{
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      z-index:60;
+    }
+
+    /* Small helper text */
+    .mono{
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      font-size:.9rem;
+      color:rgba(255,255,255,.68);
+      margin-top:10px;
+      opacity:.95;
+    }
+
+
+    .poem{
+      margin-top:16px;
+      font-size:1rem;
+      color:rgba(255,255,255,.86);
+      min-height:1.6em;
+      letter-spacing:.2px;
+      text-shadow:0 0 16px rgba(255,107,214,.18);
+    }
+
+    .journeyTrack{
+      margin-top:16px;
+      display:grid;
+      gap:10px;
+    }
+    .journeyStop{
+      position:relative;
+      padding:14px 14px 14px 44px;
+      border-radius:16px;
+      border:1px solid rgba(255,255,255,.12);
+      background:rgba(0,0,0,.22);
+    }
+    .journeyStop:before{
+      content:"";
+      position:absolute;
+      left:16px;
+      top:17px;
+      width:14px;
+      height:14px;
+      border-radius:999px;
+      background:linear-gradient(135deg,var(--mint),var(--rose));
+      box-shadow:0 0 16px rgba(117,243,198,.4);
+    }
+    .journeyStop b{display:block; font-size:1rem;}
+    .journeyStop span{color:rgba(255,255,255,.72); font-size:.92rem;}
+
+    .postcardWall{
+      margin-top:16px;
+      display:grid;
+      grid-template-columns:repeat(3,minmax(0,1fr));
+      gap:12px;
+    }
+    .postcard{
+      padding:12px;
+      border-radius:16px;
+      border:1px solid rgba(255,255,255,.14);
+      background:linear-gradient(160deg, rgba(255,255,255,.12), rgba(255,255,255,.03));
+      min-height:132px;
+    }
+    .postcard h4{margin:0;font-size:1rem;}
+    .postcard p{margin-top:8px;font-size:.92rem;line-height:1.45;}
+    @media (max-width:900px){
+      .postcardWall{grid-template-columns:1fr;}
+    }
+  </style>
+</head>
+
+<body>
+  <canvas id="fx"></canvas>
+
+  <div class="hud">
+    <div class="chip">
+      <i class="dot"></i>
+      <div>
+        <strong id="hudTitle">Navigation : séquence 0/7</strong><br/>
+        <span id="hudSub">Scrolle — le plan se dévoile.</span>
+      </div>
+    </div>
+    <div class="bar"><i id="prog"></i></div>
+    <div class="chip" style="min-width:220px;justify-content:space-between;">
+      <div>
+        <strong id="parisClock">Paris</strong><br/>
+        <span id="parisTz">Europe/Paris</span>
+      </div>
+      <span class="pill" id="heartbeat">LIVE</span>
+    </div>
+  </div>
+
+  <div class="viewport">
+    <div class="sceneBackdrop scene-start" id="sceneBackdrop"></div>
+    <div class="snow" id="snow"></div>
+    <div class="slope"></div>
+    <div class="gates" id="gates"></div>
+    <div class="camera" id="camera">
+      <div class="particles" id="particles"></div>
+      <div class="streak" id="streak"></div>
+
+      <!-- LAYER 0 -->
+      <div class="layer" style="transform: translate(-50%,-50%) translateZ(0px);">
+        <div class="panel">
+          <span class="kicker"><b>SLALOM MODE</b> · Chausse tes skis</span>
+          <h1>Amour, départ au sommet.</h1>
+          <h2>Chaque scroll = une porte de slalom à passer.</h2>
+          <p>
+            Tu descends la piste, tu prends les virages rouges et bleus,
+            et tout en bas t’attend la ligne d’arrivée avec le compteur final.
+          </p>
+          <div class="scrollHint">
+            <div class="arrow">↓</div>
+            <div>A-Team sur les skis. On garde le flow jusqu’en bas.</div>
+          </div>
+          <p class="poem" id="poemLine">✦ Respire, vise la prochaine porte, et fonce avec Amour.</p>
+          <div class="mono">Objectif lisible : arrivée + timer vers 01/03/2026 00:00 (Paris).</div>
+        </div>
+      </div>
+
+      <!-- LAYER 1 -->
+      <div class="layer" style="transform: translate(-50%,-50%) translateZ(-1300px);">
+        <div class="panel">
+          <span class="kicker"><b>PORTE #1</b> · Rouge</span>
+          <h1>Bien chaussée, bien lancée.</h1>
+          <p>Petit mot d’amour: “Tu glisses avec grâce, Amour. Continue, t’es magnifique.”</p>
+        </div>
+      </div>
+
+      <!-- LAYER 2 -->
+      <div class="layer" style="transform: translate(-50%,-50%) translateZ(-2600px);">
+        <div class="panel">
+          <span class="kicker"><b>PORTE #2</b> · Bleue</span>
+          <h1>Virage propre, regard loin.</h1>
+          <p>Motiv’ A-Team: “Ne freine pas ton éclat. Une porte de plus, on est ensemble.”</p>
+        </div>
+      </div>
+
+      <!-- LAYER 3 -->
+      <div class="layer" style="transform: translate(-50%,-50%) translateZ(-3900px);">
+        <div class="panel">
+          <span class="kicker"><b>PORTE #3</b> · Rouge</span>
+          <h1>Tu tiens la ligne parfaite.</h1>
+          <p>Petit mot d’amour: “Ton sourire vaut toutes les médailles, garde la cadence.”</p>
+        </div>
+      </div>
+
+      <!-- LAYER 4 -->
+      <div class="layer" style="transform: translate(-50%,-50%) translateZ(-5200px);">
+        <div class="panel">
+          <span class="kicker"><b>PORTE #4</b> · Bleue</span>
+          <h1>Derniers appuis avant la ligne.</h1>
+          <p>Motiv’ finale: “A-Team à fond. Encore un enchaînement, et c’est gagné.”</p>
+        </div>
+      </div>
+
+      <!-- LAYER 5 -->
+      <div class="layer" style="transform: translate(-50%,-50%) translateZ(-6500px);">
+        <div class="panel">
+          <span class="kicker"><b>LIGNE D’ARRIVÉE</b> · Samedi soir + minuit</span>
+          <h1 id="title">🎿 Arrivée validée : compteur final</h1>
+          <p>Première surprise : samedi 28/02 à 20h. Puis cap vers minuit.</p>
+
+          <div class="countdown" id="countdown">
+            <div class="timebox"><span class="num" id="days">00</span><span class="lab">Jours</span></div>
+            <div class="timebox"><span class="num" id="hours">00</span><span class="lab">Heures</span></div>
+            <div class="timebox"><span class="num" id="minutes">00</span><span class="lab">Minutes</span></div>
+            <div class="timebox"><span class="num" id="seconds">00</span><span class="lab">Secondes</span></div>
+          </div>
+
+          <div class="ctaRow">
+            <button class="btn" id="acceptBtn">✅ Je passe la ligne (A-Team)</button>
+            <button class="btn secondary" id="icsBtn">📅 Ajouter samedi 20h à l’agenda</button>
+            <button class="btn secondary" id="copyBtn">📨 Copier le plan</button>
+          </div>
+
+          <div class="fine" id="fineText">Rappel: première surprise à 20h samedi soir. Compteur principal vers 01/03/2026 00:00 (Paris).</div>
+        </div>
+      </div>
+
+      <!-- LAYER 6 -->
+      <div class="layer" style="transform: translate(-50%,-50%) translateZ(-7800px);">
+        <div class="panel">
+          <span class="kicker"><b>FINISH</b> · 01/03/2026 à 00:00</span>
+          <h1>Tu as descendu toute la piste. 🏁</h1>
+          <p>Lisible, net, élégant: on comprend direct qu’on chausse les skis. Et on célèbre.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+<script>
+/* =========================
+   1) 3D CAMERA (bon sens)
