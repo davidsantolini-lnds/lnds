@@ -1,210 +1,114 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="fr">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Rendez-vous le 1er mars</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet" />
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alerte Anniversaire</title>
     <style>
-      :root {
-        --bg: #0a0b14;
-        --bg2: #171a2f;
-        --card: rgba(255,255,255,.08);
-        --line: rgba(255,255,255,.18);
-        --text: rgba(255,255,255,.95);
-        --muted: rgba(255,255,255,.72);
-        --accent: #8ea2ff;
-        --accent2: #84e6ff;
-      }
-      * { box-sizing: border-box; }
-      html, body { margin: 0; min-height: 100%; }
-      body {
-        font-family: Inter, system-ui, sans-serif;
-        color: var(--text);
-        background:
-          radial-gradient(1100px 700px at 12% -10%, rgba(142,162,255,.2), transparent 60%),
-          radial-gradient(1000px 680px at 92% 4%, rgba(132,230,255,.16), transparent 62%),
-          linear-gradient(180deg, var(--bg), var(--bg2));
-      }
-
-      .bg-photo {
-        position: fixed;
-        inset: 0;
-        z-index: -1;
-        background: url("nous.jpg") center/cover no-repeat;
-        opacity: .1;
-      }
-
-      main {
-        width: min(920px, 92vw);
-        margin: 0 auto;
-        padding: 30px 0 50px;
-        display: grid;
-        gap: 24px;
-      }
-
-      .card {
-        border: 1px solid var(--line);
-        border-radius: 20px;
-        background: var(--card);
-        backdrop-filter: blur(8px);
-        padding: clamp(16px, 2.2vw, 24px);
-        box-shadow: 0 20px 55px rgba(0,0,0,.35);
-      }
-
-      h1 { margin: 0 0 10px; font-size: clamp(30px, 5vw, 52px); line-height: 1.02; }
-      h2 { margin: 0 0 12px; }
-      p { margin: 0; color: var(--muted); line-height: 1.65; }
-
-      .chip {
-        display: inline-block;
-        margin-bottom: 12px;
-        padding: 7px 11px;
-        border-radius: 999px;
-        border: 1px solid var(--line);
-        background: rgba(255,255,255,.06);
-        color: var(--muted);
-        font-size: 13px;
-      }
-
-      .counter {
-        display: grid;
-        grid-template-columns: repeat(4, minmax(0,1fr));
-        gap: 10px;
-        margin-top: 14px;
-      }
-      .box {
-        border: 1px solid var(--line);
-        border-radius: 14px;
-        text-align: center;
-        padding: 10px;
-        background: rgba(0,0,0,.2);
-      }
-      .num { font-size: clamp(24px, 4vw, 38px); font-weight: 800; }
-      .lbl { text-transform: uppercase; letter-spacing: .08em; font-size: 11px; color: var(--muted); }
-
-      .timeline {
-        position: relative;
-        display: grid;
-        gap: 12px;
-        padding-left: 20px;
-      }
-      .timeline::before {
-        content: "";
-        position: absolute;
-        left: 4px;
-        top: 6px;
-        bottom: 6px;
-        width: 2px;
-        background: linear-gradient(180deg, var(--accent), var(--accent2));
-        opacity: .7;
-      }
-      .event {
-        position: relative;
-        border: 1px solid var(--line);
-        border-radius: 14px;
-        background: rgba(255,255,255,.04);
-        padding: 12px;
-        transform: translateY(18px);
-        opacity: 0;
-        transition: .55s ease;
-      }
-      .event::before {
-        content: "";
-        position: absolute;
-        left: -22px;
-        top: 17px;
-        width: 10px;
-        height: 10px;
-        border-radius: 999px;
-        background: var(--accent2);
-        box-shadow: 0 0 0 6px rgba(255,255,255,.08);
-      }
-      .event.show {
-        transform: translateY(0);
-        opacity: 1;
-      }
-      .event b { display: block; margin-bottom: 4px; }
-
-      @media (max-width: 760px) {
-        .counter { grid-template-columns: repeat(2, minmax(0,1fr)); }
-      }
+        body {
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            /* Un dégradé rose/pêche, parce qu'il faut bien un peu de romantisme cliché */
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%);
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            color: #2c3e50;
+            overflow: hidden;
+        }
+        h1 {
+            font-size: 2.5rem;
+            text-align: center;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+        .countdown-container {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .time-box {
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(10px);
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.15);
+            min-width: 90px;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+        .number {
+            font-size: 3.5rem;
+            font-weight: 800;
+            display: block;
+            color: #e74c3c;
+        }
+        .label {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: bold;
+            color: #34495e;
+        }
+        .message {
+            margin-top: 40px;
+            font-size: 1.1rem;
+            font-style: italic;
+            opacity: 0;
+            transition: opacity 1.5s ease-in-out;
+            background: rgba(255,255,255,0.5);
+            padding: 10px 20px;
+            border-radius: 20px;
+        }
     </style>
-  </head>
-  <body>
-    <div class="bg-photo" aria-hidden="true"></div>
+</head>
+<body>
 
-    <main>
-      <section class="card">
-        <div class="chip" id="chip">rendez-vous le 1er mars</div>
-        <h1>Rendez-vous le 1er mars</h1>
-        <p>Un compteur simple. Une timeline claire. Juste l’essentiel.</p>
+    <h1 id="title">⏳ Le compte à rebours est lancé...</h1>
+    
+    <div class="countdown-container" id="countdown">
+        <div class="time-box"><span class="number" id="days">00</span><span class="label">Jours</span></div>
+        <div class="time-box"><span class="number" id="hours">00</span><span class="label">Heures</span></div>
+        <div class="time-box"><span class="number" id="minutes">00</span><span class="label">Minutes</span></div>
+        <div class="time-box"><span class="number" id="seconds">00</span><span class="label">Secondes</span></div>
+    </div>
 
-        <div class="counter" aria-label="Compte à rebours">
-          <div class="box"><div class="num" id="d">—</div><div class="lbl">Jours</div></div>
-          <div class="box"><div class="num" id="h">—</div><div class="lbl">Heures</div></div>
-          <div class="box"><div class="num" id="m">—</div><div class="lbl">Minutes</div></div>
-          <div class="box"><div class="num" id="s">—</div><div class="lbl">Secondes</div></div>
-        </div>
-      </section>
-
-      <section class="card">
-        <h2>Timeline</h2>
-        <div class="timeline">
-          <article class="event"><b>Aujourd’hui</b><p>On lance le compte à rebours.</p></article>
-          <article class="event"><b>Avant le 1er mars</b><p>Chaque jour nous rapproche du rendez-vous.</p></article>
-          <article class="event"><b>1er mars</b><p id="dayj">Rendez-vous le 1er mars.</p></article>
-          <article class="event"><b>Après</b><p>On continue d’écrire la suite.</p></article>
-        </div>
-      </section>
-    </main>
+    <div class="message" id="panic-message">Il est grand temps de valider le panier chez le fleuriste.</div>
 
     <script>
-      const target = new Date("2026-03-01T00:00:00");
-      const d = document.getElementById("d");
-      const h = document.getElementById("h");
-      const m = document.getElementById("m");
-      const s = document.getElementById("s");
-      const chip = document.getElementById("chip");
-      const dayj = document.getElementById("dayj");
+        // La cible : 1er mars 2026 à minuit tapante.
+        const targetDate = new Date("March 1, 2026 00:00:00").getTime();
 
-      const pad = (n) => String(n).padStart(2, "0");
-      function tick() {
-        const diff = target - new Date();
-        if (diff <= 0) {
-          d.textContent = "0";
-          h.textContent = "00";
-          m.textContent = "00";
-          s.textContent = "00";
-          chip.textContent = "rendez-vous le 1er mars";
-          dayj.textContent = "Rendez-vous le 1er mars.";
-          return;
-        }
+        const timer = setInterval(function() {
+            const now = new Date().getTime();
+            const distance = targetDate - now;
 
-        const sec = Math.floor(diff / 1000);
-        const days = Math.floor(sec / 86400);
-        const hours = Math.floor((sec % 86400) / 3600);
-        const mins = Math.floor((sec % 3600) / 60);
-        const secs = sec % 60;
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-        d.textContent = String(days);
-        h.textContent = pad(hours);
-        m.textContent = pad(mins);
-        s.textContent = pad(secs);
-        chip.textContent = `rendez-vous le 1er mars • ${days}j ${pad(hours)}:${pad(mins)}:${pad(secs)}`;
-      }
-      tick();
-      setInterval(tick, 1000);
+            document.getElementById("days").innerText = days.toString().padStart(2, '0');
+            document.getElementById("hours").innerText = hours.toString().padStart(2, '0');
+            document.getElementById("minutes").innerText = minutes.toString().padStart(2, '0');
+            document.getElementById("seconds").innerText = seconds.toString().padStart(2, '0');
 
-      const events = document.querySelectorAll('.event');
-      const io = new IntersectionObserver((entries) => {
-        entries.forEach((e) => {
-          if (e.isIntersecting) e.target.classList.add('show');
-        });
-      }, { threshold: 0.18 });
-      events.forEach((el) => io.observe(el));
+            // Un peu de pression psychologique : le message s'affiche s'il reste moins de 3 jours
+            if (days < 3 && distance > 0) {
+                document.getElementById("panic-message").style.opacity = 1;
+            }
+
+            // Quand le moment est venu
+            if (distance < 0) {
+                clearInterval(timer);
+                document.getElementById("title").innerText = "🎉 Joyeux Anniversaire ! 🎉";
+                document.getElementById("countdown").innerHTML = "<h2 style='color:#e74c3c; text-align:center;'>J'espère que tu as assuré avec le cadeau IRL.</h2>";
+                document.getElementById("panic-message").style.display = "none";
+            }
+        }, 1000);
     </script>
-  </body>
+</body>
 </html>
