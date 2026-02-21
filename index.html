@@ -3,111 +3,206 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Alerte Anniversaire</title>
+    <title>Alerte Anniversaire 3D</title>
     <style>
+        /* On donne une hauteur immense au body pour avoir de la marge de scroll */
         body {
             margin: 0;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            /* Un dégradé rose/pêche, parce qu'il faut bien un peu de romantisme cliché */
-            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%);
+            height: 500vh;
+            background-color: #050505;
+            color: white;
             font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-            color: #2c3e50;
+            overflow-x: hidden;
+        }
+
+        /* L'écran fixe qui agit comme une fenêtre vers notre monde 3D */
+        .viewport {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            perspective: 1000px; /* C'est ça qui crée l'effet de profondeur */
             overflow: hidden;
+            background: radial-gradient(circle at center, #1a1025 0%, #000000 100%);
         }
-        h1 {
-            font-size: 2.5rem;
+
+        /* La caméra qui va avancer dans le Z-index quand on scrolle */
+        .camera {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            transform-style: preserve-3d;
+            /* Une petite transition pour lisser le mouvement de la souris */
+            transition: transform 0.1s ease-out; 
+        }
+
+        /* Les calques positionnés à différentes profondeurs */
+        .layer {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 100vw;
             text-align: center;
-            margin-bottom: 30px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+            /* Le translate(-50%, -50%) sert à centrer parfaitement */
+            transform-style: preserve-3d;
         }
+
+        h1, h2 {
+            text-shadow: 0 0 20px rgba(255, 105, 180, 0.5);
+            margin: 0;
+        }
+
+        h1 { font-size: 3rem; }
+        h2 { font-size: 2rem; color: #ff9a9e; }
+        .scroll-indicator { margin-top: 20px; font-size: 2rem; animation: bounce 2s infinite; }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(20px); }
+            60% { transform: translateY(10px); }
+        }
+
+        /* Le compteur à la fin du tunnel */
         .countdown-container {
             display: flex;
-            gap: 20px;
-            flex-wrap: wrap;
+            gap: 30px;
             justify-content: center;
-        }
-        .time-box {
-            background: rgba(255, 255, 255, 0.6);
-            backdrop-filter: blur(10px);
-            padding: 20px;
-            border-radius: 15px;
-            text-align: center;
-            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.15);
-            min-width: 90px;
-            border: 1px solid rgba(255, 255, 255, 0.18);
-        }
-        .number {
-            font-size: 3.5rem;
-            font-weight: 800;
-            display: block;
-            color: #e74c3c;
-        }
-        .label {
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            font-weight: bold;
-            color: #34495e;
-        }
-        .message {
             margin-top: 40px;
-            font-size: 1.1rem;
-            font-style: italic;
-            opacity: 0;
-            transition: opacity 1.5s ease-in-out;
-            background: rgba(255,255,255,0.5);
-            padding: 10px 20px;
+        }
+
+        .time-box {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(15px);
+            padding: 30px;
             border-radius: 20px;
+            border: 1px solid rgba(255, 105, 180, 0.3);
+            box-shadow: 0 0 50px rgba(255, 105, 180, 0.2), inset 0 0 20px rgba(255, 255, 255, 0.05);
+            min-width: 120px;
+        }
+
+        .number {
+            font-size: 5rem;
+            font-weight: 900;
+            background: linear-gradient(to right, #ff9a9e, #fecfef);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: block;
+        }
+
+        .label {
+            font-size: 1.2rem;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            margin-top: 10px;
+            display: block;
+            color: #a0a0a0;
+        }
+
+        .particles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            transform-style: preserve-3d;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: white;
+            border-radius: 50%;
+            box-shadow: 0 0 10px white;
         }
     </style>
 </head>
 <body>
 
-    <h1 id="title">⏳ Le compte à rebours est lancé...</h1>
-    
-    <div class="countdown-container" id="countdown">
-        <div class="time-box"><span class="number" id="days">00</span><span class="label">Jours</span></div>
-        <div class="time-box"><span class="number" id="hours">00</span><span class="label">Heures</span></div>
-        <div class="time-box"><span class="number" id="minutes">00</span><span class="label">Minutes</span></div>
-        <div class="time-box"><span class="number" id="seconds">00</span><span class="label">Secondes</span></div>
+    <div class="viewport">
+        <div class="camera" id="camera">
+            
+            <div class="particles" id="particles"></div>
+
+            <div class="layer" style="transform: translate(-50%, -50%) translateZ(0px);">
+                <h1>Le temps file...</h1>
+                <div class="scroll-indicator">↓ Scrolle pour plonger ↓</div>
+            </div>
+
+            <div class="layer" style="transform: translate(-50%, -50%) translateZ(-1500px);">
+                <h2>On approche de la date fatidique...</h2>
+            </div>
+
+            <div class="layer" style="transform: translate(-50%, -50%) translateZ(-3000px);">
+                <h2>Prépare-toi psychologiquement.</h2>
+            </div>
+
+            <div class="layer" style="transform: translate(-50%, -50%) translateZ(-4500px);">
+                <h1 id="title">🎉 Objectif 1er Mars 🎉</h1>
+                <div class="countdown-container" id="countdown">
+                    <div class="time-box"><span class="number" id="days">00</span><span class="label">Jours</span></div>
+                    <div class="time-box"><span class="number" id="hours">00</span><span class="label">Heures</span></div>
+                    <div class="time-box"><span class="number" id="minutes">00</span><span class="label">Minutes</span></div>
+                    <div class="time-box"><span class="number" id="seconds">00</span><span class="label">Secondes</span></div>
+                </div>
+            </div>
+
+        </div>
     </div>
 
-    <div class="message" id="panic-message">Il est grand temps de valider le panier chez le fleuriste.</div>
-
     <script>
-        // La cible : 1er mars 2026 à minuit tapante.
+        // --- 1. GESTION DU SCROLL 3D ---
+        const camera = document.getElementById('camera');
+        
+        window.addEventListener('scroll', () => {
+            // Calcule le pourcentage de scroll de la page (de 0 à 1)
+            const scrollY = window.scrollY;
+            const maxScroll = document.body.scrollHeight - window.innerHeight;
+            const scrollFraction = scrollY / maxScroll;
+            
+            // On translate la caméra de 0 à 4500px en profondeur (pour atteindre le dernier écran)
+            // On ajoute une très légère rotation pour l'effet vertige de l'espace
+            const zMove = scrollFraction * 4500;
+            const rotate = scrollFraction * 15; 
+            
+            camera.style.transform = `translateZ(${zMove}px) rotateZ(${rotate}deg)`;
+        });
+
+        // --- 2. GÉNÉRATION DES PARTICULES (Les étoiles filantes) ---
+        const particlesContainer = document.getElementById('particles');
+        for(let i = 0; i < 150; i++) {
+            const p = document.createElement('div');
+            p.className = 'particle';
+            // Position X et Y aléatoire
+            p.style.left = `${Math.random() * 200 - 50}vw`;
+            p.style.top = `${Math.random() * 200 - 50}vh`;
+            // Position Z aléatoire entre 1000px (devant) et -5000px (très loin derrière)
+            p.style.transform = `translateZ(${Math.random() * -6000 + 1000}px)`;
+            
+            // Couleurs aléatoires pour faire festif
+            const colors = ['#ffffff', '#ff9a9e', '#fecfef'];
+            p.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+            
+            particlesContainer.appendChild(p);
+        }
+
+        // --- 3. LE COMPTEUR (Toujours le même moteur sous le capot) ---
         const targetDate = new Date("March 1, 2026 00:00:00").getTime();
 
         const timer = setInterval(function() {
             const now = new Date().getTime();
             const distance = targetDate - now;
 
-            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-            document.getElementById("days").innerText = days.toString().padStart(2, '0');
-            document.getElementById("hours").innerText = hours.toString().padStart(2, '0');
-            document.getElementById("minutes").innerText = minutes.toString().padStart(2, '0');
-            document.getElementById("seconds").innerText = seconds.toString().padStart(2, '0');
-
-            // Un peu de pression psychologique : le message s'affiche s'il reste moins de 3 jours
-            if (days < 3 && distance > 0) {
-                document.getElementById("panic-message").style.opacity = 1;
-            }
-
-            // Quand le moment est venu
             if (distance < 0) {
                 clearInterval(timer);
-                document.getElementById("title").innerText = "🎉 Joyeux Anniversaire ! 🎉";
-                document.getElementById("countdown").innerHTML = "<h2 style='color:#e74c3c; text-align:center;'>J'espère que tu as assuré avec le cadeau IRL.</h2>";
-                document.getElementById("panic-message").style.display = "none";
+                document.getElementById("title").innerText = "🎂 C'est le jour J ! 🎂";
+                document.getElementById("countdown").innerHTML = "<h2>Tu as intérêt à avoir ton cadeau.</h2>";
+                return;
             }
+
+            document.getElementById("days").innerText = Math.floor(distance / (1000 * 60 * 60 * 24)).toString().padStart(2, '0');
+            document.getElementById("hours").innerText = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)).toString().padStart(2, '0');
+            document.getElementById("minutes").innerText = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60)).toString().padStart(2, '0');
+            document.getElementById("seconds").innerText = Math.floor((distance % (1000 * 60)) / 1000).toString().padStart(2, '0');
         }, 1000);
     </script>
 </body>
