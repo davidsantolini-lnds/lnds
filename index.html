@@ -51,7 +51,8 @@
       gap:10px;
       padding:10px 12px;
       border-radius:999px;
-@@ -75,50 +75,126 @@
+@@ -74,50 +74,136 @@
+      pointer-events:none;
     }
     .bar > i{
       display:block;height:100%;
@@ -76,82 +77,92 @@
       transform-style:preserve-3d;
       will-change:transform;
     }
-
     .sceneBackdrop{
       position:absolute;
       inset:0;
       z-index:0;
-      transition: background 700ms ease;
-      background: linear-gradient(180deg, #c7dfff 0%, #8ab4e2 35%, #3b5f85 68%, #17324d 100%);
+      transition: background 700ms ease, filter 700ms ease;
+      background: radial-gradient(circle at 50% 35%, #1f1440 0%, #07060d 70%);
     }
-    .scene-top{ background: linear-gradient(180deg, #d8ebff 0%, #a7caee 38%, #5a7fa8 100%);}
-    .scene-mid{ background: linear-gradient(180deg, #c0dbfa 0%, #84add9 40%, #3f6c98 100%);}
-    .scene-bottom{ background: linear-gradient(180deg, #99d8ff 0%, #3f9fd0 45%, #16507a 100%);}
+    .scene-space{
+      background: radial-gradient(circle at 50% 32%, #2d1d5c 0%, #05040a 70%);
+    }
+    .scene-summit{
+      background: linear-gradient(180deg, #bdd7ff 0%, #7ca1d6 30%, #35507b 70%, #111a29 100%);
+      filter: saturate(1.15);
+    }
+    .scene-ridge{
+      background: linear-gradient(180deg, #9ac0ea 0%, #5a7da8 35%, #24384f 70%, #101a28 100%);
+    }
+    .scene-sea{
+      background: linear-gradient(180deg, #7cd0ff 0%, #2f8ac4 40%, #0e4b79 72%, #08253c 100%);
+    }
+    .snow{
+      position:absolute;
+      inset:-20% 0 0;
+      pointer-events:none;
+      z-index:1;
+      opacity:0;
+      transition:opacity 500ms ease;
+      background-image: radial-gradient(circle, rgba(255,255,255,.9) 1px, transparent 1.8px);
+      background-size: 26px 26px;
+      animation: snowfall 7s linear infinite;
+    }
+    @keyframes snowfall{
+      to{ transform: translateY(120px) translateX(-20px); }
+    }
+    .snow.on{opacity:.65;}
 
-    .slope{
+    .slopeTrack{
+      position:absolute;
+      inset:0;
+      z-index:1;
+      pointer-events:none;
+      transform-style:preserve-3d;
+    }
+    .skiLane{
       position:absolute;
       left:50%;
-      top:-4vh;
-      width:min(72vw,860px);
-      height:108vh;
-      transform:translateX(-50%);
-      border-radius:44% 44% 18% 18% / 12% 12% 20% 20%;
-      z-index:1;
-      background: linear-gradient(180deg, rgba(255,255,255,.95) 0%, rgba(241,247,255,.95) 58%, rgba(221,240,255,.92) 100%);
-      box-shadow: inset 0 0 60px rgba(130,160,220,.22), 0 26px 80px rgba(0,0,0,.25);
-      border:1px solid rgba(255,255,255,.68);
+      top:50%;
+      width:min(880px,72vw);
+      height:7800px;
+      transform:translate3d(-50%,-50%,-3900px) rotateX(89deg);
+      background:linear-gradient(180deg, rgba(255,255,255,.92), rgba(233,245,255,.95));
+      border-radius:120px;
+      box-shadow:0 0 60px rgba(255,255,255,.25);
+      opacity:.9;
     }
-    .slope:before,
-    .slope:after{
+    .skiLane:before{
       content:"";
       position:absolute;
-      top:6%; bottom:8%;
-      width:2px;
-      background: repeating-linear-gradient(to bottom, rgba(130,160,200,.28), rgba(130,160,200,.28) 14px, transparent 14px, transparent 28px);
-      opacity:.6;
+      inset:0;
+      border-radius:120px;
+      background:repeating-linear-gradient(180deg, rgba(78,120,160,.09) 0 24px, rgba(255,255,255,0) 24px 48px);
+      opacity:.55;
     }
-    .slope:before{left:34%;}
-    .slope:after{left:66%;}
-
-    .gatesOverlay{position:absolute; inset:0; z-index:2; pointer-events:none;}
-    .gateMark{
+    .gate{
       position:absolute;
-      left:50%;
-      transform:translateX(-50%);
-      width:min(64vw,720px);
-      display:flex;
-      justify-content:space-between;
-      align-items:flex-end;
-      color:#102036;
-      font-weight:800;
-      text-shadow:0 1px 0 rgba(255,255,255,.7);
-    }
-    .pole{width:8px;height:84px;border-radius:99px; box-shadow:0 10px 20px rgba(0,0,0,.18);}
-    .pole.red{background:linear-gradient(180deg,#ff8a8a,#f23737);}
-    .pole.blue{background:linear-gradient(180deg,#8ec5ff,#2c67ff);}
-    .gateTag{
-      position:absolute;
-      left:50%;
-      transform:translate(-50%, -8px);
-      padding:6px 12px;
+      width:190px;
+      height:12px;
       border-radius:999px;
-      background:rgba(255,255,255,.85);
-      border:1px solid rgba(20,40,70,.15);
-      font-size:.82rem;
+      transform-style:preserve-3d;
+      box-shadow:0 0 22px rgba(0,0,0,.28);
+    }
+    .gate.red{background:linear-gradient(90deg,#ff858f,#ff3d4f);}
+    .gate.blue{background:linear-gradient(90deg,#75b9ff,#2f76ff);}
+    .gate:after{
+      content:attr(data-love);
+      position:absolute;
+      left:12px;
+      top:-28px;
+      padding:4px 8px;
+      font-size:.78rem;
+      border-radius:999px;
+      background:rgba(4,9,20,.72);
+      border:1px solid rgba(255,255,255,.24);
+      color:#fff;
       white-space:nowrap;
     }
-
-    .finishLine{
-      margin-top:18px;
-      border-radius:20px;
-      border:1px solid rgba(255,255,255,.2);
-      background: linear-gradient(90deg, rgba(0,0,0,.22) 0 8%, rgba(255,255,255,.2) 8% 16%, rgba(0,0,0,.22) 16% 24%, rgba(255,255,255,.2) 24% 32%, rgba(0,0,0,.22) 32% 40%, rgba(255,255,255,.2) 40% 48%, rgba(0,0,0,.22) 48% 56%, rgba(255,255,255,.2) 56% 64%, rgba(0,0,0,.22) 64% 72%, rgba(255,255,255,.2) 72% 80%, rgba(0,0,0,.22) 80% 88%, rgba(255,255,255,.2) 88% 100%);
-      padding:10px 14px;
-      font-weight:900;
-      letter-spacing:.6px;
-      text-align:center;
-    }
-
 
     /* Stars */
     .particles{
@@ -177,8 +188,7 @@
       pointer-events:none;
       filter: blur(.2px);
     }
-
-@@ -388,479 +464,480 @@
+@@ -388,479 +474,493 @@
       font-size:1.35rem;
       display:block;
     }
@@ -270,9 +280,8 @@
       <i class="dot"></i>
       <div>
         <strong id="hudTitle">Navigation : séquence 0/6</strong><br/>
-        <span id="hudSub">Scrolle — le plan se dévoile.</span>
         <strong id="hudTitle">Navigation : séquence 0/7</strong><br/>
-        <span id="hudSub">Scrolle — descente slalom engagée.</span>
+        <span id="hudSub">Scrolle — le plan se dévoile.</span>
       </div>
     </div>
     <div class="bar"><i id="prog"></i></div>
@@ -286,19 +295,20 @@
   </div>
 
   <div class="viewport">
-    <div class="sceneBackdrop scene-top" id="sceneBackdrop"></div>
-    <div class="slope"></div>
-    <div class="gatesOverlay" id="gatesOverlay">
-      <div class="gateMark" style="top:14%;"><i class="pole red"></i><span class="gateTag">Amour, souffle et glisse ✨</span><i class="pole blue"></i></div>
-      <div class="gateMark" style="top:26%; width:min(56vw,640px);"><i class="pole blue"></i><span class="gateTag">A-Team focus, tu gères</span><i class="pole red"></i></div>
-      <div class="gateMark" style="top:40%; width:min(66vw,740px);"><i class="pole red"></i><span class="gateTag">Encore une porte, mon coeur</span><i class="pole blue"></i></div>
-      <div class="gateMark" style="top:56%; width:min(52vw,610px);"><i class="pole blue"></i><span class="gateTag">Style 2026 : précis + doux</span><i class="pole red"></i></div>
-      <div class="gateMark" style="top:72%; width:min(68vw,760px);"><i class="pole red"></i><span class="gateTag">On file vers la ligne d’arrivée</span><i class="pole blue"></i></div>
-    </div>
-
+    <div class="sceneBackdrop scene-space" id="sceneBackdrop"></div>
+    <div class="snow" id="snow"></div>
     <div class="camera" id="camera">
       <div class="particles" id="particles"></div>
       <div class="streak" id="streak"></div>
+      <div class="slopeTrack">
+        <div class="skiLane"></div>
+        <div class="gate red" data-love="Amour · go" style="left:54%;top:54%;transform:translate3d(-50%,-50%,-900px) rotateY(-18deg);"></div>
+        <div class="gate blue" data-love="A-Team" style="left:42%;top:50%;transform:translate3d(-50%,-50%,-1700px) rotateY(20deg);"></div>
+        <div class="gate red" data-love="Respire" style="left:56%;top:50%;transform:translate3d(-50%,-50%,-2500px) rotateY(-17deg);"></div>
+        <div class="gate blue" data-love="Encore" style="left:44%;top:48%;transform:translate3d(-50%,-50%,-3400px) rotateY(16deg);"></div>
+        <div class="gate red" data-love="Tu gères" style="left:57%;top:52%;transform:translate3d(-50%,-50%,-4300px) rotateY(-15deg);"></div>
+        <div class="gate blue" data-love="Mon coeur" style="left:43%;top:48%;transform:translate3d(-50%,-50%,-5200px) rotateY(15deg);"></div>
+      </div>
 
       <!-- LAYER 0 -->
       <div class="layer" style="transform: translate(-50%,-50%) translateZ(0px);">
@@ -315,13 +325,12 @@
             <div>Plonge. Je gère le reste.</div>
           </div>
           <div class="mono">Astuce : souris = léger vertige (cinéma, pas manège).</div>
-          <span class="kicker"><b>SLALOM BIRTHDAY</b> · briefing A-Team</span>
-          <h1>Chausse les skis, Amour.</h1>
-          <h2>Le scroll = une descente de slalom, portes rouges et bleues incluses.</h2>
-          <p>Tu descends la piste, on enchaîne les portes motivantes, et on coupe la ligne d’arrivée avec le compteur final.</p>
-          <div class="scrollHint"><div class="arrow">↓</div><div>Descends : la piste est ouverte.</div></div>
-          <p class="poem" id="poemLine">✦ Respire, carve, et garde le sourire.</p>
-          <div class="mono">Indice visuel: la piste est au centre, les portes t’accompagnent tout du long.</div>
+          <span class="kicker"><b>SLALOM BRIEF</b> · Chausse les skis</span>
+          <h1>On part en descente, Amour.</h1>
+          <h2>Tu scrolles = tu skie entre les portes rouges et bleues.</h2>
+          <p>Objectif : passer toutes les portes et rejoindre la ligne d’arrivée. En bas, compteur final vers le 01/03/2026 00:00 (Paris).</p>
+          <div class="scrollHint"><div class="arrow">↓</div><div>Flexion, appuis, et go A-Team.</div></div>
+          <p class="poem" id="poemLine">✦ Premier virage : propre. Deuxième : élégant. Troisième : Amour.</p>
         </div>
       </div>
 
@@ -340,10 +349,9 @@
               <span>Destination encore masquée</span>
             </div>
           </div>
-          <span class="kicker"><b>PORTE 1</b> · échauffement</span>
-          <h1>Premier virage, première promesse.</h1>
-          <p>“Amour, tu sais faire les choses bien.” On garde le rythme, on reste fluide, et on vise la prochaine porte.</p>
-          <div class="portal"><div class="txt"><b>Gate Cleared ✅</b><span>A-Team synchro parfaite</span></div></div>
+          <span class="kicker"><b>PORTE 1</b> · rouge</span>
+          <h1>Entrée de piste.</h1>
+          <p>Tu viens de passer la première porte. Petit mot: <b>Amour</b>. On garde la ligne et on anticipe le virage suivant.</p>
         </div>
       </div>
 
@@ -356,6 +364,9 @@
             Une ville qui te ressemble : élégante, intense, pas tiède.
             Et autour… des îles et une côte à faire taire n’importe quel PowerPoint.
           </p>
+          <span class="kicker"><b>PORTE 2</b> · bleue</span>
+          <h1>Piste visible, neige vive.</h1>
+          <p>Le slalom est lisible: neige, portes, cadence. Mot sur la porte: <b>A-Team</b>.</p>
           <div class="grid">
             <div class="card">
               <h3>Ce que je vise <span class="pill">expérience</span></h3>
@@ -374,10 +385,9 @@
                 <li><i class="tick"></i> Une surprise “wow”</li>
               </ul>
             </div>
+            <div class="card"><h3>Technique <span class="pill">ski</span></h3><ul class="list"><li><i class="tick"></i>Regard loin</li><li><i class="tick"></i>Carres propres</li><li><i class="tick"></i>Rythme régulier</li></ul></div>
+            <div class="card"><h3>Énergie <span class="pill">love</span></h3><ul class="list"><li><i class="tick"></i>Motivation douce</li><li><i class="tick"></i>Confiance totale</li><li><i class="tick"></i>Amour discret</li></ul></div>
           </div>
-          <span class="kicker"><b>PORTE 2</b> · rythme</span>
-          <h1>Droite, gauche, propre.</h1>
-          <p>“Continue, mon coeur, tu voles.” La piste reste lisible, les appuis sont nets, l’arrivée se rapproche.</p>
         </div>
       </div>
 
@@ -420,30 +430,32 @@
               <span>Tu viens de débloquer le plan.</span>
             </div>
           </div>
-          <span class="kicker"><b>PORTE 3</b> · confiance</span>
-          <h1>On garde la ligne idéale.</h1>
-          <p>“Amour, encore deux portes.” Le style est là: régulier, élégant, déterminé.</p>
+          <span class="kicker"><b>PORTES 3 & 4</b> · enchaînement</span>
+          <h1>Droite, gauche, droite.</h1>
+          <p>Chaque porte affiche un mini message d’amour pour te pousser jusqu’en bas. Tu tiens la trace, c’est beau et fluide.</p>
+          <div class="portal"><div class="txt"><b>Slalom validé ✅</b><span>Continue vers la ligne d’arrivée</span></div></div>
         </div>
       </div>
 
       <!-- LAYER 4 : Countdown + accept -->
+      <!-- LAYER 4 -->
       <div class="layer" style="transform: translate(-50%,-50%) translateZ(-5200px);">
         <div class="panel">
           <span class="kicker"><b>OBJECTIF</b> · 1er mars (heure de Paris)</span>
           <h1 id="title">🎉 Compte à rebours 🎉</h1>
           <p>Parce que certaines dates méritent un dispositif complet.</p>
-          <span class="kicker"><b>PORTE 4</b> · accélération</span>
-          <h1>Derniers virages avant finish.</h1>
-          <p>“A-Team jusqu’au bout.” Tu lis la piste en un coup d’oeil, et tu passes tout en contrôle.</p>
+          <span class="kicker"><b>PORTE 5</b> · presque en bas</span>
+          <h1>Derniers appuis avant l’arrivée.</h1>
+          <p>La piste s’ouvre, tu vois l’arche finale. Message de porte: <b>Mon coeur</b>. Plus que quelques mètres.</p>
         </div>
       </div>
 
+      <!-- LAYER 5 : countdown -->
       <div class="layer" style="transform: translate(-50%,-50%) translateZ(-6500px);">
         <div class="panel">
-          <span class="kicker"><b>LIGNE D’ARRIVÉE</b> · chrono émotionnel</span>
-          <h1 id="title">⏳ Cap sur 01/03/2026 · 00:00 (Paris)</h1>
-          <p>Et c’est noté clairement: la première surprise sera à 20h le samedi soir.</p>
-          <div class="finishLine">FINISH LINE</div>
+          <span class="kicker"><b>LIGNE D’ARRIVÉE</b> · 01 mars 2026 · 00:00 (Paris)</span>
+          <h1 id="title">🏁 Compteur d’arrivée</h1>
+          <p>Première surprise le samedi soir à 20h. Puis cap vers minuit, pour lancer officiellement le 1er mars.</p>
 
           <div class="countdown" id="countdown">
             <div class="timebox"><span class="num" id="days">00</span><span class="lab">Jours</span></div>
@@ -454,21 +466,22 @@
 
           <div class="ctaRow">
             <button class="btn" id="acceptBtn">✅ J’accepte la mission</button>
-            <button class="btn" id="acceptBtn">✅ Je passe la ligne</button>
             <button class="btn secondary" id="icsBtn">📅 Ajouter au calendrier</button>
+            <button class="btn" id="acceptBtn">✅ Je passe la ligne</button>
+            <button class="btn secondary" id="icsBtn">📅 Ajouter l’arrivée (00:00) à l’agenda</button>
             <button class="btn secondary" id="copyBtn">📨 Copier l’invitation</button>
           </div>
 
           <div class="fine" id="fineText">
             PS : si tu appuies sur “J’accepte”, il se passe un truc. Oui, j’ai codé l’ego.
-            <button class="btn secondary" id="copyBtn">📨 Copier le message</button>
           </div>
-          <div class="fine" id="fineText">Première surprise: samedi 20h. Compteur final: 01/03/2026 à 00:00 (Europe/Paris).</div>
+          <div class="fine" id="fineText">Rappel: première surprise samedi à 20h, puis arrivée officielle à 00:00 (Paris).</div>
         </div>
       </div>
 
       <!-- LAYER 5 : “Boarding pass” -->
       <div class="layer" style="transform: translate(-50%,-50%) translateZ(-6500px);">
+      <!-- LAYER 6 -->
       <div class="layer" style="transform: translate(-50%,-50%) translateZ(-7800px);">
         <div class="panel">
           <span class="kicker"><b>BOARDING PASS</b> · version romantique</span>
@@ -495,12 +508,13 @@
               </p>
             </div>
           </div>
-          <span class="kicker"><b>APRÈS FINISH</b> · tout est prêt</span>
-          <h1>Magnifique descente, Amour.</h1>
-          <p>On a compris en un regard: skis aux pieds, slalom validé, et rendez-vous chrono verrouillé.</p>
+          <span class="kicker"><b>FINISH</b> · chrono propre</span>
+          <h1>Skis en bas, sourire en haut.</h1>
+          <p>Mission lisible et belle: on comprend dès l’entrée que tu chausses les skis, puis on file jusqu’au compteur.</p>
         </div>
       </div>
 
+    </div>
     </div>
   </div>
 
@@ -512,6 +526,7 @@ const camera = document.getElementById("camera");
 const DEPTH = 6500; // profondeur max de la séquence (dernier layer z=-6500)
 const DEPTH = 7800; // profondeur max de la séquence (dernier layer z=-7800)
 const sceneBackdrop = document.getElementById("sceneBackdrop");
+const snow = document.getElementById("snow");
 let targetZ = 0, currentZ = 0;
 let targetRot = 0, currentRot = 0;
 
@@ -537,8 +552,8 @@ function tickCam(){
   const tiltX = mouseY * 2.2;
   const tiltY = mouseX * 2.2;
   const frac = Math.max(0, Math.min(1, currentZ / DEPTH));
-  const turn = Math.sin(frac * Math.PI * 6) * 10;
-  const drift = Math.sin(frac * Math.PI * 8) * 140;
+  const turn = Math.sin(frac * Math.PI * 5) * 9;
+  const drift = Math.sin(frac * Math.PI * 7) * 120;
 
   camera.style.transform = `
     translateX(${drift}px)
@@ -581,20 +596,21 @@ function updateHud(){
     "Objectif : date verrouillée.",
     "Boarding pass : prêt à décoller.",
     "Fin : ça commence pour de vrai."
-    "Départ: chausse les skis.",
-    "Porte 1: rythme et confiance.",
-    "Porte 2: virage propre.",
-    "Porte 3: continue, Amour.",
-    "Porte 4: dernière relance.",
-    "Ligne d’arrivée: compteur final.",
-    "Finish: tout est prêt."
+    "Départ slalom : chausse les skis.",
+    "Porte rouge : Amour.",
+    "Porte bleue : A-Team.",
+    "Enchaînement technique.",
+    "Dernière porte avant finish.",
+    "Ligne d’arrivée + compteur.",
+    "Finish : chrono lancé."
   ];
 
   sceneBackdrop.className = "sceneBackdrop " + (
-    frac < 0.33 ? "scene-top" :
-    frac < 0.68 ? "scene-mid" :
-    "scene-bottom"
+    frac < 0.20 ? "scene-space" :
+    frac < 0.62 ? "scene-summit" :
+    "scene-sea"
   );
+  snow.classList.toggle("on", frac > 0.18 && frac < 0.68);
   hudSub.textContent = subs[chapter] || subs[0];
 
   requestAnimationFrame(updateHud);
@@ -616,10 +632,10 @@ function updateParisTime(){
 updateParisTime();
 
 const poemLines = [
-  "✦ Respire, carve, et garde le sourire.",
-  "✦ Porte rouge, porte bleue: A-Team fluide.",
-  "✦ Chaque porte porte un mot d’amour pour aller plus loin.",
-  "✦ En bas: compteur vers minuit, surprise à 20h samedi."
+  "✦ Slalom 2026: lisible, propre, intense.",
+  "✦ Porte rouge, porte bleue, et toujours Amour.",
+  "✦ Première surprise samedi à 20h.",
+  "✦ Ligne d’arrivée: 01/03 à 00:00, heure de Paris."
 ];
 const poemEl = document.getElementById("poemLine");
 let poemIndex = 0;
@@ -712,10 +728,10 @@ const timer = setInterval(()=>{
   if(d <= 0){
     clearInterval(timer);
     document.getElementById("title").textContent = "🎂 C’est le jour J ! 🎂";
-    document.getElementById("title").textContent = "🎉 Minuit atteint : anniversaire en plein vol";
+    document.getElementById("title").textContent = "🏁 Arrivée atteinte : 01/03 lancé";
     document.getElementById("countdown").innerHTML = `<p style="margin-top:14px;font-size:1.15rem;color:rgba(255,255,255,.85)">
       Aujourd’hui, c’est toi la priorité absolue. ❤️
-      Première surprise prévue samedi à 20h, puis cap minuit. ❤️
+      Première surprise déjà lancée à 20h la veille. Minuit atteint. ❤️
     </p>`;
     return;
   }
@@ -758,8 +774,8 @@ DTSTART:${toICSDateUTC(dtStart)}
 DTEND:${toICSDateUTC(dtEnd)}
 SUMMARY:🎉 Objectif 1er Mars
 DESCRIPTION:Déploiement surprise (Europe/Paris).
-SUMMARY:🎿 Ligne d'arrivée - 01/03/2026 00:00
-DESCRIPTION:Première surprise samedi à 20h, puis passage à minuit (Europe/Paris).
+SUMMARY:🏁 Ligne d’arrivée anniversaire - 01 mars 00h00
+DESCRIPTION:Première surprise samedi à 20h, puis arrivée officielle à minuit (Europe/Paris).
 END:VEVENT
 END:VCALENDAR`;
 
@@ -768,7 +784,7 @@ END:VCALENDAR`;
   const a = document.createElement("a");
   a.href = url;
   a.download = "objectif-1er-mars.ics";
-  a.download = "arrivee-anniversaire-01-03-2026-0000.ics";
+  a.download = "arrivee-anniversaire-01-mars-00h00.ics";
   a.click();
   URL.revokeObjectURL(url);
 });
@@ -779,12 +795,11 @@ document.getElementById("copyBtn").addEventListener("click", async () => {
 
 J’ai une proposition : Naples + Procida + Côte Amalfitaine.
 4 jours : énergie, douceur, vue, et une surprise “signature”.
-Samedi soir 20h: première surprise.
-Puis on file jusqu'à 01/03/2026 à 00:00, heure de Paris.
-Mode slalom: portes rouges et bleues, full Amour.
+Première surprise samedi à 20h.
+Puis ligne d’arrivée à 00:00, heure de Paris.
 
 Tu acceptes la mission ? ✨`;
-A-Team + Amour. Tu valides ? ✨`;
+A-Team + Amour. Prête pour le slalom ? ✨`;
 
   try{
     await navigator.clipboard.writeText(msg);
@@ -810,7 +825,7 @@ const fx = document.getElementById("fx");
 const ctx = fx.getContext("2d");
 let W=0,H=0;
 function resize(){
-@@ -906,30 +983,30 @@ function drawConfetti(){
+@@ -906,30 +1006,30 @@ function drawConfetti(){
     ctx.translate(p.x, p.y);
     ctx.rotate(p.r);
     ctx.globalAlpha = Math.max(0, Math.min(1, p.life/220));
@@ -837,7 +852,7 @@ document.getElementById("acceptBtn").addEventListener("click", () => {
   hb.style.borderColor = "rgba(117,243,198,.35)";
 
   pulseText("Mission validée. Prochaine étape : la surprise. ✨");
-  pulseText("Ligne coupée. Surprise à 20h, cap minuit validé. ✨");
+  pulseText("Ligne passée. Direction minuit. ✨");
 });
 </script>
 </body>
