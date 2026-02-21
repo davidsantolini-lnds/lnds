@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Mission : Hélène ✨ — Ski Run (PS5 vibes)</title>
+  <title>Mission : Hélène ✨ — Ski Run (Scroll Edition)</title>
   <style>
     :root{
       --bg0:#050505;
@@ -11,29 +11,44 @@
       --rose:#ff9a9e;
       --pearl:#fecfef;
       --mint:#75f3c6;
-      --glass:rgba(255,255,255,.08);
-      --glass2:rgba(255,255,255,.12);
       --shadow:0 30px 90px rgba(0,0,0,.55);
       --soft:0 0 60px rgba(255,107,214,.20);
+      --glass:rgba(255,255,255,.08);
+      --glass2:rgba(255,255,255,.12);
     }
-    *{box-sizing:border-box;}
-    html,body{height:100%; margin:0; background:var(--bg0); color:#fff; overflow:hidden;}
-    body{font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial;}
 
-    canvas#game{
+    *{box-sizing:border-box;}
+    html,body{height:100%;}
+    body{
+      margin:0;
+      height: 820vh; /* cinématique longue */
+      background: var(--bg0);
+      color:#fff;
+      font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial;
+      overflow-x:hidden;
+      overscroll-behavior-y:none;
+      touch-action: pan-y; /* on garde le scroll */
+    }
+
+    /* Canvas full screen */
+    canvas#game, canvas#fx{
       position:fixed; inset:0;
       width:100vw; height:100vh;
       display:block;
+    }
+    canvas#game{
       background:
         radial-gradient(circle at 50% 25%, #1a1025 0%, #000 70%),
         linear-gradient(180deg, #000, #06030c);
+      z-index:1;
     }
+    canvas#fx{ pointer-events:none; z-index:5; }
 
     /* HUD */
     .hud{
       position:fixed; top:14px; left:14px; right:14px;
       display:flex; gap:12px; align-items:center;
-      pointer-events:none; z-index:20;
+      pointer-events:none; z-index:10;
     }
     .chip{
       display:flex; align-items:center; gap:10px;
@@ -66,15 +81,19 @@
       white-space:nowrap;
     }
 
-    /* Overlay start / finish */
-    .overlay{
+    /* Start hint */
+    .startHint{
       position:fixed; inset:0;
       display:grid; place-items:center;
-      z-index:30;
-      background: radial-gradient(circle at 50% 35%, rgba(255,107,214,.14), rgba(0,0,0,.75) 55%, rgba(0,0,0,.92) 100%);
-      padding:20px;
+      z-index:20;
+      pointer-events:none;
+      background: radial-gradient(circle at 50% 35%, rgba(255,107,214,.10), rgba(0,0,0,.72) 55%, rgba(0,0,0,.92) 100%);
+      transition: opacity .6s ease, transform .6s ease;
     }
+    .startHint.hidden{ opacity:0; transform: scale(.98); }
+
     .panel{
+      pointer-events:none;
       width:min(980px, 92vw);
       background: linear-gradient(180deg, rgba(255,255,255,.12), rgba(255,255,255,.06));
       border:1px solid rgba(255,255,255,.14);
@@ -92,7 +111,7 @@
         radial-gradient(circle at 25% 20%, rgba(255,107,214,.25), transparent 45%),
         radial-gradient(circle at 75% 70%, rgba(117,243,198,.18), transparent 46%),
         radial-gradient(circle at 50% 110%, rgba(255,154,158,.16), transparent 55%);
-      opacity:.95; pointer-events:none;
+      opacity:.95;
     }
     .panel > *{position:relative; z-index:1;}
     .kicker{
@@ -111,7 +130,52 @@
       text-shadow:0 0 26px rgba(255,107,214,.24);
     }
     p{margin:10px 0 0; color:rgba(255,255,255,.80); font-size:1.06rem; line-height:1.55; max-width: 70ch;}
-    .row{display:flex; gap:12px; flex-wrap:wrap; margin-top:16px; align-items:center;}
+    .hintLine{
+      margin-top:12px;
+      color:rgba(255,255,255,.70);
+      font-size:.95rem;
+      display:flex; gap:10px; align-items:center;
+    }
+    .arrow{
+      width:34px;height:34px;border-radius:12px;
+      display:grid;place-items:center;
+      background:rgba(255,255,255,.08);
+      border:1px solid rgba(255,255,255,.10);
+      animation:bob 1.8s infinite;
+    }
+    @keyframes bob{
+      0%,20%,50%,80%,100%{transform:translateY(0);}
+      40%{transform:translateY(8px);}
+      60%{transform:translateY(4px);}
+    }
+
+    /* Finish overlay */
+    .finish{
+      position:fixed; inset:0;
+      display:none; place-items:center;
+      z-index:25;
+      background: radial-gradient(circle at 50% 35%, rgba(117,243,198,.10), rgba(0,0,0,.75) 55%, rgba(0,0,0,.92) 100%);
+      padding:20px;
+    }
+    .finish.show{ display:grid; }
+
+    .grid{
+      margin-top:14px;
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:12px;
+    }
+    @media (max-width: 900px){ .grid{grid-template-columns:1fr;} }
+    .card{
+      background: rgba(0,0,0,.18);
+      border:1px solid rgba(255,255,255,.10);
+      border-radius:22px;
+      padding:16px 14px;
+    }
+    .card h3{margin:0; font-size:1.02rem; letter-spacing:.2px;}
+    .small{color:rgba(255,255,255,.66); font-size:.92rem; line-height:1.45; margin-top:8px;}
+
+    .row{display:flex; gap:12px; flex-wrap:wrap; margin-top:14px; align-items:center;}
     .btn{
       pointer-events:auto;
       cursor:pointer; border:none;
@@ -130,40 +194,15 @@
       font-weight:800;
       color:rgba(255,255,255,.86);
     }
-    .hint{
-      margin-top:10px;
-      color:rgba(255,255,255,.62);
-      font-size:.92rem;
-    }
-    .grid{
-      margin-top:14px;
-      display:grid;
-      grid-template-columns: 1fr 1fr;
-      gap:12px;
-    }
-    @media (max-width: 900px){ .grid{grid-template-columns:1fr;} }
-    .card{
-      background: rgba(0,0,0,.18);
-      border:1px solid rgba(255,255,255,.10);
-      border-radius:22px;
-      padding:16px 14px;
-    }
-    .card h3{margin:0; font-size:1.02rem; letter-spacing:.2px;}
-    .small{color:rgba(255,255,255,.66); font-size:.92rem; line-height:1.45; margin-top:8px;}
+    .fine{color:rgba(255,255,255,.62); font-size:.92rem; line-height:1.45; margin-top:10px;}
 
-    /* Countdown (finish panel) */
-    .countdown{ margin-top:14px; display:flex; gap:12px; flex-wrap:wrap; }
+    .countdown{ margin-top:10px; display:flex; gap:12px; flex-wrap:wrap; }
     .timebox{ background: rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.12); border-radius:18px; padding:14px; min-width:110px; text-align:center; }
     .num{ font-size:2rem; font-weight:950; display:block; background:linear-gradient(90deg,var(--rose),var(--pearl)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
     .lab{ font-size:.75rem; text-transform:uppercase; color:rgba(255,255,255,.55); letter-spacing:1px; margin-top:4px; display:block; }
 
-    /* confetti canvas */
-    canvas#fx{
-      position:fixed; inset:0; pointer-events:none; z-index:40;
-    }
-
     @media (prefers-reduced-motion: reduce){
-      .overlay{background: rgba(0,0,0,.9);}
+      .startHint, .finish{background: rgba(0,0,0,.9);}
     }
   </style>
 </head>
@@ -176,12 +215,12 @@
   <div class="chip">
     <i class="dot"></i>
     <div>
-      <strong id="hudTitle">Ski Run — Mission</strong><br/>
-      <span id="hudSub">Passe les portes. Garde le flow.</span>
+      <strong id="hudTitle">Ski Run — Scroll Edition</strong><br/>
+      <span id="hudSub">Scroll = descente · souris/doigt = direction</span>
     </div>
   </div>
   <div class="bar"><i id="prog"></i></div>
-  <div class="chip" style="min-width:260px; justify-content:space-between;">
+  <div class="chip" style="min-width:290px; justify-content:space-between;">
     <div>
       <strong id="speed">0 km/h</strong><br/>
       <span id="score">Score 0 · Combo x1</span>
@@ -190,56 +229,36 @@
   </div>
 </div>
 
-<!-- START OVERLAY -->
-<div class="overlay" id="startOverlay">
+<div class="startHint" id="startHint">
   <div class="panel">
-    <span class="kicker"><b>STARTHOUSE</b> · A-Team Winter Mission</span>
-    <h1>Descente PS5 vibes. Pour Hélène. 🎿✨</h1>
+    <span class="kicker"><b>STARTHOUSE</b> · Mission Hélène</span>
+    <h1>Descente “PS5 vibes”… mais pilotée au scroll. 🎿✨</h1>
     <p>
-      Objectif : <b>passer les portes</b> sans rater le flow.
-      Plus tu es propre, plus le combo grimpe. À l’arrivée, tu débloques la mission anniversaire.
+      <b>Scrolle</b> pour prendre de la vitesse et franchir les portes.
+      <b>Bouge la souris / ton doigt</b> pour carver à gauche/droite.
+      À l’arrivée, tu débloques le plan du voyage.
     </p>
-
-    <div class="grid">
-      <div class="card">
-        <h3>Contrôles</h3>
-        <div class="small">
-          ← / → : tourner · ↑ : boost · Espace : drift/frein · R : restart<br/>
-          Manette : stick gauche (si dispo)
-        </div>
-      </div>
-      <div class="card">
-        <h3>Astuce “ciné”</h3>
-        <div class="small">
-          Tourne tôt, relâche en sortie. Drift = style + contrôle, mais tu perds de la vitesse.
-        </div>
-      </div>
+    <div class="hintLine">
+      <div class="arrow">↓</div>
+      <div>Go. Fais une descente propre. (Combo = style)</div>
     </div>
-
-    <div class="row">
-      <button class="btn" id="startBtn">▶ Lancer la descente</button>
-      <button class="btn secondary" id="muteBtn">🔊 Son: ON</button>
-    </div>
-    <div class="hint">Tip : clique une fois sur la page si ton navigateur bloque l’audio.</div>
   </div>
 </div>
 
-<!-- FINISH OVERLAY -->
-<div class="overlay" id="finishOverlay" style="display:none;">
+<div class="finish" id="finish">
   <div class="panel">
     <span class="kicker"><b>FINISH LINE</b> · Mission débloquée</span>
     <h1>🏁 Run validé. Maintenant : le vrai voyage.</h1>
     <p>
       <b>Naples + Procida + Côte Amalfitaine</b>. 4 jours : énergie, douceur, vue, et une surprise “signature”.
-      Tu viens de gagner le droit de me laisser gérer toute la logistique. 😌
+      Zéro charge mentale pour toi. Tout pour le “wow”.
     </p>
 
     <div class="grid">
       <div class="card">
         <h3>Boarding pass</h3>
         <div class="small">
-          Mode : “zéro charge mentale” · KPI : ton sourire (100%) ·
-          Bonus : meilleur coucher de soleil du système solaire.
+          Mode : “zéro logistique dans ta tête” · Rythme : intense + doux · KPI : ton sourire (100%)
         </div>
       </div>
       <div class="card">
@@ -250,13 +269,13 @@
           <div class="timebox"><span class="num" id="minutes">00</span><span class="lab">Minutes</span></div>
           <div class="timebox"><span class="num" id="seconds">00</span><span class="lab">Secondes</span></div>
         </div>
-        <div class="row" style="margin-top:14px;">
+        <div class="row">
           <button class="btn" id="acceptBtn">✅ J’accepte la mission</button>
           <button class="btn secondary" id="icsBtn">📅 Ajouter au calendrier</button>
           <button class="btn secondary" id="copyBtn">📨 Copier l’invitation</button>
           <button class="btn secondary" id="replayBtn">🔁 Replay</button>
         </div>
-        <div class="hint" id="fineText">PS : oui, c’est un jeu vidéo romantique. C’est assumé.</div>
+        <div class="fine" id="fineText">PS : oui, c’est un jeu vidéo romantique. C’est assumé.</div>
       </div>
     </div>
   </div>
@@ -285,197 +304,123 @@ function resize(){
   DPR = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
   W = canvas.width = Math.floor(innerWidth * DPR);
   H = canvas.height = Math.floor(innerHeight * DPR);
-  canvas.style.width = innerWidth + "px";
-  canvas.style.height = innerHeight + "px";
   ctx.setTransform(DPR,0,0,DPR,0,0);
 
   fx.width = Math.floor(innerWidth * DPR);
   fx.height = Math.floor(innerHeight * DPR);
-  fx.style.width = innerWidth + "px";
-  fx.style.height = innerHeight + "px";
   fctx.setTransform(DPR,0,0,DPR,0,0);
 }
 addEventListener("resize", resize);
 resize();
 
 /* =========================
-   2) Simple WebAudio (whoosh + carve)
-========================= */
-let audioOn = true;
-let audioCtx = null;
-let master = null;
-let noise = null;
-let noiseGain = null;
-let whooshOsc = null;
-let whooshGain = null;
-
-function initAudio(){
-  if(audioCtx) return;
-  audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-  master = audioCtx.createGain();
-  master.gain.value = 0.55;
-  master.connect(audioCtx.destination);
-
-  // White noise buffer
-  const bufferSize = 2 * audioCtx.sampleRate;
-  const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
-  const data = buffer.getChannelData(0);
-  for(let i=0;i<bufferSize;i++) data[i] = (Math.random()*2-1) * 0.6;
-
-  noise = audioCtx.createBufferSource();
-  noise.buffer = buffer;
-  noise.loop = true;
-
-  noiseGain = audioCtx.createGain();
-  noiseGain.gain.value = 0.0;
-
-  const filter = audioCtx.createBiquadFilter();
-  filter.type = "lowpass";
-  filter.frequency.value = 900;
-
-  noise.connect(filter);
-  filter.connect(noiseGain);
-  noiseGain.connect(master);
-
-  // Whoosh tone
-  whooshOsc = audioCtx.createOscillator();
-  whooshOsc.type = "sawtooth";
-  whooshOsc.frequency.value = 80;
-
-  whooshGain = audioCtx.createGain();
-  whooshGain.gain.value = 0.0;
-
-  const whooshFilter = audioCtx.createBiquadFilter();
-  whooshFilter.type = "bandpass";
-  whooshFilter.frequency.value = 220;
-  whooshFilter.Q.value = 0.8;
-
-  whooshOsc.connect(whooshFilter);
-  whooshFilter.connect(whooshGain);
-  whooshGain.connect(master);
-
-  noise.start();
-  whooshOsc.start();
-}
-
-function setAudioIntensity(speed01, carve01){
-  if(!audioOn || prefersReduced) return;
-  if(!audioCtx) return;
-
-  // noise = neige / vent
-  const n = clamp(speed01, 0, 1);
-  noiseGain.gain.setTargetAtTime(0.02 + n*0.18, audioCtx.currentTime, 0.04);
-
-  // whoosh = vitesse + carving
-  const w = clamp(speed01*0.9 + carve01*0.6, 0, 1);
-  whooshGain.gain.setTargetAtTime(0.00 + w*0.10, audioCtx.currentTime, 0.04);
-  whooshOsc.frequency.setTargetAtTime(60 + speed01*140, audioCtx.currentTime, 0.06);
-}
-
-/* =========================
-   3) Input (keyboard + gamepad)
-========================= */
-const keys = new Set();
-addEventListener("keydown", (e)=>{
-  keys.add(e.code);
-  if(["ArrowLeft","ArrowRight","ArrowUp","Space"].includes(e.code)) e.preventDefault();
-});
-addEventListener("keyup", (e)=>keys.delete(e.code));
-
-function readGamepad(){
-  const pads = navigator.getGamepads ? navigator.getGamepads() : [];
-  for(const p of pads){
-    if(!p) continue;
-    const ax0 = p.axes && p.axes.length ? p.axes[0] : 0; // left stick X
-    const ax1 = p.axes && p.axes.length>1 ? p.axes[1] : 0;
-
-    // triggers vary; use buttons 7 (RT) and 6 (LT) if present
-    const rt = p.buttons && p.buttons[7] ? p.buttons[7].value : 0;
-    const lt = p.buttons && p.buttons[6] ? p.buttons[6].value : 0;
-
-    return {
-      steer: clamp(ax0, -1, 1),
-      boost: clamp(rt, 0, 1),
-      brake: clamp(lt, 0, 1) || (p.buttons && p.buttons[0] ? (p.buttons[0].pressed?1:0) : 0), // A as brake fallback
-      drift: (p.buttons && p.buttons[1] ? (p.buttons[1].pressed?1:0) : 0), // B
-      present: true
-    };
-  }
-  return { steer:0, boost:0, brake:0, drift:0, present:false };
-}
-
-/* =========================
-   4) Game state
+   2) Game parameters
 ========================= */
 const hudSpeed = document.getElementById("speed");
 const hudScore = document.getElementById("score");
 const progEl = document.getElementById("prog");
 const statePill = document.getElementById("statePill");
+const startHint = document.getElementById("startHint");
+const finishEl = document.getElementById("finish");
 
-const startOverlay = document.getElementById("startOverlay");
-const finishOverlay = document.getElementById("finishOverlay");
+const TRACK_LEN = 5600;
+const TRACK_W   = 520;
+const GATE_SPACING = 170;
 
-const TRACK_LEN = 5200;      // “longueur” de piste (units)
-const TRACK_W   = 520;       // largeur (units)
-const GATE_SPACING = 170;    // distance entre portes
+let gates = [];
+let particles = [];
+let confetti = [];
 
-let running = false;
+let player = {
+  x: 0,
+  y: 0,             // progress in track units
+  speed: 0,         // computed from scroll delta
+  steer: 0,         // from pointer
+  combo: 1,
+  comboTimer: 0,
+  score: 0
+};
+
+let camera = { x:0, y:0, shake:0, fov:1.0 };
 let finished = false;
 
-let player, camera, gates, particles;
-
-function resetGame(){
-  running = false;
-  finished = false;
-
-  player = {
-    x: 0,
-    y: 0,             // progression sur piste (0 -> TRACK_LEN)
-    vx: 0,
-    speed: 0,
-    steer: 0,
-    drift: 0,
-    combo: 1,
-    comboTimer: 0,
-    score: 0,
-    hp: 3,
-    hitCooldown: 0
-  };
-
-  camera = {
-    x: 0,
-    y: 0,
-    shake: 0,
-    fov: 1.0
-  };
-
-  // Génère des portes alternées rouge/bleu
+/* =========================
+   3) Track + gates generation
+========================= */
+function genGates(){
   gates = [];
   let side = -1;
-  for(let gy=220; gy<TRACK_LEN; gy += GATE_SPACING){
+  for(let gy=260; gy<TRACK_LEN; gy += GATE_SPACING){
     side *= -1;
-    const offset = side * (TRACK_W*0.25 + Math.random()*TRACK_W*0.20);
-    gates.push({
-      y: gy,
-      x: offset,
-      w: 120,
-      h: 46,
-      passed: false,
-      good: null
-    });
+    const offset = side * (TRACK_W*0.25 + Math.random()*TRACK_W*0.22);
+    gates.push({ y:gy, x:offset, w:120, h:46, passed:false, good:null });
   }
-
-  particles = [];
-  progEl.style.width = "0%";
-  statePill.textContent = "READY";
-  hudSpeed.textContent = "0 km/h";
-  hudScore.textContent = "Score 0 · Combo x1";
 }
-
-resetGame();
+genGates();
 
 /* =========================
-   5) Visual helpers
+   4) Pointer steering (mouse + touch)
+   - we steer by moving pointer horizontally
+========================= */
+let targetSteer = 0;
+function setSteerFromClientX(clientX){
+  const nx = (clientX / innerWidth) * 2 - 1; // -1..1
+  targetSteer = clamp(nx, -1, 1);
+}
+addEventListener("mousemove", (e)=>setSteerFromClientX(e.clientX), { passive:true });
+
+let touchSteerActive = false;
+addEventListener("touchstart", (e)=>{
+  if(!e.touches || !e.touches[0]) return;
+  touchSteerActive = true;
+  setSteerFromClientX(e.touches[0].clientX);
+}, { passive:true });
+
+addEventListener("touchmove", (e)=>{
+  if(!touchSteerActive || !e.touches || !e.touches[0]) return;
+  setSteerFromClientX(e.touches[0].clientX);
+}, { passive:true });
+
+addEventListener("touchend", ()=>{ touchSteerActive = false; }, { passive:true });
+
+/* =========================
+   5) Scroll -> speed + progress
+   - We map scroll progress to player.y
+   - We estimate "speed" from scroll delta (for vibe + particles)
+========================= */
+let lastScrollY = window.scrollY;
+let lastScrollT = performance.now();
+
+function getScrollFrac(){
+  const maxScroll = document.body.scrollHeight - innerHeight;
+  return maxScroll > 0 ? clamp(window.scrollY / maxScroll, 0, 1) : 0;
+}
+
+function updateFromScroll(){
+  const nowT = performance.now();
+  const dy = window.scrollY - lastScrollY;
+  const dt = Math.max(0.016, (nowT - lastScrollT)/1000);
+
+  // hide start hint after first real movement
+  if(window.scrollY > 8) startHint.classList.add("hidden");
+
+  // speed estimate (units-ish)
+  const v = dy / dt; // px/s
+  // smooth speed & keep positive vibe
+  player.speed = lerp(player.speed, clamp(Math.abs(v), 0, 3200), 0.12);
+
+  // progress on track
+  const frac = getScrollFrac();
+  player.y = frac * TRACK_LEN;
+
+  lastScrollY = window.scrollY;
+  lastScrollT = nowT;
+}
+addEventListener("scroll", updateFromScroll, { passive:true });
+updateFromScroll();
+
+/* =========================
+   6) Drawing helpers
 ========================= */
 function drawRoundedRect(c, x,y,w,h,r){
   const rr = Math.min(r, w/2, h/2);
@@ -489,20 +434,18 @@ function drawRoundedRect(c, x,y,w,h,r){
 }
 
 function worldToScreen(wx, wy){
-  // Simple “perspective” : plus loin = plus petit
   const relY = wy - camera.y;
   const depth = clamp(relY / 900, 0, 1.6);
-  const scale = (1.25 - depth*0.55) * camera.fov; // proche plus grand
+  const scale = (1.25 - depth*0.55) * camera.fov;
   const sx = innerWidth/2 + (wx - camera.x) * scale;
   const sy = innerHeight*0.62 - relY * (0.45 * scale);
   return { x:sx, y:sy, s:scale };
 }
 
 /* =========================
-   6) FX confetti (finish / accept)
+   7) FX confetti
 ========================= */
-let confetti = [];
-function spawnConfetti(n=240){
+function spawnConfetti(n=260){
   confetti = [];
   const cols = ["#ffffff","#ff9a9e","#fecfef","#75f3c6","#ff6bd6"];
   for(let i=0;i<n;i++){
@@ -542,17 +485,60 @@ function drawConfetti(){
 }
 
 /* =========================
-   7) Gameplay loop
+   8) Particles burst
+========================= */
+function burst(x,y,color){
+  if(prefersReduced) return;
+  for(let i=0;i<22;i++){
+    particles.push({
+      x, y,
+      vx: (Math.random()*2-1) * (2 + Math.random()*6),
+      vy: (Math.random()*2-1) * (2 + Math.random()*6),
+      life: 0.55 + Math.random()*0.35,
+      c: color,
+      s: 2 + Math.random()*3,
+      snow:false
+    });
+  }
+}
+
+/* =========================
+   9) Main loop (scroll-driven)
 ========================= */
 let lastT = performance.now();
 function step(t){
-  const dt = clamp((t - lastT) / 1000, 0, 0.033);
+  const dt = clamp((t - lastT)/1000, 0, 0.04);
   lastT = t;
 
-  // Background draw
+  // steering smoothing
+  player.steer = lerp(player.steer, targetSteer, 0.10);
+
+  // map steer to x position (carving)
+  // we let X "follow" pointer like a ski: stable but responsive
+  const border = TRACK_W*0.48;
+  const targetX = player.steer * border;
+  player.x = lerp(player.x, targetX, 0.12);
+
+  // camera follows player with a little "PS5 shake"
+  camera.y = lerp(camera.y, player.y - 240, 0.10);
+  camera.x = lerp(camera.x, player.x * 0.45, 0.12);
+
+  const speed01 = clamp(player.speed / 3200, 0, 1);
+  camera.fov = lerp(camera.fov, 1.0 + speed01*0.12, 0.08);
+  camera.shake = lerp(camera.shake, 0, 0.08);
+
+  // progress + HUD
+  const frac = clamp(player.y / TRACK_LEN, 0, 1);
+  progEl.style.width = (frac*100).toFixed(1) + "%";
+  const kmh = Math.round(18 + speed01*92);
+  hudSpeed.textContent = `${kmh} km/h`;
+  hudScore.textContent = `Score ${Math.floor(player.score)} · Combo x${player.combo}`;
+  statePill.textContent = finished ? "FINISH" : (frac<0.02 ? "READY" : "LIVE");
+
+  // background
   ctx.clearRect(0,0,innerWidth,innerHeight);
 
-  // Star-ish mist layer
+  // aura
   if(!prefersReduced){
     const g = ctx.createRadialGradient(innerWidth/2, innerHeight*0.25, 0, innerWidth/2, innerHeight*0.25, innerWidth*0.9);
     g.addColorStop(0, "rgba(255,107,214,.10)");
@@ -562,133 +548,29 @@ function step(t){
     ctx.fillRect(0,0,innerWidth,innerHeight);
   }
 
-  if(running && !finished){
-    // Inputs
-    const gp = readGamepad();
-    const left  = keys.has("ArrowLeft") ? 1 : 0;
-    const right = keys.has("ArrowRight") ? 1 : 0;
-    const up    = keys.has("ArrowUp") ? 1 : 0;
-    const brake = keys.has("Space") ? 1 : 0;
+  drawTrack(frac);
+  handleAndDrawGates(dt);
+  spawnAndDrawSnow(dt, speed01);
 
-    const steer = gp.present ? gp.steer : (right - left);
-    const boost = gp.present ? gp.boost : up;
-    const drift = gp.present ? gp.drift : brake; // space = drift/frein
-
-    // Physics-ish
-    const baseAcc = 95;
-    const boostAcc = 140 * boost;
-    const drag = 0.030;
-    const driftDrag = drift ? 0.060 : 0.0;
-
-    // turn influence depends on speed
-    const turnRate = 2.6;
-    player.steer = lerp(player.steer, steer, 0.22);
-    player.drift = lerp(player.drift, drift ? 1 : 0, 0.18);
-
-    player.speed += (baseAcc + boostAcc) * dt;
-    player.speed -= player.speed * (drag + driftDrag) * (60*dt);
-
-    // clamp speed
-    player.speed = clamp(player.speed, 120, 940);
-
-    // “carving”: more steering = more lateral velocity
-    const lateral = player.steer * (0.85 + (player.speed/940)*1.25) * (1.0 - player.drift*0.55);
-    player.vx = lerp(player.vx, lateral * 240, 0.18);
-
-    // advance along track
-    player.y += player.speed * dt * 0.72;
-    player.x += player.vx * dt;
-
-    // borders collision
-    const border = TRACK_W*0.48;
-    if(player.x < -border || player.x > border){
-      if(player.hitCooldown <= 0){
-        player.hp -= 1;
-        player.hitCooldown = 0.7;
-        camera.shake = 1.0;
-        player.combo = 1;
-        player.comboTimer = 0;
-      }
-      player.x = clamp(player.x, -border, border);
-      player.speed *= 0.86;
-    }
-    player.hitCooldown = Math.max(0, player.hitCooldown - dt);
-
-    // combo decay
-    if(player.comboTimer > 0) player.comboTimer -= dt;
-    else player.combo = 1;
-
-    // camera follow
-    camera.y = lerp(camera.y, player.y - 220, 0.08);
-    camera.x = lerp(camera.x, player.x * 0.45, 0.10);
-    camera.fov = lerp(camera.fov, 1.0 + (player.speed/940)*0.12, 0.06);
-    camera.shake = lerp(camera.shake, 0, 0.08);
-
-    // Audio intensity
-    if(audioOn && audioCtx){
-      const speed01 = clamp((player.speed-120)/(940-120), 0, 1);
-      const carve01 = clamp(Math.abs(player.steer) * (1.0 - player.drift*0.5), 0, 1);
-      setAudioIntensity(speed01, carve01);
-    }
-
-    // progress bar
-    const progress = clamp(player.y / TRACK_LEN, 0, 1);
-    progEl.style.width = (progress*100).toFixed(1) + "%";
-
-    // HUD speed/score
-    const kmh = Math.round(player.speed * 0.12);
-    hudSpeed.textContent = `${kmh} km/h`;
-    hudScore.textContent = `Score ${Math.floor(player.score)} · Combo x${player.combo}`;
-
-    // Draw track (simple pseudo-3D)
-    drawTrack(progress);
-
-    // Gates
-    handleAndDrawGates(dt);
-
-    // Snow particles (screen space)
-    if(!prefersReduced) spawnAndDrawSnow(dt, progress);
-
-    // life indicator (pill)
-    statePill.textContent = player.hp > 0 ? `HP ${player.hp}` : `CRASH`;
-    statePill.style.borderColor = player.hp === 1 ? "rgba(255,71,100,.35)" : "rgba(255,255,255,.10)";
-    statePill.style.background   = player.hp === 1 ? "rgba(255,71,100,.12)" : "rgba(255,255,255,.08)";
-
-    // fail condition => restart overlay soft
-    if(player.hp <= 0){
-      running = false;
-      startOverlay.style.display = "grid";
-      document.getElementById("hudSub").textContent = "Oups. R pour recommencer (et mettre ça propre).";
-      statePill.textContent = "RETRY";
-    }
-
-    // finish
-    if(player.y >= TRACK_LEN){
-      finished = true;
-      running = false;
-      onFinish();
-    }
-  } else {
-    // Idle scene
-    drawIdle();
+  // finish detect
+  if(!finished && frac >= 0.999){
+    finished = true;
+    onFinish();
   }
 
   requestAnimationFrame(step);
 }
+requestAnimationFrame(step);
 
 function drawTrack(progress){
-  // Track trapezoid
   const topY = innerHeight*0.22;
   const botY = innerHeight*1.05;
 
-  // perspective widths
   const topW = innerWidth*0.18;
   const botW = innerWidth*1.15;
 
-  // lateral offset from camera.x
   const offset = -(camera.x / (TRACK_W*0.5)) * innerWidth*0.12;
 
-  // snow gradient
   const g = ctx.createLinearGradient(0, topY, 0, botY);
   g.addColorStop(0, "rgba(235,240,255,.78)");
   g.addColorStop(1, "rgba(205,220,245,.96)");
@@ -702,19 +584,20 @@ function drawTrack(progress){
   ctx.closePath();
   ctx.fill();
 
-  // subtle noise lines (fake texture)
+  // texture lines
   ctx.globalAlpha = 0.10;
   ctx.strokeStyle = "#ffffff";
   for(let i=0;i<18;i++){
     const y = topY + (i/18)*(botY-topY);
+    const w = topW + (botW-topW)*(i/18);
     ctx.beginPath();
-    ctx.moveTo(innerWidth/2 - (topW + (botW-topW)*(i/18)) + offset, y);
-    ctx.lineTo(innerWidth/2 + (topW + (botW-topW)*(i/18)) + offset, y);
+    ctx.moveTo(innerWidth/2 - w + offset, y);
+    ctx.lineTo(innerWidth/2 + w + offset, y);
     ctx.stroke();
   }
   ctx.globalAlpha = 1;
 
-  // sides glow
+  // edges glow
   ctx.globalAlpha = 0.10 + (progress*0.18);
   ctx.strokeStyle = "rgba(255,107,214,.7)";
   ctx.lineWidth = 2;
@@ -727,7 +610,7 @@ function drawTrack(progress){
   ctx.globalAlpha = 1;
   ctx.lineWidth = 1;
 
-  // motion blur vignette
+  // vignette + motion blur feel
   if(!prefersReduced){
     const v = ctx.createRadialGradient(innerWidth/2, innerHeight*0.65, innerWidth*0.10, innerWidth/2, innerHeight*0.65, innerWidth*0.75);
     v.addColorStop(0, "rgba(0,0,0,0)");
@@ -736,33 +619,32 @@ function drawTrack(progress){
     ctx.fillRect(0,0,innerWidth,innerHeight);
   }
 
-  // camera shake overlay
   if(camera.shake > 0.02){
-    ctx.globalAlpha = camera.shake * 0.15;
-    ctx.fillStyle = "rgba(255,255,255,1)";
+    ctx.globalAlpha = camera.shake * 0.14;
+    ctx.fillStyle = "#fff";
     ctx.fillRect(0,0,innerWidth,innerHeight);
     ctx.globalAlpha = 1;
   }
 }
 
 function handleAndDrawGates(dt){
-  // draw from far to near
+  // combo decay
+  if(player.comboTimer > 0) player.comboTimer -= dt;
+  else player.combo = 1;
+
   for(let i=gates.length-1;i>=0;i--){
     const g = gates[i];
-    const wy = g.y;
-    if(wy < camera.y - 80) continue;
-    if(wy > camera.y + 980) continue;
+    if(g.y < camera.y - 80) continue;
+    if(g.y > camera.y + 980) continue;
 
-    const ws = worldToScreen(g.x, wy);
+    const ws = worldToScreen(g.x, g.y);
     const w = g.w * ws.s;
     const h = g.h * ws.s;
 
-    // poles positions on track screen
     const isRed = (i % 2 === 0);
     const col = isRed ? "rgba(255,71,100,1)" : "rgba(71,158,255,1)";
     const glow = isRed ? "rgba(255,71,100,.35)" : "rgba(71,158,255,.35)";
 
-    // gate body
     ctx.save();
     ctx.translate(ws.x, ws.y);
     ctx.rotate((-player.steer) * 0.08);
@@ -781,7 +663,7 @@ function handleAndDrawGates(dt){
     ctx.fill();
     ctx.shadowBlur = 0;
 
-    ctx.fillStyle = "rgba(255,255,255,.9)";
+    ctx.fillStyle = "rgba(255,255,255,.92)";
     ctx.font = `${Math.max(10, 12*ws.s)}px -apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial`;
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
@@ -795,69 +677,41 @@ function handleAndDrawGates(dt){
 
     ctx.restore();
 
-    // collision / pass check
-    if(!g.passed && Math.abs((g.y - player.y)) < 55){
+    // pass detection (scroll-driven) once when player crosses y
+    if(!g.passed && Math.abs(g.y - player.y) < 55){
       const dx = Math.abs(player.x - g.x);
-      if(dx < 120){
-        // good pass
-        g.passed = true;
-        g.good = true;
-
+      if(dx < 130){
+        g.passed = true; g.good = true;
         player.combo = clamp(player.combo + 1, 1, 9);
         player.comboTimer = 1.2;
 
+        const speed01 = clamp(player.speed/3200, 0, 1);
         const styleBonus = 1 + player.combo*0.15;
-        const speedBonus = clamp((player.speed-120)/(940-120), 0, 1) * 60;
-        player.score += (220 + speedBonus) * styleBonus;
-
-        camera.shake = Math.max(camera.shake, 0.18);
-
-        // burst particles
+        player.score += (220 + speed01*70) * styleBonus;
+        camera.shake = Math.max(camera.shake, 0.16);
         burst(ws.x, ws.y, isRed ? "#ff4764" : "#479eff");
       } else {
-        // missed gate (penalty)
-        g.passed = true;
-        g.good = false;
-        player.combo = 1;
-        player.comboTimer = 0;
-
+        g.passed = true; g.good = false;
+        player.combo = 1; player.comboTimer = 0;
         player.score = Math.max(0, player.score - 120);
-        camera.shake = Math.max(camera.shake, 0.35);
-        player.speed *= 0.92;
-
+        camera.shake = Math.max(camera.shake, 0.30);
         burst(ws.x, ws.y, "#ffffff");
       }
     }
   }
 }
 
-function burst(x,y,color){
-  if(prefersReduced) return;
-  for(let i=0;i<22;i++){
-    particles.push({
-      x, y,
-      vx: (Math.random()*2-1) * (2 + Math.random()*6),
-      vy: (Math.random()*2-1) * (2 + Math.random()*6),
-      life: 0.55 + Math.random()*0.35,
-      c: color,
-      s: 2 + Math.random()*3
-    });
-  }
-}
-
-function spawnAndDrawSnow(dt, progress){
-  // screen snow streaks based on speed
-  const speed01 = clamp((player.speed-120)/(940-120),0,1);
-  const rate = 20 + speed01*80;
-
-  // spawn
+function spawnAndDrawSnow(dt, speed01){
+  // spawn snow streaks (screen space) based on scroll speed
+  const rate = prefersReduced ? 0 : (18 + speed01*85);
   const toSpawn = Math.floor(rate * dt);
+
   for(let i=0;i<toSpawn;i++){
     particles.push({
       x: Math.random()*innerWidth,
       y: Math.random()*innerHeight*0.7,
       vx: (-player.steer*40) + (Math.random()*2-1)*10,
-      vy: 180 + speed01*520 + Math.random()*120,
+      vy: 180 + speed01*540 + Math.random()*120,
       life: 0.25 + Math.random()*0.35,
       c: "rgba(255,255,255,.9)",
       s: 1 + Math.random()*2.4,
@@ -865,7 +719,7 @@ function spawnAndDrawSnow(dt, progress){
     });
   }
 
-  // draw
+  // draw particles
   ctx.save();
   ctx.globalCompositeOperation = "screen";
   for(const p of particles){
@@ -878,7 +732,6 @@ function spawnAndDrawSnow(dt, progress){
 
     ctx.fillStyle = p.c;
     if(p.snow){
-      // streak
       ctx.fillRect(p.x, p.y, p.s*0.9, p.s*10);
     } else {
       ctx.beginPath();
@@ -889,76 +742,46 @@ function spawnAndDrawSnow(dt, progress){
   ctx.restore();
   ctx.globalAlpha = 1;
 
-  // cleanup
   particles = particles.filter(p => p.life > 0 && p.y < innerHeight + 60 && p.x > -60 && p.x < innerWidth + 60);
 }
 
-function drawIdle(){
-  // Pretty idle: track + title ghost
-  camera.x = lerp(camera.x, 0, 0.06);
-  camera.y = lerp(camera.y, 0, 0.06);
-  drawTrack(0);
-
-  ctx.globalAlpha = 0.22;
-  ctx.fillStyle = "rgba(255,255,255,1)";
-  ctx.font = `900 ${Math.max(18, innerWidth*0.022)}px -apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial`;
-  ctx.textAlign = "center";
-  ctx.fillText("MISSION : HÉLÈNE — SKI RUN", innerWidth/2, innerHeight*0.78);
-  ctx.globalAlpha = 1;
-}
-
 /* =========================
-   8) Start / Finish
+   10) Finish
 ========================= */
-document.getElementById("startBtn").addEventListener("click", () => {
-  initAudio();
-  if(audioCtx && audioCtx.state === "suspended") audioCtx.resume();
-  startOverlay.style.display = "none";
-  running = true;
-  finished = false;
-  statePill.textContent = "GO";
-  document.getElementById("hudSub").textContent = "← → carve · ↑ boost · Espace drift";
-});
-
-document.getElementById("muteBtn").addEventListener("click", async (e) => {
-  initAudio();
-  if(audioCtx && audioCtx.state === "suspended") await audioCtx.resume();
-  audioOn = !audioOn;
-  e.target.textContent = audioOn ? "🔊 Son: ON" : "🔇 Son: OFF";
-  if(noiseGain) noiseGain.gain.value = 0;
-  if(whooshGain) whooshGain.gain.value = 0;
-});
-
-addEventListener("keydown", (e)=>{
-  if(e.code === "Enter" && startOverlay.style.display !== "none"){
-    document.getElementById("startBtn").click();
-  }
-  if(e.code === "KeyR"){
-    resetGame();
-    startOverlay.style.display = "grid";
-    finishOverlay.style.display = "none";
-    confetti = [];
-    fctx.clearRect(0,0,innerWidth,innerHeight);
-  }
-});
-
 function onFinish(){
-  statePill.textContent = "FINISH";
-  document.getElementById("hudSub").textContent = "Run clean. Mission unlocked.";
-  finishOverlay.style.display = "grid";
+  finishEl.classList.add("show");
   spawnConfetti();
   drawConfetti();
+  statePill.textContent = "FINISH";
+  document.getElementById("hudSub").textContent = "Run clean. Mission unlocked.";
 }
 
 /* =========================
-   9) Accept / Replay + ICS + Copy
+   11) Replay
 ========================= */
 document.getElementById("replayBtn").addEventListener("click", ()=>{
-  resetGame();
-  finishOverlay.style.display = "none";
-  startOverlay.style.display = "grid";
+  // reset gates + score
+  genGates();
+  particles = [];
+  player.score = 0;
+  player.combo = 1;
+  player.comboTimer = 0;
+  finished = false;
+
+  // hide finish
+  finishEl.classList.remove("show");
+  fctx.clearRect(0,0,innerWidth,innerHeight);
+
+  // scroll top smoothly
+  window.scrollTo({ top: 0, behavior:"smooth" });
+  startHint.classList.remove("hidden");
+  statePill.textContent = "READY";
+  document.getElementById("hudSub").textContent = "Scroll = descente · souris/doigt = direction";
 });
 
+/* =========================
+   12) Accept + ICS + Copy
+========================= */
 document.getElementById("acceptBtn").addEventListener("click", () => {
   spawnConfetti(320);
   drawConfetti();
@@ -1035,7 +858,7 @@ DTSTAMP:${toICSDateUTC(Date.now())}
 DTSTART:${toICSDateUTC(dtStart)}
 DTEND:${toICSDateUTC(dtEnd)}
 SUMMARY:🎉 Objectif 1er Mars
-DESCRIPTION:Déploiement surprise (Europe/Paris).
+DESCRIPTION:Mission voyage : Naples + Procida + Côte Amalfitaine (Europe/Paris).
 END:VEVENT
 END:VCALENDAR`;
   const blob = new Blob([ics], { type:"text/calendar;charset=utf-8" });
@@ -1052,7 +875,8 @@ document.getElementById("copyBtn").addEventListener("click", async () => {
   const msg =
 `Hélène ❤️
 
-Je t’ai codé une descente de ski (oui) et à la fin : mission débloquée.
+Je t’ai codé une descente de ski pilotée au scroll (oui).
+Et à la fin : mission débloquée.
 
 Naples + Procida + Côte Amalfitaine.
 4 jours : énergie, douceur, vue, et une surprise “signature”.
@@ -1066,11 +890,6 @@ Tu acceptes la mission ? ✨`;
     alert(msg);
   }
 });
-
-/* =========================
-   10) Boot
-========================= */
-requestAnimationFrame(step);
 </script>
 </body>
 </html>
