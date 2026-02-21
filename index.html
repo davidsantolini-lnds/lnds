@@ -1,399 +1,9 @@
-<!doctype html>
-<html lang="fr">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Anniversaire de mon Amour</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet" />
-    <style>
-      :root {
-        --bg: #070813;
-        --bg2: #13172b;
-        --text: rgba(255, 255, 255, 0.92);
-        --muted: rgba(255, 255, 255, 0.72);
-        --line: rgba(255, 255, 255, 0.17);
-        --card: rgba(255, 255, 255, 0.08);
-        --pink: #ff6eb6;
-        --violet: #8f7dff;
-        --cyan: #75ddff;
-      }
-
-      * { box-sizing: border-box; }
-      html, body { margin: 0; min-height: 100%; }
-      body {
-        font-family: Manrope, system-ui, sans-serif;
-        color: var(--text);
-        background:
-          radial-gradient(1000px 500px at 8% -10%, rgba(255, 110, 182, 0.24), transparent 60%),
-          radial-gradient(1000px 500px at 92% 8%, rgba(117, 221, 255, 0.18), transparent 60%),
-          linear-gradient(180deg, var(--bg), var(--bg2));
-        overflow-x: hidden;
-      }
-
-      .photo-bg {
-        position: fixed;
-        inset: 0;
-        z-index: -3;
-        background: url("nous.jpg") center/cover no-repeat;
-        opacity: .15;
-        transform: scale(1.08);
-      }
-
-      .sky {
-        position: fixed;
-        inset: -15%;
-        z-index: -2;
-        pointer-events: none;
-        background:
-          radial-gradient(circle at 20% 35%, rgba(255,110,182,.22), transparent 35%),
-          radial-gradient(circle at 75% 30%, rgba(143,125,255,.22), transparent 35%),
-          radial-gradient(circle at 55% 78%, rgba(117,221,255,.16), transparent 40%);
-        filter: blur(24px);
-      }
-
-      header {
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        z-index: 50;
-        backdrop-filter: blur(12px);
-        background: rgba(6, 8, 18, .52);
-        border-bottom: 1px solid var(--line);
-      }
-      .head {
-        width: min(1020px, 94vw);
-        margin: 0 auto;
-        padding: 12px 0;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        gap: 8px;
-      }
-      .brand { font-weight: 800; letter-spacing: -.02em; }
-      nav { display: flex; gap: 8px; flex-wrap: wrap; }
-      nav button, nav a {
-        border: 1px solid var(--line);
-        background: rgba(255, 255, 255, 0.05);
-        color: var(--text);
-        padding: 8px 11px;
-        border-radius: 999px;
-        font-size: 12px;
-        text-decoration: none;
-        cursor: pointer;
-      }
-      nav button.active { background: linear-gradient(120deg, rgba(255,110,182,.36), rgba(143,125,255,.36)); }
-
-      .progress-wrap {
-        position: fixed;
-        right: 12px;
-        top: 74px;
-        width: 7px;
-        height: calc(100vh - 90px);
-        border-radius: 999px;
-        background: rgba(255,255,255,.14);
-        z-index: 40;
-        overflow: hidden;
-      }
-      .progress {
-        width: 100%;
-        height: 0%;
-        background: linear-gradient(180deg, var(--pink), var(--violet), var(--cyan));
-      }
-      .progress { width: 100%; height: 0%; border-radius: 999px; background: linear-gradient(180deg, var(--pink), var(--violet), var(--cyan)); }
-
-      main {
-        width: min(1020px, 92vw);
-        margin: 0 auto;
-        padding-top: 76px;
-        padding-bottom: 44px;
-      }
-
-      section {
-        min-height: 66vh;
-        display: grid;
-        align-content: center;
-        padding: 26px 0;
-      }
-
-      .card {
-        border: 1px solid var(--line);
-        background: var(--card);
-        border-radius: 22px;
-        padding: clamp(16px, 2.5vw, 26px);
-        box-shadow: 0 24px 70px rgba(0,0,0,.35);
-      }
-
-      h1 {
-        margin: 0;
-        font-family: "Playfair Display", serif;
-        font-size: clamp(44px, 8vw, 90px);
-        line-height: .92;
-      }
-      h2 { margin: 0 0 8px; }
-      p { margin: 0; color: var(--muted); line-height: 1.68; }
-
-      .chip {
-        width: fit-content;
-        border: 1px solid var(--line);
-        border-radius: 999px;
-        padding: 7px 11px;
-        margin-bottom: 12px;
-        background: rgba(255,255,255,.06);
-      }
-
-      .count {
-        margin-top: 14px;
-        display: grid;
-        grid-template-columns: repeat(4, minmax(0,1fr));
-        gap: 10px;
-      }
-      .box {
-        border: 1px solid var(--line);
-        border-radius: 14px;
-        text-align: center;
-        padding: 10px;
-        background: rgba(0,0,0,.22);
-      }
-      .num { font-weight: 800; font-size: clamp(23px, 4vw, 38px); }
-      .lbl { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
-
-      .moments {
-        display: grid;
-        gap: 14px;
-        perspective: 1200px;
-      }
-      .moment {
-        border: 1px solid var(--line);
-        border-radius: 15px;
-        padding: 12px;
-        background: rgba(255,255,255,.04);
-        opacity: 0;
-        transform: translateY(36px) translateX(var(--x, 0)) rotateX(9deg) scale(.95);
-        transition: opacity .8s cubic-bezier(.2,.95,.2,1), transform .9s cubic-bezier(.2,.95,.2,1);
-      }
-      .moment:nth-child(odd) { --x: -28px; }
-      .moment:nth-child(even) { --x: 28px; }
-      .moment.visible {
-        opacity: 1;
-        transform: translateY(0) translateX(0) rotateX(0) scale(1);
-      }
-      .moment b { color: #fff; }
-
-      .flight {
-        min-height: 130vh;
-      }
-      .stage {
-        position: sticky;
-        top: 92px;
-        min-height: 62vh;
-        border-radius: 22px;
-        border: 1px solid var(--line);
-        background: rgba(0,0,0,.28);
-        overflow: hidden;
-        display: grid;
-        place-items: center;
-      }
-      .lane {
-        position: relative;
-        width: min(88vw, 780px);
-        height: min(58vw, 360px);
-        border: 1px dashed rgba(255,255,255,.26);
-        border-radius: 999px;
-      }
-      .comet {
-        position: absolute;
-        left: 50%; top: 50%; margin: -14px;
-        width: 28px; height: 28px; border-radius: 999px;
-        background: linear-gradient(120deg, var(--pink), var(--violet));
-        box-shadow: 0 0 25px rgba(255,110,182,.75);
-      }
-      .trail {
-        position: absolute;
-        left: 50%; top: 50%; width: 120px; height: 4px;
-        margin-top: -2px;
-        transform-origin: 0 50%;
-        background: linear-gradient(90deg, rgba(255,255,255,.95), transparent);
-        opacity: .75;
-      }
-      .note {
-        position: absolute;
-        inset: 0;
-        display: grid;
-        place-items: center;
-        text-align: center;
-        padding: 20px;
-      }
-
-      footer { text-align: center; color: rgba(255,255,255,.55); padding-top: 10px; }
-      @media (max-width: 760px) { .count { grid-template-columns: repeat(2, minmax(0,1fr)); } }
-    </style>
-  </head>
-  <body>
-    <div class="photo-bg" id="photoBg"></div>
-    <div class="sky"></div>
-
-    <header>
-      <div class="head">
-        <div class="brand">Mon Amour ❤️</div>
-        <nav id="nav">
-          <button data-to="intro">Intro</button>
-          <button data-to="timeline">Timeline</button>
-          <button data-to="flight">Effet</button>
-          <button data-to="final">Final</button>
-          <a href="contact.html">Page 2</a>
-        </nav>
-      </div>
-      <div class="badge" id="countdownChip">⏳ Vers le 1er mars</div>
-    </header>
-
-    <div class="progress-wrap" aria-hidden="true"><div class="progress" id="progress"></div></div>
-
-    <main>
-      <section id="intro">
-        <article class="card">
-          <div class="chip" id="chip">⏳ Vers le 1er mars</div>
-          <h1>Joyeux anniversaire<br />mon Amour</h1>
-          <p>Un petit scroll, mais magique : transitions douces, moments qui volent, et une timeline jolie du début à la fin.</p>
-          <div class="count" aria-label="Compte à rebours">
-            <div class="box"><div class="num" id="d">—</div><div class="lbl">Jours</div></div>
-            <div class="box"><div class="num" id="h">—</div><div class="lbl">Heures</div></div>
-            <div class="box"><div class="num" id="m">—</div><div class="lbl">Minutes</div></div>
-            <div class="box"><div class="num" id="s">—</div><div class="lbl">Secondes</div></div>
-          </div>
-        </article>
-      </section>
-
-      <section id="timeline">
-        <article class="card">
-          <h2>Timeline anniversaire</h2>
-          <div class="moments">
-            <div class="moment"><b>Maintenant</b><p>Tu ouvres la page. Première surprise.</p></div>
-            <div class="moment"><b>Avant le jour J</b><p>Petites attentions, grands sourires.</p></div>
-            <div class="moment"><b>Le jour J</b><p id="dayj">On célèbre ton anniversaire comme une star.</p></div>
-            <div class="moment"><b>Après</b><p>On garde cette énergie, version nous.</p></div>
-          </div>
-        </article>
-      </section>
-
-      <section id="flight" class="flight">
-        <article class="stage" id="stage">
-          <div class="lane" id="lane">
-            <div class="trail" id="trail"></div>
-            <div class="comet" id="comet"></div>
-            <div class="note">Quand tu scrolles, ça vole ✨</div>
-          </div>
-        </article>
-      </section>
-
-      <section id="final">
-        <article class="card">
-          <h2>Fin propre, promesse tenue</h2>
-          <p>Je t’aime fort. Et demain, on branchera la page contact.</p>
-        </article>
-      </section>
-
-      <footer>Fait avec ❤️</footer>
-    </main>
-
-    <script>
-      const sections = [...document.querySelectorAll("main > section")];
-      const nav = document.getElementById("nav");
-      const progress = document.getElementById("progress");
-      const photoBg = document.getElementById("photoBg");
-      const stage = document.getElementById("stage");
-      const comet = document.getElementById("comet");
-      const trail = document.getElementById("trail");
-
-      nav.addEventListener("click", (e) => {
-        const btn = e.target.closest("button[data-to]");
-        if (!btn) return;
-        document.getElementById(btn.dataset.to).scrollIntoView({ behavior: "smooth", block: "start" });
-      });
-
-      const spy = new IntersectionObserver((entries) => {
-        entries.forEach((entry) => {
-          if (!entry.isIntersecting) return;
-          const id = entry.target.id;
-          [...nav.querySelectorAll("button")].forEach((b) => b.classList.toggle("active", b.dataset.to === id));
-        });
-      }, { threshold: 0.55 });
-      sections.forEach((s) => spy.observe(s));
-
-      const ioMoments = new IntersectionObserver((entries) => {
-        entries.forEach((e) => e.isIntersecting && e.target.classList.add("visible"));
-      }, { threshold: 0.2 });
-      document.querySelectorAll(".moment").forEach((m) => ioMoments.observe(m));
-
-      const easeOutExpo = (x) => (x === 1 ? 1 : 1 - Math.pow(2, -10 * x));
-
-      function onScroll() {
-        const y = window.scrollY;
-        const max = document.documentElement.scrollHeight - window.innerHeight;
-        const ratio = max > 0 ? y / max : 0;
-        progress.style.height = `${ratio * 100}%`;
-        photoBg.style.transform = `scale(1.08) translateY(${y * -0.05}px)`;
-
-        const rect = stage.getBoundingClientRect();
-        const vh = window.innerHeight;
-        let t = 1 - Math.min(1, Math.max(0, rect.top / vh));
-        t = easeOutExpo(Math.min(1, Math.max(0, t)));
-
-        const angle = t * 900;
-        const radius = 140 + Math.sin(t * Math.PI * 3) * 20;
-        const rad = angle * Math.PI / 180;
-        const x = Math.cos(rad) * radius;
-        const y2 = Math.sin(rad) * (radius * 0.58);
-        comet.style.transform = `translate(${x}px, ${y2}px) scale(${0.9 + t * 0.35})`;
-        trail.style.transform = `translate(${x}px, ${y2}px) rotate(${angle + 180}deg) scaleX(${0.7 + t})`;
-        trail.style.opacity = `${0.35 + t * 0.55}`;
-      }
-
-      window.addEventListener("scroll", onScroll, { passive: true });
-      onScroll();
-
-      const target = new Date("2026-03-01T00:00:00");
-      const chip = document.getElementById("chip");
-      const dayj = document.getElementById("dayj");
-      const d = document.getElementById("d");
-      const h = document.getElementById("h");
-      const m = document.getElementById("m");
-      const s = document.getElementById("s");
-      const pad = (n) => String(n).padStart(2, "0");
-
-      function tick() {
-        const diff = target - new Date();
-        if (diff <= 0) {
-          d.textContent = "0"; h.textContent = "00"; m.textContent = "00"; s.textContent = "00";
-          chip.textContent = "🎉 Joyeux anniversaire";
-          dayj.textContent = "C'est aujourd'hui. Je t'aime très fort. ❤️";
-          return;
-        }
-        const sec = Math.floor(diff / 1000);
-        const days = Math.floor(sec / 86400);
-        const hrs = Math.floor((sec % 86400) / 3600);
-        const mins = Math.floor((sec % 3600) / 60);
-        const secs = sec % 60;
-        d.textContent = String(days);
-        h.textContent = pad(hrs);
-        m.textContent = pad(mins);
-        s.textContent = pad(secs);
-        chip.textContent = `⏳ ${days}j ${pad(hrs)}:${pad(mins)}:${pad(secs)}`;
-      }
-
-      tick();
-      setInterval(tick, 1000);
-    </script>
-  </body>
-</html>
  (cd "$(git rev-parse --show-toplevel)" && git apply --3way <<'EOF' 
 diff --git a/index.html b/index.html
-index ba6d3261961d11e1bd533bf6f90101a4ec4f631a..fb851ba15012b2bc83b67179ddaa381f9934ca73 100644
+index ba6d3261961d11e1bd533bf6f90101a4ec4f631a..737e7ec4f3f59c8a005b87008b9d518c25589600 100644
 --- a/index.html
 +++ b/index.html
-@@ -1,518 +1,527 @@
+@@ -1,518 +1,414 @@
  <!doctype html>
  <html lang="fr">
    <head>
@@ -406,10 +16,10 @@ index ba6d3261961d11e1bd533bf6f90101a4ec4f631a..fb851ba15012b2bc83b67179ddaa381f
 -    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 -    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300..800&display=swap" rel="stylesheet">
 -
-+    <title>Mon Amour — Édition Anniversaire</title>
++    <title>1er mars — Mon Amour</title>
 +    <link rel="preconnect" href="https://fonts.googleapis.com" />
 +    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;600;700;800&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet" />
++    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet" />
      <style>
 -      :root{
 -        --bg0: #070A12;
@@ -433,37 +43,37 @@ index ba6d3261961d11e1bd533bf6f90101a4ec4f631a..fb851ba15012b2bc83b67179ddaa381f
 -      html, body{ height: 100%; }
 -      body{
 -        margin: 0;
+-        font-family: Manrope, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
 +      :root {
-+        --bg0: #05040b;
-+        --bg1: #110d1f;
-+        --bg2: #0d1b27;
-+        --text: rgba(255, 255, 255, 0.92);
-+        --muted: rgba(255, 255, 255, 0.7);
-+        --line: rgba(255, 255, 255, 0.16);
-+        --card: rgba(255, 255, 255, 0.07);
-+        --pink: #ff6cab;
-+        --violet: #8f7eff;
-+        --cyan: #67d6ff;
++        --bg0: #060711;
++        --bg1: #121832;
++        --text: rgba(255, 255, 255, 0.93);
++        --muted: rgba(255, 255, 255, 0.73);
++        --line: rgba(255, 255, 255, 0.17);
++        --card: rgba(255, 255, 255, 0.08);
++        --pink: #ff6eb6;
++        --violet: #8f7dff;
++        --cyan: #75ddff;
 +      }
 +
 +      * { box-sizing: border-box; }
 +      html, body { margin: 0; min-height: 100%; }
 +      body {
-         font-family: Manrope, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
++        font-family: Manrope, system-ui, sans-serif;
          color: var(--text);
 -        background: radial-gradient(1200px 700px at 30% 15%, rgba(180,120,255,.18), transparent 60%),
 -                    radial-gradient(900px 650px at 80% 10%, rgba(120,210,255,.16), transparent 60%),
 -                    linear-gradient(180deg, var(--bg0), var(--bg1));
-+        background:
-+          radial-gradient(1200px 700px at 20% 0%, rgba(255, 108, 171, 0.18), transparent 60%),
-+          radial-gradient(900px 600px at 90% 10%, rgba(103, 214, 255, 0.14), transparent 65%),
-+          linear-gradient(160deg, var(--bg0), var(--bg1) 45%, var(--bg2));
          overflow-x: hidden;
++        background:
++          radial-gradient(1200px 650px at 8% -10%, rgba(255,110,182,.25), transparent 58%),
++          radial-gradient(1200px 650px at 90% 10%, rgba(117,221,255,.2), transparent 58%),
++          linear-gradient(180deg, var(--bg0), var(--bg1));
        }
  
 -      /* ===== Hero background photo ===== */
 -      .hero-bg{
-+      .parallax-bg {
++      .photo {
          position: fixed;
          inset: 0;
          z-index: -3;
@@ -473,75 +83,72 @@ index ba6d3261961d11e1bd533bf6f90101a4ec4f631a..fb851ba15012b2bc83b67179ddaa381f
 -        transform: scale(1.03);
 -        filter: saturate(1.05) contrast(1.02);
 +        background: url("nous.jpg") center/cover no-repeat;
-+        opacity: 0.2;
++        opacity: .16;
 +        transform: scale(1.08);
-+        filter: saturate(1.12) contrast(1.04);
        }
 -      .hero-noise{
 +
-+      .lights {
++      .aurora {
          position: fixed;
 -        inset: -40%;
-+        inset: -20% -10%;
-         z-index: -2;
+-        z-index: -2;
++        inset: -20%;
          pointer-events: none;
 -        opacity: .10;
 -        mix-blend-mode: overlay;
 -        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23n)' opacity='.25'/%3E%3C/svg%3E");
 -        transform: rotate(10deg);
-       }
+-      }
 -      .hero-vignette{
 -        position: fixed;
 -        inset: 0;
 -        z-index: -1;
 -        pointer-events:none;
 -        background: radial-gradient(1200px 800px at 50% 20%, transparent 35%, rgba(0,0,0,.55) 80%);
-+      .blob {
-+        position: absolute;
-+        width: 46vw;
-+        height: 46vw;
-+        border-radius: 999px;
-+        filter: blur(70px);
-+        opacity: 0.25;
++        z-index: -2;
++        filter: blur(30px);
++        background:
++          radial-gradient(circle at 25% 30%, rgba(255,110,182,.22), transparent 35%),
++          radial-gradient(circle at 80% 32%, rgba(143,125,255,.2), transparent 35%),
++          radial-gradient(circle at 50% 80%, rgba(117,221,255,.16), transparent 40%);
        }
-+      .b1 { top: -8%; left: -8%; background: var(--pink); }
-+      .b2 { top: 25%; right: -10%; background: var(--violet); }
-+      .b3 { bottom: -18%; left: 20%; background: var(--cyan); }
  
 -      /* ===== Layout ===== */
 -      header{
 -        position: sticky;
-+      .top-nav {
++      header {
 +        position: fixed;
          top: 0;
 -        z-index: 10;
 -        padding: 14px 16px;
-+        left: 0;
-+        right: 0;
-+        z-index: 20;
-         backdrop-filter: blur(14px);
-         -webkit-backdrop-filter: blur(14px);
+-        backdrop-filter: blur(14px);
+-        -webkit-backdrop-filter: blur(14px);
 -        background: rgba(0,0,0,.22);
 -        border-bottom: 1px solid rgba(255,255,255,.10);
-+        background: rgba(5, 5, 10, 0.45);
-+        border-bottom: 1px solid var(--line);
-       }
+-      }
 -      .nav{
 -        max-width: 1100px;
-+      .nav-inner {
-+        width: min(1160px, 95vw);
++        left: 0;
++        right: 0;
++        z-index: 40;
++        backdrop-filter: blur(12px);
++        background: rgba(6,8,18,.55);
++        border-bottom: 1px solid var(--line);
++      }
++      .head {
++        width: min(1000px, 94vw);
          margin: 0 auto;
 -        display:flex;
 -        align-items:center;
++        padding: 12px 0;
 +        display: flex;
-+        align-items: center;
          justify-content: space-between;
 -        gap: 12px;
 -      }
 -      .brand{
 -        display:flex;
 -        align-items:center;
-         gap: 10px;
+-        gap: 10px;
 -        min-width: 0;
 -      }
 -      .dot{
@@ -549,12 +156,10 @@ index ba6d3261961d11e1bd533bf6f90101a4ec4f631a..fb851ba15012b2bc83b67179ddaa381f
 -        background: rgba(255,255,255,.85);
 -        box-shadow: 0 0 0 6px rgba(255,255,255,.08);
 -        flex: 0 0 auto;
-+        padding: 12px 0;
-       }
+-      }
 -      .brand span{
-+      .brand {
-         font-weight: 800;
-         letter-spacing: -0.02em;
+-        font-weight: 800;
+-        letter-spacing: -0.02em;
 -        white-space: nowrap;
 -        overflow: hidden;
 -        text-overflow: ellipsis;
@@ -562,46 +167,40 @@ index ba6d3261961d11e1bd533bf6f90101a4ec4f631a..fb851ba15012b2bc83b67179ddaa381f
 -      .chip{
 -        display:inline-flex;
 -        align-items:center;
-+        display: flex;
 +        align-items: center;
          gap: 8px;
 -        padding: 8px 10px;
 +      }
-+      .dot {
-+        width: 10px;
-+        height: 10px;
++      .brand { font-weight: 800; }
++      nav { display: flex; gap: 8px; align-items: center; }
++      nav button, nav a {
++        border: 1px solid var(--line);
          border-radius: 999px;
 -        border: 1px solid rgba(255,255,255,.16);
 -        background: rgba(255,255,255,.06);
 -        color: var(--muted);
 -        font-size: 13px;
 -        flex: 0 0 auto;
-+        background: linear-gradient(120deg, var(--pink), var(--violet));
-+        box-shadow: 0 0 0 8px rgba(255, 255, 255, 0.08);
++        background: rgba(255,255,255,.05);
++        color: var(--text);
++        text-decoration: none;
++        font-size: 12px;
++        padding: 8px 11px;
++        cursor: pointer;
        }
++      nav .active { background: linear-gradient(120deg, rgba(255,110,182,.36), rgba(143,125,255,.36)); }
  
 -      main{
 -        max-width: 1100px;
--        margin: 0 auto;
++      main {
++        width: min(980px, 92vw);
+         margin: 0 auto;
 -        padding: 26px 16px 90px;
-+      .menu {
-+        display: flex;
-+        flex-wrap: wrap;
-+        gap: 8px;
-+        justify-content: flex-end;
-       }
+-      }
 -
 -      section{
 -        margin: 18px 0 34px;
-+      .menu button {
-+        border: 1px solid var(--line);
-+        background: rgba(255, 255, 255, 0.06);
-+        color: var(--text);
-+        border-radius: 999px;
-+        padding: 8px 12px;
-+        font-size: 13px;
-+        cursor: pointer;
-       }
+-      }
 -
 -      .card{
 -        border-radius: var(--r);
@@ -610,35 +209,22 @@ index ba6d3261961d11e1bd533bf6f90101a4ec4f631a..fb851ba15012b2bc83b67179ddaa381f
 -        box-shadow: var(--shadow2);
 -        backdrop-filter: blur(14px);
 -        -webkit-backdrop-filter: blur(14px);
-+      .menu button.active {
-+        background: linear-gradient(120deg, rgba(255, 108, 171, 0.34), rgba(143, 126, 255, 0.34));
-       }
- 
+-      }
+-
 -      /* ===== Hero block ===== */
 -      .hero{
 -        padding: clamp(18px, 3.5vw, 34px);
-+      .progress-wrap {
-+        position: fixed;
-+        right: 16px;
-+        top: 86px;
-+        z-index: 15;
-+        width: 8px;
-+        height: calc(100vh - 106px);
-+        border-radius: 999px;
-+        background: rgba(255, 255, 255, 0.12);
-         overflow: hidden;
+-        overflow: hidden;
 -        position: relative;
-       }
+-      }
 -      .hero::before{
 -        content:"";
 -        position:absolute; inset: 0;
 -        background: radial-gradient(900px 500px at 15% 10%, rgba(255,255,255,.10), transparent 60%),
 -                    radial-gradient(700px 500px at 90% 20%, rgba(160,120,255,.12), transparent 65%);
 -        pointer-events:none;
-+      .progress {
-+        width: 100%;
-+        height: 0;
-+        background: linear-gradient(180deg, var(--pink), var(--violet), var(--cyan));
++        padding-top: 78px;
++        padding-bottom: 48px;
        }
  
 -      .kicker{
@@ -651,11 +237,13 @@ index ba6d3261961d11e1bd533bf6f90101a4ec4f631a..fb851ba15012b2bc83b67179ddaa381f
 -        background: rgba(0,0,0,.18);
 -        color: var(--muted);
 -        font-size: 13px;
-+      main {
-+        width: min(1120px, 94vw);
-+        margin: 0 auto;
-+        padding-top: 88px;
-+        padding-bottom: 90px;
++      section { min-height: 84vh; display: grid; align-content: center; }
++      .card {
++        border: 1px solid var(--line);
++        border-radius: 24px;
++        background: var(--card);
++        padding: clamp(16px, 2.4vw, 28px);
++        box-shadow: 0 24px 70px rgba(0,0,0,.35);
        }
 -      .kicker b{ color: rgba(255,255,255,.88); font-weight: 800; }
  
@@ -666,19 +254,14 @@ index ba6d3261961d11e1bd533bf6f90101a4ec4f631a..fb851ba15012b2bc83b67179ddaa381f
 -        letter-spacing: -0.04em;
 -      }
 -      .lead{
--        margin: 0;
++      h1 {
+         margin: 0;
 -        max-width: 58ch;
 -        color: var(--muted);
 -        font-size: clamp(15px, 1.7vw, 18px);
 -        line-height: 1.65;
-+      section {
-+        min-height: 100vh;
-+        display: grid;
-+        align-content: center;
-+        gap: 18px;
-+        padding: 42px 0;
-       }
- 
+-      }
+-
 -      .grid{
 -        display:grid;
 -        grid-template-columns: 1.2fr .8fr;
@@ -687,15 +270,12 @@ index ba6d3261961d11e1bd533bf6f90101a4ec4f631a..fb851ba15012b2bc83b67179ddaa381f
 -      }
 -      @media (max-width: 880px){
 -        .grid{ grid-template-columns: 1fr; }
-+      .card {
-+        border: 1px solid var(--line);
-+        border-radius: 24px;
-+        background: var(--card);
-+        backdrop-filter: blur(10px);
-+        -webkit-backdrop-filter: blur(10px);
-+        padding: clamp(16px, 2.4vw, 28px);
-+        box-shadow: 0 20px 80px rgba(0, 0, 0, 0.45);
++        font-family: "Playfair Display", serif;
++        line-height: .95;
++        font-size: clamp(40px, 7vw, 84px);
        }
++      h2 { margin: 0 0 8px; }
++      p { margin: 0; color: var(--muted); line-height: 1.65; }
  
 -      /* ===== Countdown ===== */
 -      .countdown{
@@ -703,21 +283,13 @@ index ba6d3261961d11e1bd533bf6f90101a4ec4f631a..fb851ba15012b2bc83b67179ddaa381f
 -        background: rgba(0,0,0,.24);
 -        border: 1px solid rgba(255,255,255,.14);
 -        border-radius: 22px;
-+      .hero-title {
-+        font-family: "Playfair Display", serif;
-+        font-size: clamp(38px, 7vw, 84px);
-+        line-height: 0.95;
-+        letter-spacing: -0.03em;
-+        margin: 0;
-       }
+-      }
 -      .cd-title{
 -        display:flex;
 -        align-items:center;
 -        justify-content: space-between;
 -        gap: 10px;
-+      .lead {
-+        max-width: 62ch;
-         color: var(--muted);
+-        color: var(--muted);
 -        font-size: 13px;
 -        letter-spacing: .06em;
 -        text-transform: uppercase;
@@ -729,15 +301,23 @@ index ba6d3261961d11e1bd533bf6f90101a4ec4f631a..fb851ba15012b2bc83b67179ddaa381f
 -        border: 1px solid rgba(255,255,255,.16);
 -        box-shadow: 0 14px 40px rgba(0,0,0,.35);
 -        flex: 0 0 auto;
-+        line-height: 1.75;
++      .chip {
++        width: fit-content;
++        border: 1px solid var(--line);
++        border-radius: 999px;
++        padding: 7px 11px;
++        background: rgba(255,255,255,.06);
++        margin-bottom: 12px;
        }
 -      .cd-title img{ width:100%; height:100%; object-fit: cover; display:block; }
  
 -      .cd-grid{
 -        display:grid;
-+      .countdown {
+-        grid-template-columns: repeat(4, minmax(0, 1fr));
++      .count {
++        margin-top: 16px;
 +        display: grid;
-         grid-template-columns: repeat(4, minmax(0, 1fr));
++        grid-template-columns: repeat(4, minmax(0,1fr));
          gap: 10px;
 -        margin-top: 12px;
        }
@@ -747,11 +327,11 @@ index ba6d3261961d11e1bd533bf6f90101a4ec4f631a..fb851ba15012b2bc83b67179ddaa381f
 -        background: rgba(255,255,255,.06);
 -        padding: 14px 12px;
 +      .box {
-+        border: 1px solid var(--line);
-+        border-radius: 16px;
          text-align: center;
-+        padding: 12px;
-+        background: rgba(0, 0, 0, 0.22);
++        border: 1px solid var(--line);
++        border-radius: 14px;
++        padding: 10px;
++        background: rgba(0,0,0,.22);
        }
 -      .num{
 -        font-size: clamp(24px, 4vw, 40px);
@@ -768,9 +348,7 @@ index ba6d3261961d11e1bd533bf6f90101a4ec4f631a..fb851ba15012b2bc83b67179ddaa381f
 -      @media (max-width: 520px){
 -        .cd-grid{ grid-template-columns: repeat(2, minmax(0, 1fr)); }
 -      }
-+      .num { font-size: clamp(25px, 4vw, 42px); font-weight: 800; }
-+      .lbl { color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .08em; }
- 
+-
 -      /* ===== Scroll sections ===== */
 -      .panel{
 -        padding: clamp(18px, 3vw, 28px);
@@ -779,54 +357,43 @@ index ba6d3261961d11e1bd533bf6f90101a4ec4f631a..fb851ba15012b2bc83b67179ddaa381f
 -        margin: 0 0 10px;
 -        font-size: clamp(20px, 2.2vw, 26px);
 -        letter-spacing: -0.02em;
-+      .grid-2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
-+      .grid-3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
-+      @media (max-width: 860px) {
-+        .grid-2, .grid-3 { grid-template-columns: 1fr; }
-+        .countdown { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-       }
+-      }
 -      .p{
 -        margin: 0;
-+
-+      .chip {
-+        border: 1px solid var(--line);
-+        border-radius: 999px;
-+        padding: 7px 12px;
-+        display: inline-flex;
-+        width: fit-content;
-+        background: rgba(255, 255, 255, 0.06);
-         color: var(--muted);
+-        color: var(--muted);
 -        line-height: 1.7;
-       }
+-      }
++      .num { font-size: clamp(24px, 4vw, 40px); font-weight: 800; }
++      .lbl { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
  
 -      .facts{
 -        display:grid;
 -        grid-template-columns: repeat(3, minmax(0,1fr));
-+      .timeline {
-+        border-left: 2px solid rgba(255, 255, 255, 0.22);
-+        padding-left: 16px;
-+        display: grid;
-         gap: 12px;
+-        gap: 12px;
 -        margin-top: 14px;
-       }
+-      }
 -      @media (max-width: 880px){
 -        .facts{ grid-template-columns: 1fr; }
--      }
++      .progress-wrap {
++        position: fixed;
++        right: 12px;
++        top: 74px;
++        width: 7px;
++        height: calc(100vh - 88px);
++        border-radius: 999px;
++        background: rgba(255,255,255,.14);
++        overflow: hidden;
++        z-index: 35;
+       }
 -      .fact{
 -        border-radius: 20px;
 -        border: 1px solid rgba(255,255,255,.14);
 -        background: rgba(255,255,255,.06);
 -        padding: 14px 14px;
-+      .timeline .step { position: relative; }
-+      .timeline .step::before {
-+        content: "";
-+        position: absolute;
-+        left: -22px;
-+        top: 6px;
-+        width: 10px;
-+        height: 10px;
-+        border-radius: 999px;
-+        background: linear-gradient(120deg, var(--pink), var(--violet));
++      .progress {
++        width: 100%;
++        height: 0%;
++        background: linear-gradient(180deg, var(--pink), var(--violet), var(--cyan));
        }
 -      .fact .k{ color: rgba(255,255,255,.85); font-weight: 800; }
 -      .fact .v{ color: var(--muted); margin-top: 6px; line-height: 1.6; }
@@ -836,10 +403,11 @@ index ba6d3261961d11e1bd533bf6f90101a4ec4f631a..fb851ba15012b2bc83b67179ddaa381f
 -        flex-wrap: wrap;
 -        gap: 10px;
 -        margin-top: 14px;
-+      .gallery {
++      .timeline-wrap {
++        position: relative;
 +        display: grid;
-+        grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
-+        gap: 12px;
++        grid-template-columns: 60px 1fr;
++        gap: 14px;
        }
 -      button{
 -        appearance:none;
@@ -847,42 +415,30 @@ index ba6d3261961d11e1bd533bf6f90101a4ec4f631a..fb851ba15012b2bc83b67179ddaa381f
 -        background: rgba(255,255,255,.08);
 -        color: var(--text);
 -        padding: 12px 14px;
-+      .gallery figure {
-+        margin: 0;
-         border-radius: 16px;
+-        border-radius: 16px;
 -        font-weight: 750;
 -        cursor: pointer;
 -        transition: transform .12s ease, background .12s ease, border-color .12s ease;
-+        overflow: hidden;
-+        border: 1px solid var(--line);
-+        background: rgba(255, 255, 255, 0.05);
-+      }
-+      .gallery img { width: 100%; height: 160px; object-fit: cover; display: block; }
-+      .gallery figcaption { color: var(--muted); padding: 8px 10px; font-size: 13px; }
-+
-+      .input-row { display: flex; gap: 10px; flex-wrap: wrap; }
-+      .input-row input, .input-row textarea {
-+        flex: 1;
-+        min-width: 220px;
-+        border: 1px solid var(--line);
-+        border-radius: 12px;
-+        background: rgba(0, 0, 0, 0.26);
-+        color: var(--text);
-+        padding: 10px;
-+        font-family: inherit;
++      .line-col {
++        position: relative;
        }
 -      button:hover{
 -        transform: translateY(-1px);
--        background: rgba(255,255,255,.14);
++      .line {
++        position: sticky;
++        top: 108px;
++        width: 8px;
++        height: calc(100vh - 140px);
++        margin: 0 auto;
++        border-radius: 999px;
+         background: rgba(255,255,255,.14);
 -        border-color: rgba(255,255,255,.24);
-+      .input-row button {
-+        border: 0;
-+        border-radius: 12px;
-+        padding: 10px 14px;
-+        cursor: pointer;
-+        font-weight: 700;
-+        color: white;
-+        background: linear-gradient(120deg, var(--pink), var(--violet));
++        overflow: hidden;
++      }
++      .line-fill {
++        width: 100%;
++        height: 0%;
++        background: linear-gradient(180deg, var(--pink), var(--violet), var(--cyan));
        }
 -      button:active{ transform: translateY(0) scale(.99); }
  
@@ -890,40 +446,78 @@ index ba6d3261961d11e1bd533bf6f90101a4ec4f631a..fb851ba15012b2bc83b67179ddaa381f
 -        height: 1px;
 -        background: rgba(255,255,255,.10);
 -        margin: 16px 0;
--      }
-+      .list { display: grid; gap: 10px; margin-top: 12px; }
-+      .item { border: 1px solid var(--line); border-radius: 14px; padding: 10px 12px; background: rgba(255, 255, 255, 0.03); }
++      .moments {
++        display: grid;
++        gap: 16px;
++        padding: 8px 0;
+       }
  
 -      /* ===== Reveal on scroll ===== */
 -      .reveal{
-+      .reveal {
++      .moment {
++        position: relative;
++        border: 1px solid var(--line);
++        border-radius: 16px;
++        padding: 14px;
++        background: rgba(255,255,255,.04);
++        transform: translateY(42px) scale(.95) rotateX(10deg);
++        transform-origin: 50% 100%;
          opacity: 0;
 -        transform: translateY(14px);
 -        transition: opacity .7s ease, transform .7s ease;
-+        transform: translateY(24px) scale(.98);
-+        transition: opacity .75s ease, transform .75s ease;
++        transition: transform .85s cubic-bezier(.2,.9,.2,1), opacity .85s cubic-bezier(.2,.9,.2,1), box-shadow .5s;
++      }
++      .moment::before {
++        content: "";
++        position: absolute;
++        left: -26px;
++        top: 22px;
++        width: 11px;
++        height: 11px;
++        border-radius: 999px;
++        background: linear-gradient(120deg, var(--pink), var(--violet));
++        box-shadow: 0 0 0 6px rgba(255,255,255,.08);
        }
 -      .reveal.is-visible{
-+      .reveal.is-visible {
++      .moment.visible {
          opacity: 1;
 -        transform: translateY(0);
--      }
--
++        transform: translateY(0) scale(1) rotateX(0deg);
+       }
++      .moment.active {
++        box-shadow: 0 0 0 1px rgba(255,255,255,.25), 0 20px 55px rgba(0,0,0,.34);
++        background: linear-gradient(120deg, rgba(255,110,182,.13), rgba(143,125,255,.12));
++      }
++      .moment b { color: #fff; }
+ 
 -      /* ===== Footer ===== */
 -      footer{
 -        margin-top: 44px;
 -        text-align:center;
 -        color: rgba(255,255,255,.55);
 -        font-size: 13px;
-+        transform: translateY(0) scale(1);
++      .floaty {
++        position: fixed;
++        pointer-events: none;
++        inset: 0;
++        z-index: -1;
++      }
++      .particle {
++        position: absolute;
++        width: 8px;
++        height: 8px;
++        border-radius: 999px;
++        background: rgba(255,255,255,.5);
++        filter: blur(.4px);
++        opacity: .45;
        }
  
 -      @media (prefers-reduced-motion: reduce){
 -        .reveal{ opacity: 1; transform:none; transition:none; }
-+      footer {
-+        text-align: center;
-+        color: rgba(255, 255, 255, 0.55);
-+        padding-top: 20px;
++      footer { text-align: center; color: rgba(255,255,255,.56); padding-top: 8px; }
++      @media (max-width: 760px) {
++        .count { grid-template-columns: repeat(2, minmax(0,1fr)); }
++        .timeline-wrap { grid-template-columns: 32px 1fr; }
        }
      </style>
    </head>
@@ -932,25 +526,24 @@ index ba6d3261961d11e1bd533bf6f90101a4ec4f631a..fb851ba15012b2bc83b67179ddaa381f
 -    <div class="hero-bg" aria-hidden="true"></div>
 -    <div class="hero-noise" aria-hidden="true"></div>
 -    <div class="hero-vignette" aria-hidden="true"></div>
--
--    <header>
++    <div class="photo" id="photo"></div>
++    <div class="aurora"></div>
++    <div class="floaty" id="floaty"></div>
+ 
+     <header>
 -      <div class="nav">
 -        <div class="brand">
 -          <div class="dot"></div>
 -          <span>Bonjour mon Amour</span>
 -        </div>
 -        <div class="chip" id="chip">⏳ Vers le 1er mars</div>
-+    <div class="parallax-bg" id="parallax"></div>
-+    <div class="lights" aria-hidden="true">
-+      <div class="blob b1"></div>
-+      <div class="blob b2"></div>
-+      <div class="blob b3"></div>
-+    </div>
-+
-+    <header class="top-nav">
-+      <div class="nav-inner">
-+        <div class="brand"><span class="dot"></span> Bonjour mon Amour</div>
-+        <nav class="menu" id="menu"></nav>
++      <div class="head">
++        <div class="brand">1er mars • Mon Amour</div>
++        <nav id="nav">
++          <button data-to="compteur">Compteur</button>
++          <button data-to="timeline">Timeline</button>
++          <a href="contact.html">Page 2</a>
++        </nav>
        </div>
      </header>
  
@@ -969,32 +562,15 @@ index ba6d3261961d11e1bd533bf6f90101a4ec4f631a..fb851ba15012b2bc83b67179ddaa381f
 -              <span>Compte à rebours anniversaire</span>
 -              <span class="mini"><img src="nous.jpg" alt="Nous deux"></span>
 -            </div>
-+    <div class="progress-wrap" aria-hidden="true"><div class="progress" id="progress"></div></div>
- 
+-
 -            <div class="cd-grid" aria-label="Compte à rebours">
 -              <div class="box"><div class="num" id="d">—</div><div class="lbl">Jours</div></div>
 -              <div class="box"><div class="num" id="h">—</div><div class="lbl">Heures</div></div>
 -              <div class="box"><div class="num" id="m">—</div><div class="lbl">Minutes</div></div>
 -              <div class="box"><div class="num" id="s">—</div><div class="lbl">Secondes</div></div>
 -            </div>
-+    <main>
-+      <section id="hero" data-title="Accueil" class="reveal">
-+        <div class="card">
-+          <div class="chip" id="chip">⏳ Vers le 1er mars</div>
-+          <h1 class="hero-title">Joyeux anniversaire<br />mon Amour ❤️</h1>
-+          <p class="lead">
-+            Je voulais une page qui se découvre doucement, en scrollant, comme une histoire.
-+            Ici, on garde nos rêves, nos photos, nos projets de voyage et nos idées les plus folles.
-+          </p>
-+          <div class="countdown" aria-label="Compte à rebours anniversaire">
-+            <div class="box"><div class="num" id="d">—</div><div class="lbl">Jours</div></div>
-+            <div class="box"><div class="num" id="h">—</div><div class="lbl">Heures</div></div>
-+            <div class="box"><div class="num" id="m">—</div><div class="lbl">Minutes</div></div>
-+            <div class="box"><div class="num" id="s">—</div><div class="lbl">Secondes</div></div>
-           </div>
-+        </div>
-+      </section>
- 
+-          </div>
+-
 -          <div class="panel card" style="background: rgba(0,0,0,.22); border-color: rgba(255,255,255,.12);">
 -            <h2 class="title">Le programme</h2>
 -            <p class="p">
@@ -1005,26 +581,14 @@ index ba6d3261961d11e1bd533bf6f90101a4ec4f631a..fb851ba15012b2bc83b67179ddaa381f
 -            <div class="ctaRow">
 -              <button id="scrollNext">Voir la suite</button>
 -              <button id="surprise">Ou un petit mot avant de continuer</button>
-+      <section id="vision" data-title="Notre Histoire" class="reveal">
-+        <div class="grid-2">
-+          <article class="card">
-+            <h2>Notre histoire en quelques chapitres</h2>
-+            <div class="timeline">
-+              <div class="step"><b>Chapitre 1 :</b> Le début de nous, là où tout a changé.</div>
-+              <div class="step"><b>Chapitre 2 :</b> Les fous rires, les galères, les victoires main dans la main.</div>
-+              <div class="step"><b>Chapitre 3 :</b> L'année 2026, version encore plus belle.</div>
-             </div>
+-            </div>
 -            <p class="p" id="note" style="margin-top:12px; color: rgba(255,255,255,.66);">
 -              PS : le bouton “Voir la suite” descend proprement, si tu as la flemme de scroller...
 -            </p>
 -          </div>
-+          </article>
-+          <article class="card" id="dayj">
-+            <h2>Le jour J</h2>
-+            <p class="lead">Quand le compteur arrive à zéro, ce bloc se transforme en message d'anniversaire spécial.</p>
-+          </article>
-         </div>
-       </section>
+-        </div>
+-      </section>
++    <div class="progress-wrap"><div class="progress" id="progress"></div></div>
  
 -      <!-- SECTION 2 -->
 -      <section class="card panel reveal" id="sec2">
@@ -1038,14 +602,7 @@ index ba6d3261961d11e1bd533bf6f90101a4ec4f631a..fb851ba15012b2bc83b67179ddaa381f
 -          <div class="fact">
 -            <div class="k">Toi</div>
 -            <div class="v">Celle qui rend tout le reste moins bruyant.</div>
-+      <section id="voyages" data-title="Voyages" class="reveal">
-+        <article class="card">
-+          <h2>Nos idées de voyages</h2>
-+          <p class="lead">Une wishlist en duo : écris toutes vos destinations de rêve.</p>
-+          <div class="input-row">
-+            <input id="tripInput" placeholder="Ex: Kyoto au printemps, roadtrip en Italie..." />
-+            <button id="addTrip">Ajouter</button>
-           </div>
+-          </div>
 -          <div class="fact">
 -            <div class="k">Nous</div>
 -            <div class="v">A-Team. Pas parfaite, mais vraie. Et franchement stylée.</div>
@@ -1053,9 +610,19 @@ index ba6d3261961d11e1bd533bf6f90101a4ec4f631a..fb851ba15012b2bc83b67179ddaa381f
 -          <div class="fact">
 -            <div class="k">Bientôt</div>
 -            <div class="v">Le 1er mars. Surprise</div>
--          </div>
++    <main>
++      <section id="compteur">
++        <article class="card">
++          <div class="chip" id="chip">⏳ Vers le 1er mars</div>
++          <h1>Bientôt le<br />1er mars</h1>
++          <p>Un compte à rebours simple, beau, et juste pour toi.</p>
++          <div class="count">
++            <div class="box"><div class="num" id="d">—</div><div class="lbl">Jours</div></div>
++            <div class="box"><div class="num" id="h">—</div><div class="lbl">Heures</div></div>
++            <div class="box"><div class="num" id="m">—</div><div class="lbl">Minutes</div></div>
++            <div class="box"><div class="num" id="s">—</div><div class="lbl">Secondes</div></div>
+           </div>
 -        </div>
-+          <div class="list" id="tripList"></div>
 +        </article>
        </section>
  
@@ -1070,65 +637,52 @@ index ba6d3261961d11e1bd533bf6f90101a4ec4f631a..fb851ba15012b2bc83b67179ddaa381f
 -          <div class="fact">
 -            <div class="k">Maintenant</div>
 -            <div class="v">Tu lis ceci. Donc j’ai réussi à te faire arriver ici. Mission accomplie. Et ce site n'est pas (trop) une daube.</div>
-+      <section id="souvenirs" data-title="Souvenirs" class="reveal">
-+        <article class="card">
-+          <h2>Galerie souvenirs</h2>
-+          <p class="lead">Ajoute vos photos souvenirs directement depuis ton téléphone ou ordi.</p>
-+          <div class="input-row">
-+            <input id="photoLabel" placeholder="Légende (ex: Week-end à la mer)" />
-+            <input id="photoInput" type="file" accept="image/*" />
-+            <button id="addPhoto">Importer</button>
-           </div>
+-          </div>
 -          <div class="fact">
 -            <div class="k">Le jour J</div>
 -            <div class="v" id="dayj">Dès le début de ton week-end anniversaire, ce site t'orientera... garde le précieusement en favori !</div>
-+          <div class="gallery" id="gallery"></div>
-+        </article>
-+      </section>
-+
-+      <section id="idees" data-title="Idées folles" class="reveal">
++      <section id="timeline">
 +        <article class="card">
-+          <h2>Nos idées folles</h2>
-+          <p class="lead">Des idées de date, activités et surprises à réaliser ensemble.</p>
-+          <div class="input-row">
-+            <textarea id="ideaInput" rows="2" placeholder="Ex: nuit étoilée, pique-nique au lever du soleil..."></textarea>
-+            <button id="addIdea">Ajouter</button>
++          <h2>Timeline</h2>
++          <div class="timeline-wrap" id="timelineWrap">
++            <div class="line-col">
++              <div class="line"><div class="line-fill" id="lineFill"></div></div>
++            </div>
++            <div class="moments">
++              <div class="moment"><b>Maintenant</b><p>La page s'ouvre. Première émotion.</p></div>
++              <div class="moment"><b>Semaine avant</b><p>Petits signes, grands sourires.</p></div>
++              <div class="moment"><b>Veille</b><p>Le moment approche. Le cœur accélère.</p></div>
++              <div class="moment"><b>1er mars</b><p id="dayj">Notre journée. Notre énergie.</p></div>
++              <div class="moment"><b>Après</b><p>On garde cette lumière, et on continue.</p></div>
++            </div>
            </div>
 -        </div>
-+          <div class="list" id="ideaList"></div>
-+        </article>
-+      </section>
- 
+-
 -        <div class="ctaRow" style="margin-top: 14px;">
 -          <button id="top">Remonter en haut</button>
-+      <section id="final" data-title="Final" class="reveal">
-+        <div class="grid-3">
-+          <article class="card"><h3>Toi</h3><p class="lead">La plus belle partie de toutes mes journées.</p></article>
-+          <article class="card"><h3>Nous</h3><p class="lead">Une team solide, sincère, douce et ambitieuse.</p></article>
-+          <article class="card"><h3>Demain</h3><p class="lead">Encore plus de souvenirs, d'amour, et de voyages.</p></article>
-         </div>
+-        </div>
++        </article>
        </section>
  
 -      <footer class="reveal">
 -        Fait avec ❤️
 -      </footer>
-+      <footer>Fait avec ❤️ — et encore plus à venir.</footer>
++      <footer>Fait avec ❤️</footer>
      </main>
  
      <script>
 -      // ===== Countdown: 1er mars 2026 à 00:00 (heure locale du navigateur) =====
 -      // Si vous êtes en France, c'est l'heure de Paris.
 -      const target = new Date("2026-03-01T00:00:00");
-+      const sections = [...document.querySelectorAll("main section")];
-+      const menu = document.getElementById("menu");
++      const nav = document.getElementById("nav");
++      const sections = [...document.querySelectorAll("main > section")];
 +      const progress = document.getElementById("progress");
-+      const parallax = document.getElementById("parallax");
++      const photo = document.getElementById("photo");
++      const lineFill = document.getElementById("lineFill");
++      const timelineWrap = document.getElementById("timelineWrap");
++      const moments = [...document.querySelectorAll(".moment")];
 +
-+      menu.innerHTML = sections
-+        .map((s) => `<button data-to="${s.id}">${s.dataset.title}</button>`)
-+        .join("");
-+
-+      menu.addEventListener("click", (e) => {
++      nav.addEventListener("click", (e) => {
 +        const btn = e.target.closest("button[data-to]");
 +        if (!btn) return;
 +        document.getElementById(btn.dataset.to).scrollIntoView({ behavior: "smooth", block: "start" });
@@ -1138,29 +692,71 @@ index ba6d3261961d11e1bd533bf6f90101a4ec4f631a..fb851ba15012b2bc83b67179ddaa381f
 -      const elH = document.getElementById("h");
 -      const elM = document.getElementById("m");
 -      const elS = document.getElementById("s");
-+      const io = new IntersectionObserver((entries) => {
-+        entries.forEach((entry) => {
-+          if (entry.isIntersecting) entry.target.classList.add("is-visible");
-+        });
-+      }, { threshold: 0.2 });
-+      document.querySelectorAll(".reveal").forEach((el) => io.observe(el));
-+
 +      const spy = new IntersectionObserver((entries) => {
 +        entries.forEach((entry) => {
 +          if (!entry.isIntersecting) return;
 +          const id = entry.target.id;
-+          [...menu.querySelectorAll("button")].forEach((b) => b.classList.toggle("active", b.dataset.to === id));
++          [...nav.querySelectorAll("button")].forEach((b) => b.classList.toggle("active", b.dataset.to === id));
 +        });
-+      }, { threshold: 0.55 });
++      }, { threshold: 0.58 });
 +      sections.forEach((s) => spy.observe(s));
 +
-+      window.addEventListener("scroll", () => {
-+        const top = window.scrollY;
++      const momentObserver = new IntersectionObserver((entries) => {
++        entries.forEach((entry) => {
++          if (!entry.isIntersecting) return;
++          entry.target.classList.add("visible");
++        });
++      }, { threshold: 0.22 });
++      moments.forEach((m) => momentObserver.observe(m));
++
++      function updateTimelineEffects() {
++        const rect = timelineWrap.getBoundingClientRect();
++        const vh = window.innerHeight;
++        const progressRaw = (vh * 0.72 - rect.top) / (rect.height + vh * 0.15);
++        const p = Math.max(0, Math.min(1, progressRaw));
++        lineFill.style.height = `${p * 100}%`;
++
++        let activeIndex = 0;
++        let bestDist = Infinity;
++        moments.forEach((m, i) => {
++          const r = m.getBoundingClientRect();
++          const center = r.top + r.height * 0.5;
++          const dist = Math.abs(center - vh * 0.45);
++          if (dist < bestDist) { bestDist = dist; activeIndex = i; }
++        });
++        moments.forEach((m, i) => m.classList.toggle("active", i === activeIndex));
++      }
++
++      function onScroll() {
++        const y = window.scrollY;
 +        const max = document.documentElement.scrollHeight - window.innerHeight;
-+        const ratio = max > 0 ? (top / max) * 100 : 0;
-+        progress.style.height = ratio + "%";
-+        parallax.style.transform = `scale(1.08) translateY(${top * -0.05}px)`;
-+      }, { passive: true });
++        const p = max > 0 ? y / max : 0;
++        progress.style.height = `${p * 100}%`;
++        photo.style.transform = `scale(1.08) translateY(${y * -0.05}px)`;
++        updateTimelineEffects();
++      }
++      window.addEventListener("scroll", onScroll, { passive: true });
++
++      const floaty = document.getElementById("floaty");
++      for (let i = 0; i < 22; i++) {
++        const dot = document.createElement("span");
++        dot.className = "particle";
++        dot.style.left = `${Math.random() * 100}%`;
++        dot.style.top = `${Math.random() * 100}%`;
++        dot.style.opacity = `${0.18 + Math.random() * 0.45}`;
++        dot.dataset.spd = (0.25 + Math.random() * 0.65).toFixed(2);
++        floaty.appendChild(dot);
++      }
++      const particles = [...document.querySelectorAll(".particle")];
++      function animateParticles() {
++        const y = window.scrollY;
++        particles.forEach((p, i) => {
++          const spd = Number(p.dataset.spd);
++          const drift = Math.sin((y * 0.004) + i) * 8;
++          p.style.transform = `translate(${drift}px, ${-y * spd * 0.035}px)`;
++        });
++      }
++      window.addEventListener("scroll", animateParticles, { passive: true });
 +
 +      const target = new Date("2026-03-01T00:00:00");
        const chip = document.getElementById("chip");
@@ -1189,18 +785,18 @@ index ba6d3261961d11e1bd533bf6f90101a4ec4f631a..fb851ba15012b2bc83b67179ddaa381f
 +        const diff = target - new Date();
 +        if (diff <= 0) {
 +          d.textContent = "0"; h.textContent = "00"; m.textContent = "00"; s.textContent = "00";
-+          chip.textContent = "🎉 Joyeux anniversaire mon Amour";
-+          dayj.innerHTML = "<h2>Le jour J est arrivé 🎉</h2><p class='lead'>Aujourd'hui, c'est toi la reine. Je t'aime fort, fort, fort. ❤️</p>";
++          chip.textContent = "🌸 1er mars";
++          dayj.textContent = "Le 1er mars est là. ❤️";
            return;
          }
--
+ 
          const sec = Math.floor(diff / 1000);
          const days = Math.floor(sec / 86400);
 -        const hours = Math.floor((sec % 86400) / 3600);
 +        const hrs = Math.floor((sec % 86400) / 3600);
          const mins = Math.floor((sec % 3600) / 60);
          const secs = sec % 60;
--
+ 
 -        elD.textContent = String(days);
 -        elH.textContent = pad(hours);
 -        elM.textContent = pad(mins);
@@ -1213,9 +809,12 @@ index ba6d3261961d11e1bd533bf6f90101a4ec4f631a..fb851ba15012b2bc83b67179ddaa381f
 +        s.textContent = pad(secs);
 +        chip.textContent = `⏳ ${days}j ${pad(hrs)}:${pad(mins)}:${pad(secs)}`;
        }
++
        tick();
++      onScroll();
++      animateParticles();
        setInterval(tick, 1000);
- 
+-
 -      // ===== Reveal on scroll (IntersectionObserver) =====
 -      const els = document.querySelectorAll(".reveal");
 -      const io = new IntersectionObserver((entries) => {
@@ -1232,86 +831,15 @@ index ba6d3261961d11e1bd533bf6f90101a4ec4f631a..fb851ba15012b2bc83b67179ddaa381f
 -      document.getElementById("surprise").addEventListener("click", () => {
 -        document.getElementById("note").textContent =
 -          messages[Math.floor(Math.random() * messages.length)];
-+      const tripInput = document.getElementById("tripInput");
-+      const tripList = document.getElementById("tripList");
-+      const ideaInput = document.getElementById("ideaInput");
-+      const ideaList = document.getElementById("ideaList");
-+      const photoInput = document.getElementById("photoInput");
-+      const photoLabel = document.getElementById("photoLabel");
-+      const gallery = document.getElementById("gallery");
-+
-+      const state = {
-+        trips: JSON.parse(localStorage.getItem("loveTrips") || "[]"),
-+        ideas: JSON.parse(localStorage.getItem("loveIdeas") || "[]"),
-+        photos: JSON.parse(localStorage.getItem("lovePhotos") || "[]")
-+      };
-+
-+      function save() {
-+        localStorage.setItem("loveTrips", JSON.stringify(state.trips));
-+        localStorage.setItem("loveIdeas", JSON.stringify(state.ideas));
-+        localStorage.setItem("lovePhotos", JSON.stringify(state.photos));
-+      }
-+
-+      function renderTrips() {
-+        tripList.innerHTML = state.trips.map((v, i) =>
-+          `<div class='item'>🌍 ${v} <button data-del-trip='${i}' style='float:right'>Supprimer</button></div>`
-+        ).join("") || "<div class='item'>Ajoute votre première destination ✈️</div>";
-+      }
-+      function renderIdeas() {
-+        ideaList.innerHTML = state.ideas.map((v, i) =>
-+          `<div class='item'>💡 ${v} <button data-del-idea='${i}' style='float:right'>Supprimer</button></div>`
-+        ).join("") || "<div class='item'>Ajoute votre première idée folle 🌙</div>";
-+      }
-+      function renderPhotos() {
-+        gallery.innerHTML = state.photos.map((p, i) =>
-+          `<figure><img src='${p.data}' alt='Souvenir'><figcaption>${p.label || "Notre souvenir"} <button data-del-photo='${i}' style='float:right'>X</button></figcaption></figure>`
-+        ).join("") || "<div class='item'>Importe vos premières photos 📸</div>";
-+      }
-+
-+      document.getElementById("addTrip").addEventListener("click", () => {
-+        if (!tripInput.value.trim()) return;
-+        state.trips.unshift(tripInput.value.trim());
-+        tripInput.value = "";
-+        save(); renderTrips();
-       });
+-      });
 -
 -      document.getElementById("scrollNext").addEventListener("click", () => {
 -        document.getElementById("sec2").scrollIntoView({ behavior: "smooth", block: "start" });
-+      document.getElementById("addIdea").addEventListener("click", () => {
-+        if (!ideaInput.value.trim()) return;
-+        state.ideas.unshift(ideaInput.value.trim());
-+        ideaInput.value = "";
-+        save(); renderIdeas();
-+      });
-+      document.getElementById("addPhoto").addEventListener("click", () => {
-+        const file = photoInput.files?.[0];
-+        if (!file) return;
-+        const reader = new FileReader();
-+        reader.onload = () => {
-+          state.photos.unshift({ label: photoLabel.value.trim(), data: reader.result });
-+          photoInput.value = "";
-+          photoLabel.value = "";
-+          save(); renderPhotos();
-+        };
-+        reader.readAsDataURL(file);
-       });
- 
+-      });
+-
 -      document.getElementById("top").addEventListener("click", () => {
 -        window.scrollTo({ top: 0, behavior: "smooth" });
-+      document.body.addEventListener("click", (e) => {
-+        const t = e.target;
-+        const iTrip = t.getAttribute("data-del-trip");
-+        const iIdea = t.getAttribute("data-del-idea");
-+        const iPhoto = t.getAttribute("data-del-photo");
-+        if (iTrip !== null) state.trips.splice(Number(iTrip), 1);
-+        if (iIdea !== null) state.ideas.splice(Number(iIdea), 1);
-+        if (iPhoto !== null) state.photos.splice(Number(iPhoto), 1);
-+        if (iTrip !== null || iIdea !== null || iPhoto !== null) { save(); renderTrips(); renderIdeas(); renderPhotos(); }
-       });
-+
-+      renderTrips();
-+      renderIdeas();
-+      renderPhotos();
+-      });
      </script>
    </body>
  </html>
