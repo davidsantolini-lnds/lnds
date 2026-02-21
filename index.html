@@ -96,6 +96,41 @@
       transform-style:preserve-3d;
       will-change:transform;
     }
+    .sceneBackdrop{
+      position:absolute;
+      inset:0;
+      z-index:0;
+      transition: background 700ms ease, filter 700ms ease;
+      background: radial-gradient(circle at 50% 35%, #1f1440 0%, #07060d 70%);
+    }
+    .scene-space{
+      background: radial-gradient(circle at 50% 32%, #2d1d5c 0%, #05040a 70%);
+    }
+    .scene-summit{
+      background: linear-gradient(180deg, #bdd7ff 0%, #7ca1d6 30%, #35507b 70%, #111a29 100%);
+      filter: saturate(1.15);
+    }
+    .scene-ridge{
+      background: linear-gradient(180deg, #9ac0ea 0%, #5a7da8 35%, #24384f 70%, #101a28 100%);
+    }
+    .scene-sea{
+      background: linear-gradient(180deg, #7cd0ff 0%, #2f8ac4 40%, #0e4b79 72%, #08253c 100%);
+    }
+    .snow{
+      position:absolute;
+      inset:-20% 0 0;
+      pointer-events:none;
+      z-index:1;
+      opacity:0;
+      transition:opacity 500ms ease;
+      background-image: radial-gradient(circle, rgba(255,255,255,.9) 1px, transparent 1.8px);
+      background-size: 26px 26px;
+      animation: snowfall 7s linear infinite;
+    }
+    @keyframes snowfall{
+      to{ transform: translateY(120px) translateX(-20px); }
+    }
+    .snow.on{opacity:.65;}
 
     /* Stars */
     .particles{
@@ -490,6 +525,8 @@
   </div>
 
   <div class="viewport">
+    <div class="sceneBackdrop scene-space" id="sceneBackdrop"></div>
+    <div class="snow" id="snow"></div>
     <div class="camera" id="camera">
       <div class="particles" id="particles"></div>
       <div class="streak" id="streak"></div>
@@ -497,65 +534,56 @@
       <!-- LAYER 0 -->
       <div class="layer" style="transform: translate(-50%,-50%) translateZ(0px);">
         <div class="panel">
-          <span class="kicker"><b>PROJET SECRET</b> · Transmission chiffrée</span>
-          <h1>Hélène, j’ai une proposition.</h1>
-          <h2>Un voyage. Un vrai. Et un site qui le prouve.</h2>
+          <span class="kicker"><b>A-TEAM BRIEF</b> · Anniversaire 2026</span>
+          <h1>Amour, on lance la séquence.</h1>
+          <h2>Pas de voyage : un week-end anniversaire + une surprise secrète.</h2>
           <p>
-            Scrolle : tu traverses un “tunnel” et tu débloques des indices.
-            À la fin… tu tombes sur le plan complet.
+            Tu plonges dans la scène, avec virages à droite/gauche.
+            Objectif : arriver au 28 février 2026 à 20h (Paris), début officiel de ton anniversaire.
           </p>
           <div class="scrollHint">
             <div class="arrow">↓</div>
-            <div>Plonge. Je gère le reste.</div>
+            <div>Descends. L’A-Team gère la trajectoire.</div>
           </div>
-          <p class="poem" id="poemLine">✦ On part pour fabriquer des souvenirs qui sentent le soleil.</p>
-          <div class="mono">Astuce : souris = léger vertige (cinéma, pas manège).</div>
+          <p class="poem" id="poemLine">✦ Mode 2026 : précis, stylé, et full Amour.</p>
+          <div class="mono">Astuce : souris + scroll = chute cinématique avec virages.</div>
         </div>
       </div>
 
       <!-- LAYER 1 -->
       <div class="layer" style="transform: translate(-50%,-50%) translateZ(-1300px);">
         <div class="panel">
-          <span class="kicker"><b>INDICE #1</b> · Ce n’est pas un resto</span>
-          <h1>Je veux t’emmener là où le temps ralentit.</h1>
+          <span class="kicker"><b>SCÈNE 1</b> · Orbite nocturne</span>
+          <h1>On tombe depuis l’espace.</h1>
           <p>
-            Un endroit où tu peux être brillante, fonceuse, et… incroyablement tranquille en même temps.
-            Spoiler : il y aura de l’eau, des ruelles, du soleil, et une cuisine qui attaque directement la dopamine.
+            Les étoiles filent, le cœur accélère, et le plan reste verrouillé.
+            Personne, même moi ici, ne dévoile la surprise avant le moment exact.
           </p>
-          <div class="portal">
-            <div class="txt">
-              <b>Portail en cours d’ouverture…</b>
-              <span>Destination encore masquée</span>
-            </div>
-          </div>
+          <div class="portal"><div class="txt"><b>Entrée atmosphérique</b><span>Cap maintenu vers 28/02 · 20:00</span></div></div>
         </div>
       </div>
 
       <!-- LAYER 2 -->
       <div class="layer" style="transform: translate(-50%,-50%) translateZ(-2600px);">
         <div class="panel">
-          <span class="kicker"><b>INDICE #2</b> · Niveau “carte postale”</span>
-          <h1>Une ville vivante. Vraie. Un peu folle.</h1>
-          <p>
-            Une ville qui te ressemble : élégante, intense, pas tiède.
-            Et autour… des îles et une côte à faire taire n’importe quel PowerPoint.
-          </p>
+          <span class="kicker"><b>SCÈNE 2</b> · Sommet enneigé</span>
+          <h1>Le blanc, le froid, la vue totale.</h1>
+          <p>On approche d’un sommet enneigé : neige visible, silence net, vibe cinéma 2026.</p>
           <div class="grid">
             <div class="card">
-              <h3>Ce que je vise <span class="pill">expérience</span></h3>
+              <h3>Repères <span class="pill">altitude</span></h3>
               <ul class="list">
-                <li><i class="tick"></i> Matins doux (café + vue)</li>
-                <li><i class="tick"></i> Une île “hors du monde”</li>
-                <li><i class="tick"></i> Un coucher de soleil niveau cinéma</li>
-                <li><i class="tick"></i> Zéro logistique dans ta tête</li>
+                <li><i class="tick"></i> Vent propre, ciel clair</li>
+                <li><i class="tick"></i> Virage gauche contrôlé</li>
+                <li><i class="tick"></i> Descente engagée</li>
               </ul>
             </div>
             <div class="card">
-              <h3>Ce que je promets <span class="pill">anti-stress</span></h3>
+              <h3>Signal A-Team <span class="pill">stable</span></h3>
               <ul class="list">
-                <li><i class="tick"></i> Plan clair</li>
-                <li><i class="tick"></i> Rythme respirable</li>
-                <li><i class="tick"></i> Une surprise “wow”</li>
+                <li><i class="tick"></i> Cap sécurisé</li>
+                <li><i class="tick"></i> Surprise protégée</li>
+                <li><i class="tick"></i> Amour à 100%</li>
               </ul>
             </div>
           </div>
@@ -565,51 +593,39 @@
       <!-- LAYER 3 -->
       <div class="layer" style="transform: translate(-50%,-50%) translateZ(-3900px);">
         <div class="panel">
-          <span class="kicker"><b>RÉVÉLATION</b> · Destination dévoilée</span>
-          <h1>Naples + Procida + Côte Amalfitaine.</h1>
-          <h2>Un trip intense, beau, et parfaitement orchestré.</h2>
+          <span class="kicker"><b>SCÈNE 3</b> · Ligne de crête</span>
+          <h1>On serpente le long de la montagne.</h1>
+          <h2>Droite, gauche, droite — toujours vers ton anniversaire.</h2>
           <p>
-            Naples pour l’énergie (et la meilleure pizza du système solaire),
-            Procida pour le calme coloré, et la côte pour la magie.
+            Cette phase, c’est la maîtrise : on tourne, on descend, on garde le style.
+            Et on conserve le secret total sur ton cadeau du 1er mars 2026.
           </p>
+          <div class="portal"><div class="txt"><b>Trajectoire verrouillée ✅</b><span>Prochaine zone : niveau mer</span></div></div>
+        </div>
+      </div>
 
+      <!-- LAYER 4 -->
+      <div class="layer" style="transform: translate(-50%,-50%) translateZ(-5200px);">
+        <div class="panel">
+          <span class="kicker"><b>SCÈNE 4</b> · Niveau mer</span>
+          <h1>Retour à notre spot : la file d’attente surf.</h1>
+          <p>
+            Là où nous nous sommes rencontrés. Même énergie, plus de profondeur,
+            et quelques “Amour” glissés naturellement, version 2026.
+          </p>
           <div class="grid">
-            <div class="card">
-              <h3>Itinéraire “ciné” <span class="pill">4 jours</span></h3>
-              <ul class="list">
-                <li><i class="tick"></i> J1 · Arrivée + ruelles + dîner “wow”</li>
-                <li><i class="tick"></i> J2 · Procida (slow-life + couleurs)</li>
-                <li><i class="tick"></i> J3 · Amalfi / Positano (vue + dolce vita)</li>
-                <li><i class="tick"></i> J4 · Musée / shopping + retour</li>
-              </ul>
-            </div>
-            <div class="card">
-              <h3>Le moment signature <span class="pill">surprise</span></h3>
-              <p style="margin-top:10px;">
-                Une table réservée au bon endroit, au bon timing,
-                avec une vue qui fait bugger la rationalité.
-              </p>
-              <p class="fine">
-                (Oui : j’ai déjà des idées précises. Non : je ne spoil pas ici.)
-              </p>
-            </div>
-          </div>
-
-          <div class="portal">
-            <div class="txt">
-              <b>Portail stabilisé ✅</b>
-              <span>Tu viens de débloquer le plan.</span>
-            </div>
+            <div class="card"><h3>Souvenir clé <span class="pill">origin</span></h3><p>Une file d’attente, des planches, puis nous.</p></div>
+            <div class="card"><h3>Maintenant <span class="pill">A-Team</span></h3><p>On avance ensemble vers 20h, précis et sans bruit inutile.</p></div>
           </div>
         </div>
       </div>
 
-      <!-- LAYER 4 : Countdown + accept -->
-      <div class="layer" style="transform: translate(-50%,-50%) translateZ(-5200px);">
+      <!-- LAYER 5 : countdown -->
+      <div class="layer" style="transform: translate(-50%,-50%) translateZ(-6500px);">
         <div class="panel">
-          <span class="kicker"><b>OBJECTIF</b> · 1er mars (heure de Paris)</span>
-          <h1 id="title">🎉 Compte à rebours 🎉</h1>
-          <p>Parce que certaines dates méritent un dispositif complet.</p>
+          <span class="kicker"><b>OBJECTIF</b> · 28 février 2026 · 20:00 (Paris)</span>
+          <h1 id="title">⏳ Début de l’anniversaire</h1>
+          <p>À 20h, première surprise. Le cadeau reste secret et sera remis le 1er mars 2026.</p>
 
           <div class="countdown" id="countdown">
             <div class="timebox"><span class="num" id="days">00</span><span class="lab">Jours</span></div>
@@ -619,44 +635,21 @@
           </div>
 
           <div class="ctaRow">
-            <button class="btn" id="acceptBtn">✅ J’accepte la mission</button>
-            <button class="btn secondary" id="icsBtn">📅 Ajouter au calendrier</button>
+            <button class="btn" id="acceptBtn">✅ A-Team : je valide</button>
+            <button class="btn secondary" id="icsBtn">📅 Ajouter le 28/02 20h à l’agenda</button>
             <button class="btn secondary" id="copyBtn">📨 Copier l’invitation</button>
           </div>
 
-          <div class="fine" id="fineText">
-            PS : si tu appuies sur “J’accepte”, il se passe un truc. Oui, j’ai codé l’ego.
-          </div>
+          <div class="fine" id="fineText">Note: la première surprise démarre à 20h, le cadeau est remis le 1er mars. Secret total.</div>
         </div>
       </div>
 
-      <!-- LAYER 5 : “Boarding pass” -->
-      <div class="layer" style="transform: translate(-50%,-50%) translateZ(-6500px);">
+      <!-- LAYER 6 : final -->
+      <div class="layer" style="transform: translate(-50%,-50%) translateZ(-7800px);">
         <div class="panel">
-          <span class="kicker"><b>BOARDING PASS</b> · version romantique</span>
-          <h1>Billet de voyage : délivré.</h1>
-          <h2>Destination : Naples / Procida / Amalfi</h2>
-          <div class="grid">
-            <div class="card">
-              <h3>Détails <span class="pill">propre</span></h3>
-              <ul class="list">
-                <li><i class="tick"></i> Mode : “zéro charge mentale”</li>
-                <li><i class="tick"></i> Rythme : intense + doux</li>
-                <li><i class="tick"></i> KPI : ton sourire (100%)</li>
-              </ul>
-              <p class="fine">Ce site est la preuve matérielle que je suis déjà dans l’exécution.</p>
-            </div>
-            <div class="card">
-              <h3>Dernière question <span class="pill">simple</span></h3>
-              <p style="margin-top:10px;">
-                Tu préfères que je révèle la surprise “signature” avant…
-                ou seulement au moment où tu la vis ?
-              </p>
-              <p class="fine">
-                (Ne réponds pas ici. Réponds en me regardant. C’est mieux.)
-              </p>
-            </div>
-          </div>
+          <span class="kicker"><b>FINAL</b> · 28 février, 20:00</span>
+          <h1>On y est. Happy Birthday launch.</h1>
+          <p>Tu confirmes et on déroule la soirée. Quelques Amour, beaucoup d’intention, zéro spoil.</p>
         </div>
       </div>
 
@@ -702,6 +695,7 @@
       </div>
 
     </div>
+    </div>
   </div>
 
 <script>
@@ -710,6 +704,8 @@
 ========================= */
 const camera = document.getElementById("camera");
 const DEPTH = 7800; // profondeur max de la séquence (dernier layer z=-7800)
+const sceneBackdrop = document.getElementById("sceneBackdrop");
+const snow = document.getElementById("snow");
 let targetZ = 0, currentZ = 0;
 let targetRot = 0, currentRot = 0;
 
@@ -734,12 +730,16 @@ function tickCam(){
 
   const tiltX = mouseY * 2.2;
   const tiltY = mouseX * 2.2;
+  const frac = Math.max(0, Math.min(1, currentZ / DEPTH));
+  const turn = Math.sin(frac * Math.PI * 5) * 9;
+  const drift = Math.sin(frac * Math.PI * 7) * 120;
 
   camera.style.transform = `
+    translateX(${drift}px)
     translateZ(${currentZ}px)
-    rotateZ(${currentRot}deg)
-    rotateX(${tiltX}deg)
-    rotateY(${tiltY}deg)
+    rotateZ(${currentRot + turn * 0.25}deg)
+    rotateX(${tiltX + 1.6}deg)
+    rotateY(${tiltY + turn}deg)
   `;
 
   requestAnimationFrame(tickCam);
@@ -762,14 +762,22 @@ function updateHud(){
   const chapter = Math.min(7, Math.max(0, Math.floor(frac * 7.2)));
   hudTitle.textContent = `Navigation : séquence ${chapter}/7`;
   const subs = [
-    "Scrolle — le plan se dévoile.",
-    "Indice #1 : on quitte le quotidien.",
-    "Indice #2 : on vise l’exception.",
-    "Révélation : destination trouvée.",
-    "Objectif : date verrouillée.",
-    "Boarding pass : prêt à décoller.",
-    "Carnet final : la version la plus belle du voyage."
+    "Scrolle — chute cinématique activée.",
+    "Espace : entrée en orbite.",
+    "Sommet enneigé : visibilité neige.",
+    "Montagne : virages A-Team.",
+    "Niveau mer : spot de surf originel.",
+    "Objectif : 28/02 · 20:00.",
+    "Final : anniversaire lancé."
   ];
+
+  sceneBackdrop.className = "sceneBackdrop " + (
+    frac < 0.22 ? "scene-space" :
+    frac < 0.46 ? "scene-summit" :
+    frac < 0.7 ? "scene-ridge" :
+    "scene-sea"
+  );
+  snow.classList.toggle("on", frac > 0.2 && frac < 0.55);
   hudSub.textContent = subs[chapter] || subs[0];
 
   requestAnimationFrame(updateHud);
@@ -791,10 +799,10 @@ function updateParisTime(){
 updateParisTime();
 
 const poemLines = [
-  "✦ On part pour fabriquer des souvenirs qui sentent le soleil.",
-  "✦ Promis : ce voyage aura ton énergie, ton style, et zéro charge mentale.",
-  "✦ Objectif secret : te voir dire wow au moins trois fois par jour.",
-  "✦ C'est plus qu'un trajet : c'est nous, en version dolce vita."
+  "✦ Mode 2026 : précis, stylé, et full Amour.",
+  "✦ A-Team en pilotage : virages propres, cap propre.",
+  "✦ Première surprise à 20h, cadeau le 1er mars. Secret absolu.",
+  "✦ Notre histoire continue au niveau mer, là où tout a commencé."
 ];
 const poemEl = document.getElementById("poemLine");
 let poemIndex = 0;
@@ -845,7 +853,7 @@ function fireStreak(){
 fireStreak();
 
 /* =========================
-   5) Countdown FIXÉ Europe/Paris (minuit 1er mars 2026)
+   5) Countdown FIXÉ Europe/Paris (28 février 2026 à 20h)
 ========================= */
 function getZonedTimestamp({ year, monthIndex, day, hour=0, minute=0, second=0, timeZone }) {
   const utcGuess = Date.UTC(year, monthIndex, day, hour, minute, second);
@@ -874,7 +882,7 @@ function getZonedTimestamp({ year, monthIndex, day, hour=0, minute=0, second=0, 
 }
 
 const targetDate = getZonedTimestamp({
-  year: 2026, monthIndex: 2, day: 1, hour:0, minute:0, second:0, timeZone:"Europe/Paris"
+  year: 2026, monthIndex: 1, day: 28, hour:20, minute:0, second:0, timeZone:"Europe/Paris"
 });
 
 const pad2 = (n) => String(n).padStart(2,"0");
@@ -885,9 +893,9 @@ const timer = setInterval(()=>{
 
   if(d <= 0){
     clearInterval(timer);
-    document.getElementById("title").textContent = "🎂 C’est le jour J ! 🎂";
+    document.getElementById("title").textContent = "🎉 20h atteinte : anniversaire lancé";
     document.getElementById("countdown").innerHTML = `<p style="margin-top:14px;font-size:1.15rem;color:rgba(255,255,255,.85)">
-      Aujourd’hui, c’est toi la priorité absolue. ❤️
+      Première surprise en cours. Amour + A-Team, sans spoiler. ❤️
     </p>`;
     return;
   }
@@ -928,8 +936,8 @@ UID:${uid}
 DTSTAMP:${toICSDateUTC(Date.now())}
 DTSTART:${toICSDateUTC(dtStart)}
 DTEND:${toICSDateUTC(dtEnd)}
-SUMMARY:🎉 Objectif 1er Mars
-DESCRIPTION:Déploiement surprise (Europe/Paris).
+SUMMARY:🎂 Début anniversaire - 28 février 20h
+DESCRIPTION:Première surprise à 20h. Cadeau remis le 1er mars 2026 (secret).
 END:VEVENT
 END:VCALENDAR`;
 
@@ -937,7 +945,7 @@ END:VCALENDAR`;
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
-  a.download = "objectif-1er-mars.ics";
+  a.download = "anniversaire-28-fevrier-20h.ics";
   a.click();
   URL.revokeObjectURL(url);
 });
@@ -946,10 +954,11 @@ document.getElementById("copyBtn").addEventListener("click", async () => {
   const msg =
 `Hélène ❤️
 
-J’ai une proposition : Naples + Procida + Côte Amalfitaine.
-4 jours : énergie, douceur, vue, et une surprise “signature”.
+Le 28 février à 20h, ton anniversaire commence officiellement.
+Première surprise dès le départ.
+Le cadeau sera remis le 1er mars 2026. Secret total.
 
-Tu acceptes la mission ? ✨`;
+A-Team + Amour. Tu valides ? ✨`;
 
   try{
     await navigator.clipboard.writeText(msg);
@@ -1039,7 +1048,7 @@ document.getElementById("acceptBtn").addEventListener("click", () => {
   hb.style.background = "rgba(117,243,198,.15)";
   hb.style.borderColor = "rgba(117,243,198,.35)";
 
-  pulseText("Mission validée. Prochaine étape : la surprise. ✨");
+  pulseText("A-Team validée. Première surprise à 20h. ✨");
 });
 </script>
 </body>
