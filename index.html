@@ -140,4 +140,168 @@
         <div class="scene visible" id="scene1">
             <h1>Initialisation...</h1>
             <p>> Chargement du protocole "Cadeau de génie".<br>> Exécution du script romantique.sh...<br>> Bypass de l'option "Acheter des fleurs au supermarché".</p>
-            <div class="scroll-down">
+            <div class="scroll-down">▼ Amorcer le défilement ▼</div>
+        </div>
+
+        <div class="scene" id="scene2">
+            <h1>Océan Privé</h1>
+            <p>J'aurais pu t'offrir un week-end surf, mais j'ai préféré te coder une houle virtuelle. Au moins, ici, l'eau est toujours à bonne température et il n'y a pas de sable dans les combinaisons.</p>
+        </div>
+
+        <div class="scene" id="scene3">
+            <h1>Altitude Max</h1>
+            <p>Et parce que tu aimes la montagne, voici un blizzard sur mesure. Admire cette neige qui ne fond jamais, parfaitement conçue pour que tu puisses te plaindre du froid, même derrière un écran.</p>
+        </div>
+
+        <div class="scene" id="scene4">
+            <h1 id="final-title">Le vrai sommet est ici.</h1>
+            <p id="final-msg">Tout ce voyage numérique juste pour te rappeler qu'il ne te reste que ce temps avant de devenir officiellement plus vieille :</p>
+            
+            <div class="countdown-wrapper" id="countdown">
+                <div class="time-block"><span class="num" id="days">00</span><span class="text">Jours</span></div>
+                <div class="time-block"><span class="num" id="hours">00</span><span class="text">Heures</span></div>
+                <div class="time-block"><span class="num" id="minutes">00</span><span class="text">Min</span></div>
+                <div class="time-block"><span class="num" id="seconds">00</span><span class="text">Sec</span></div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // --- 1. MOTEUR GRAPHIQUE CANVAS ---
+        const canvas = document.getElementById('canvas-bg');
+        const ctx = canvas.getContext('2d');
+        
+        let width, height;
+        let particles = [];
+        const particleCount = 400; // Plus il y en a, plus c'est beau (et plus le PC souffle)
+        
+        // Variable magique qui va de 0 à 1 selon le scroll
+        let scrollProgress = 0; 
+
+        function resize() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        // Création des particules (elles vont muter en fonction du scroll)
+        for (let i = 0; i < particleCount; i++) {
+            particles.push({
+                x: Math.random() * width,
+                y: Math.random() * height,
+                z: Math.random() * 1000, // Profondeur pour la 3D
+                size: Math.random() * 2 + 1,
+                speedX: 0,
+                speedY: 0,
+                baseColor: [255, 255, 255]
+            });
+        }
+
+        // Boucle d'animation principale à 60 FPS
+        function render() {
+            // Effet de traînée (on efface pas tout à fait l'image précédente)
+            ctx.fillStyle = 'rgba(5, 5, 5, 0.2)';
+            ctx.fillRect(0, 0, width, height);
+
+            particles.forEach((p, index) => {
+                let color = `rgba(255, 255, 255, ${1 - p.z/1000})`;
+
+                // ETAPE 1 : HACKER (0 à 0.25)
+                if (scrollProgress < 0.25) {
+                    p.speedY = 2;
+                    p.speedX = 0;
+                    color = `rgba(0, 255, 0, ${1 - p.z/1000})`; // Vert Matrix
+                } 
+                // ETAPE 2 : SURF / VAGUES (0.25 à 0.5)
+                else if (scrollProgress >= 0.25 && scrollProgress < 0.5) {
+                    // Mouvement sinusoïdal pour imiter la houle
+                    p.speedY = Math.sin((p.x / 50) + (Date.now() / 500)) * 2;
+                    p.speedX = -3; // Courant vers la gauche
+                    color = `rgba(0, 191, 255, ${1 - p.z/1000})`; // Bleu lagon
+                }
+                // ETAPE 3 : MONTAGNE / BLIZZARD (0.5 à 0.75)
+                else if (scrollProgress >= 0.5 && scrollProgress < 0.75) {
+                    p.speedY = 5 + (p.size * 2); // Tombe vite
+                    p.speedX = 3 + Math.sin(Date.now() / 1000 + index); // Vent chaotique
+                    color = `rgba(255, 255, 255, ${1 - p.z/1000})`; // Blanc neige
+                }
+                // ETAPE 4 : HYPER-ESPACE (0.75 à 1)
+                else {
+                    // Les particules fuient le centre de l'écran (effet tunnel)
+                    const dx = p.x - width / 2;
+                    const dy = p.y - height / 2;
+                    p.speedX = dx * 0.02;
+                    p.speedY = dy * 0.02;
+                    
+                    // Couleurs festives
+                    const colors = ['#ff9a9e', '#fecfef', '#ffffff'];
+                    color = colors[index % 3];
+                }
+
+                // Application du mouvement
+                p.x += p.speedX;
+                p.y += p.speedY;
+
+                // Si la particule sort de l'écran, on la recycle de l'autre côté
+                if (p.x < 0) p.x = width;
+                if (p.x > width) p.x = 0;
+                if (p.y < 0) p.y = height;
+                if (p.y > height) {
+                    p.y = 0;
+                    p.x = Math.random() * width;
+                }
+
+                // Dessin de la particule
+                ctx.fillStyle = color;
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                ctx.fill();
+            });
+
+            requestAnimationFrame(render);
+        }
+        render(); // Lance le moteur
+
+        // --- 2. GESTION DU SCROLL ET APPARITION DES TEXTES ---
+        window.addEventListener('scroll', () => {
+            const maxScroll = document.body.scrollHeight - window.innerHeight;
+            scrollProgress = window.scrollY / maxScroll;
+
+            // Détecter quelle scène est à l'écran pour la faire apparaître
+            const scenes = document.querySelectorAll('.scene');
+            scenes.forEach((scene, index) => {
+                const rect = scene.getBoundingClientRect();
+                // Si la scène est dans le champ de vision
+                if (rect.top < window.innerHeight * 0.75 && rect.bottom > 0) {
+                    scene.classList.add('visible');
+                } else {
+                    scene.classList.remove('visible');
+                }
+            });
+        });
+
+        // --- 3. LE COMPTEUR IMPITOYABLE ---
+        const targetDate = new Date("March 1, 2026 00:00:00").getTime();
+        
+        const timer = setInterval(function() {
+            const now = new Date().getTime();
+            const distance = targetDate - now;
+
+            if (distance < 0) {
+                clearInterval(timer);
+                document.getElementById("final-title").innerText = "🎂 ALERTE GÉNÉRALE 🎂";
+                document.getElementById("final-msg").innerText = "Le temps est écoulé. J'espère que tu aimes ce site web, parce que c'est tout ce que j'ai.";
+                document.getElementById("countdown").style.display = "none";
+                return;
+            }
+
+            document.getElementById("days").innerText = Math.floor(distance / (1000 * 60 * 60 * 24)).toString().padStart(2, '0');
+            document.getElementById("hours").innerText = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)).toString().padStart(2, '0');
+            document.getElementById("minutes").innerText = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60)).toString().padStart(2, '0');
+            document.getElementById("seconds").innerText = Math.floor((distance % (1000 * 60)) / 1000).toString().padStart(2, '0');
+        }, 1000);
+    </script>
+</body>
+</html>
