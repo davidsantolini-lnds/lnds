@@ -215,7 +215,6 @@
       filter: blur(.2px);
     }
 
-
     .gates{
       position:absolute;
       inset:0;
@@ -547,7 +546,6 @@
       opacity:.95;
     }
 
-
     .poem{
       margin-top:16px;
       font-size:1rem;
@@ -611,7 +609,7 @@
     <div class="chip">
       <i class="dot"></i>
       <div>
-        <strong id="hudTitle">Navigation : séquence 0/7</strong><br/>
+        <strong id="hudTitle">Navigation : séquence 0/6</strong><br/>
         <span id="hudSub">Scrolle — le plan se dévoile.</span>
       </div>
     </div>
@@ -632,7 +630,6 @@
       <div class="particles" id="particles"></div>
       <div class="streak" id="streak"></div>
 
-      <!-- LAYER 0 -->
       <div class="layer" style="transform: translate(-50%,-50%) translateZ(0px);">
         <div class="panel">
           <span class="kicker"><b>SLALOM MODE</b> · Anniversaire A-Team</span>
@@ -649,7 +646,6 @@
         </div>
       </div>
 
-      <!-- LAYER 1 -->
       <div class="layer" style="transform: translate(-50%,-50%) translateZ(-1300px);">
         <div class="panel">
           <span class="kicker"><b>PORTE ROUGE</b> · Focus</span>
@@ -662,7 +658,6 @@
         </div>
       </div>
 
-      <!-- LAYER 2 -->
       <div class="layer" style="transform: translate(-50%,-50%) translateZ(-2600px);">
         <div class="panel">
           <span class="kicker"><b>PORTE BLEUE</b> · Relance</span>
@@ -676,7 +671,6 @@
         </div>
       </div>
 
-      <!-- LAYER 3 -->
       <div class="layer" style="transform: translate(-50%,-50%) translateZ(-3900px);">
         <div class="panel">
           <span class="kicker"><b>PORTE ROUGE</b> · Mental fort</span>
@@ -689,7 +683,6 @@
         </div>
       </div>
 
-      <!-- LAYER 4 -->
       <div class="layer" style="transform: translate(-50%,-50%) translateZ(-5200px);">
         <div class="panel">
           <span class="kicker"><b>DERNIÈRE PORTE</b> · Finale</span>
@@ -702,7 +695,6 @@
         </div>
       </div>
 
-      <!-- LAYER 5 -->
       <div class="layer" style="transform: translate(-50%,-50%) translateZ(-6500px);">
         <div class="panel">
           <span class="kicker"><b>LIGNE D’ARRIVÉE</b> · Timing officiel</span>
@@ -726,7 +718,6 @@
         </div>
       </div>
 
-      <!-- LAYER 6 -->
       <div class="layer" style="transform: translate(-50%,-50%) translateZ(-7800px);">
         <div class="panel">
           <span class="kicker"><b>APRÈS-COURSE</b> · Smile</span>
@@ -740,4 +731,74 @@
 
 <script>
 /* =========================
-   1) 3D CAMERA (bon sens)
+   1) 3D CAMERA (Le vrai téléski)
+========================= */
+const camera = document.getElementById('camera');
+const prog = document.getElementById('prog');
+const hudTitle = document.getElementById('hudTitle');
+
+// On calcule la hauteur totale qu'on peut scroller
+let maxScroll = document.body.scrollHeight - window.innerHeight;
+
+window.addEventListener('resize', () => {
+  maxScroll = document.body.scrollHeight - window.innerHeight;
+});
+
+window.addEventListener('scroll', () => {
+  const scrolled = window.scrollY;
+  const progress = scrolled / maxScroll;
+  
+  // Remplissage de la jauge HUD
+  prog.style.width = (progress * 100) + '%';
+  
+  // La dernière frame est à -7800px sur l'axe Z. 
+  const zMove = progress * 7800;
+  camera.style.transform = `translateZ(${zMove}px)`;
+  
+  // Mise à jour du HUD (6 séquences)
+  const currentLayer = Math.min(6, Math.floor((zMove + 650) / 1300));
+  hudTitle.innerHTML = `Navigation : séquence ${currentLayer}/6`;
+});
+
+/* =========================
+   2) HORLOGE PARIS & COMPTE A REBOURS
+========================= */
+const parisClock = document.getElementById('parisClock');
+const targetDate = new Date('2026-03-01T00:00:00+01:00').getTime(); // Heure de Paris
+
+function updateTime() {
+  const now = new Date();
+  
+  // Heure en direct sur le HUD
+  parisClock.innerText = now.toLocaleTimeString('fr-FR', {timeZone: 'Europe/Paris'});
+  
+  // Compte à rebours
+  const diff = targetDate - now.getTime();
+  
+  if (diff > 0) {
+    document.getElementById('days').innerText = String(Math.floor(diff / (1000 * 60 * 60 * 24))).padStart(2, '0');
+    document.getElementById('hours').innerText = String(Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))).padStart(2, '0');
+    document.getElementById('minutes').innerText = String(Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60))).padStart(2, '0');
+    document.getElementById('seconds').innerText = String(Math.floor((diff % (1000 * 60)) / 1000)).padStart(2, '0');
+  } else {
+    // Si la date est dépassée
+    ['days', 'hours', 'minutes', 'seconds'].forEach(id => {
+      document.getElementById(id).innerText = "00";
+    });
+  }
+}
+
+// Lancer l'horloge
+setInterval(updateTime, 1000);
+updateTime(); // Appel immédiat pour éviter le blanc d'une seconde
+
+/* =========================
+   3) LA NEIGE (Effet visuel)
+========================= */
+// On active la neige dès le chargement
+window.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('snow').classList.add('on');
+});
+</script>
+</body>
+</html>
