@@ -2,225 +2,194 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Mission : Hélène ✨ - Run 2</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Mission : Hélène ✨ - Final Cut</title>
 
   <style>
     :root{
-      --bg0:#050505;
-      --pink:#ff6bd6;
-      --rose:#ff9a9e;
-      --pearl:#fecfef;
+      --bg0:#020204; /* Noir plus profond */
+      --pink:#ff4785;
+      --blue:#2477ff;
       --mint:#75f3c6;
-      --shadow:0 30px 90px rgba(0,0,0,.55);
-      --soft:0 0 60px rgba(255, 107, 214, .20);
+      /* Ombres beaucoup plus marquées pour le contraste cinéma */
+      --shadow-cine: 0 50px 100px rgba(0,0,0,0.8), 0 20px 40px rgba(0,0,0,0.6);
     }
 
     *{box-sizing:border-box;}
     html,body{height:100%;}
     body{
       margin:0;
-      /* On augmente la hauteur pour une descente plus longue et fluide */
-      height: 12000px; 
+      height: 14000px; /* Descente encore plus longue */
       background:var(--bg0);
       color:#fff;
-      font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial;
+      font-family:-apple-system,BlinkMacSystemFont,Arial;
       overflow-x:hidden;
-      /* Important pour éviter le rebond sur Mac */
       overscroll-behavior-y: none; 
     }
 
-    /* HUD (inchangé) */
+    /* --- HUD (Style épuré) --- */
     .hud{
-      position:fixed;
-      top:14px; left:14px; right:14px;
-      z-index:50;
-      display:flex; gap:12px; align-items:center;
-      pointer-events:none;
+      position:fixed; top:20px; left:20px; right:20px; z-index:100;
+      display:flex; gap:15px; align-items:center; pointer-events:none;
+      text-shadow: 0 2px 5px rgba(0,0,0,0.8);
     }
-    .chip{
-      display:flex; align-items:center; gap:10px;
-      padding:10px 12px;
-      border-radius:999px;
-      background:rgba(0,0,0,.35);
-      border:1px solid rgba(255,255,255,.09);
-      backdrop-filter: blur(12px);
-      box-shadow: 0 15px 50px rgba(0,0,0,.35);
-      min-width: 180px;
+    .chip-glass{
+      background: rgba(0,0,0,0.6);
+      backdrop-filter: blur(16px) saturate(1.2);
+      border: 1px solid rgba(255,255,255,0.15);
+      padding: 12px 18px; border-radius: 12px;
+      display:flex; align-items:center; gap:12px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
     }
-    .dot{ width:10px;height:10px;border-radius:50%; background:var(--mint); box-shadow:0 0 12px var(--mint); }
-    .hud strong{font-size:.92rem;}
-    .hud span{font-size:.82rem;color:rgba(255,255,255,.65)}
-    .bar{
-      flex:1; height:10px; border-radius:999px;
-      background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.08);
-      overflow:hidden;
-    }
-    .bar > i{
-      display:block;height:100%; width:0%;
-      background:linear-gradient(90deg, var(--rose), var(--pink), var(--mint));
-      box-shadow: var(--soft);
-      transition: width 0.1s linear; /* Fluidité de la barre */
-    }
-    .pill{ padding:4px 10px; border-radius:999px; background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.10); font-size:.78rem; color:rgba(255,255,255,.72); }
+    .dot-live{ width:10px; height:10px; background:red; border-radius:50%; box-shadow:0 0 15px red; animation: pulse 1s infinite alternate;}
+    @keyframes pulse { from{opacity:0.6} to{opacity:1}}
+    .bar-container{ flex:1; height:8px; background:rgba(255,255,255,0.1); border-radius:4px; overflow:hidden; }
+    .bar-fill{ height:100%; width:0%; background:linear-gradient(90deg, var(--pink), var(--blue)); transition: width 0.1s linear; }
 
-    /* Viewport 3D & Ambiance */
+    /* --- VIEWPORT & AMBIANCE CINÉMA --- */
     .viewport{
       position:fixed; inset:0;
-      perspective:1000px; /* Perspective un peu plus forte */
+      /* Perspective très forte pour l'immersion grand angle */
+      perspective: 800px; 
+      background: linear-gradient(180deg, #0a0a14 0%, #1a2035 40%, #eef 100%);
       overflow:hidden;
-      background: radial-gradient(circle at 50% 30%, #1a1025 0%, #000 70%);
     }
-    
-    /* NOUVELLE NEIGE : 3 couches Parallaxe + Mouvement organique */
-    .snow-container {
-        position: fixed; inset: 0; pointer-events: none; z-index: 1;
-        filter: drop-shadow(0 0 5px white);
+    /* VIGNETTAGE CINÉMA : Assombrit fortement les coins */
+    .viewport:after {
+        content: ""; position: absolute; inset: 0; z-index: 50; pointer-events: none;
+        background: radial-gradient(circle at center, transparent 30%, rgba(0,0,0,0.8) 90%);
+        mix-blend-mode: multiply;
     }
+    /* BROUILLARD ATMOSPHÉRIQUE : Donne la profondeur */
+    .fog-layer {
+        position: absolute; inset:0; z-index: 2; pointer-events: none;
+        background: linear-gradient(0deg, rgba(230,240,255,0.8) 0%, transparent 40%);
+    }
+
+    /* --- NEIGE AMÉLIORÉE --- */
+    .snow-container { position: fixed; inset: -100%; pointer-events: none; z-index: 1; transform-style: preserve-3d;}
     .snow-layer {
-        position: absolute; inset: -100% 0 0 0;
-        background-repeat: repeat;
-        animation-timing-function: linear;
-        animation-iteration-count: infinite;
-        opacity: 0; transition: opacity 2s ease-in;
+        position: absolute; inset:0; background-repeat: repeat;
+        opacity:0; transition: opacity 1s ease-in;
+        animation-timing-function: linear; animation-iteration-count: infinite;
     }
     body.skiing .snow-layer { opacity: 1; }
-
-    /* Couche lointaine (petite, lente) */
-    .snow-far {
-        background-image: radial-gradient(circle, rgba(255,255,255,0.8) 1px, transparent 2px);
-        background-size: 50px 50px;
-        animation-name: snowfall-far;
-        animation-duration: 20s;
-        opacity: 0.3 !important;
-    }
-    /* Couche moyenne */
-    .snow-mid {
-        background-image: radial-gradient(circle, rgba(255,255,255,0.9) 1.5px, transparent 3px);
-        background-size: 100px 100px;
-        animation-name: snowfall-mid;
-        animation-duration: 10s;
-        opacity: 0.5 !important;
-    }
-    /* Couche proche (rapide, grosse, effet vitesse) */
-    .snow-near {
-        background-image: radial-gradient(circle, #fff 2px, transparent 4px);
-        background-size: 150px 150px;
-        animation-name: snowfall-near;
-        animation-duration: 5s;
-        opacity: 0.8 !important;
+    .snow-far { background-size: 60px 60px; background-image: radial-gradient(circle, rgba(255,255,255,0.7) 1px, transparent 2px); animation: snowfall 25s infinite; transform: translateZ(-200px) scale(2); opacity: 0.4!important;}
+    .snow-mid { background-size: 120px 120px; background-image: radial-gradient(circle, rgba(255,255,255,0.9) 2px, transparent 3px); animation: snowfall 15s infinite; }
+    .snow-near { background-size: 180px 180px; background-image: radial-gradient(circle, #fff 3px, transparent 5px); animation: snowfall 7s infinite; transform: translateZ(100px); }
+    @keyframes snowfall {
+        0% { background-position: 0px 0px; }
+        100% { background-position: 50px 1000px; }
     }
 
-    /* Animations de neige qui oscillent */
-    @keyframes snowfall-far {
-        0% { transform: translateY(0) translateX(0); }
-        50% { transform: translateY(50%) translateX(20px); }
-        100% { transform: translateY(100%) translateX(0); }
-    }
-    @keyframes snowfall-mid {
-        0% { transform: translateY(0) translateX(0); }
-        50% { transform: translateY(50%) translateX(-30px); }
-        100% { transform: translateY(100%) translateX(0); }
-    }
-    @keyframes snowfall-near {
-        0% { transform: translateY(0) translateX(0); }
-        50% { transform: translateY(50%) translateX(40px); }
-        100% { transform: translateY(100%) translateX(0); }
-    }
+    /* --- CAMÉRA --- */
+    .camera{ position:absolute; inset:0; transform-style:preserve-3d; will-change:transform; }
 
-    /* Caméra et Éléments 3D */
-    .camera{
-      position:absolute; inset:0;
-      transform-style:preserve-3d;
-      will-change:transform;
-      /* Le mouvement sera géré en JS */
-    }
+    /* --- PANNEAUX DE PISTE (Le sol) --- */
+    .layer{ position:absolute; top:50%; left:50%; width:min(1200px, 95vw); transform-style:preserve-3d; transform-origin: center center -1000px; }
 
-    /* Layers & Panels */
-    .layer{
-      position:absolute; top:50%; left:50%;
-      width:min(1100px, 90vw);
-      transform-style:preserve-3d;
-      /* Point d'origine important pour les rotations */
-      transform-origin: center center -500px; 
-    }
-
-    .panel{
+    .panel-surface{
       position:relative;
-      /* Légère inclinaison vers l'arrière pour l'effet de pente */
-      transform: rotateX(5deg);
-      background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.02));
-      border:1px solid rgba(255,255,255,.12);
-      border-radius:28px;
-      padding:30px;
-      box-shadow: var(--shadow);
-      backdrop-filter: blur(10px);
-      overflow:hidden;
-    }
-    /* Effet de halo lumineux sur les panels */
-    .panel:after {
-        content: ""; position: absolute; inset: 0;
-        background: radial-gradient(circle at top, rgba(255,255,255,0.15), transparent 70%);
-        mix-blend-mode: overlay; pointer-events: none;
-    }
-   
-    /* Typography & Elements */
-    .kicker{ display:inline-flex; gap:10px; padding:8px 12px; border-radius:999px; background: rgba(0,0,0,.3); border:1px solid rgba(255,255,255,.15); font-size:.85rem; color:rgba(255,255,255,.8); }
-    .kicker b{ color:#fff; font-weight:800; }
-    h1{ margin:14px 0 6px; font-size: clamp(2.5rem, 5vw, 4rem); line-height:1.05; text-shadow:0 0 30px rgba(255,107,214,.3); }
-    p{ margin:12px 0 0; color: rgba(255,255,255,.8); font-size:1.1rem; line-height:1.6; max-width: 600px; }
-
-    .slope{
-      margin-top:24px; border-radius:20px; min-height:240px;
-      border:1px solid rgba(255,255,255,.3);
-      background: linear-gradient(170deg, rgba(255,255,255,.9) 0%, rgba(210,230,255,.8) 100%);
-      position:relative; overflow:hidden;
-      box-shadow: 0 20px 50px rgba(0,0,0,.4);
+      /* Inclinaison réaliste de la piste */
+      transform: rotateX(15deg);
+      background: linear-gradient(170deg, rgba(220,235,255,1) 0%, rgba(180,200,230,1) 100%);
+      /* Texture de glace/neige damée */
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.4' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.3'/%3E%3C/svg%3E");
+      border-radius: 30px;
+      padding: 40px;
+      /* Ombre portée sur le sol "en dessous" */
+      box-shadow: 0 40px 80px rgba(0,0,0,0.5);
       transform-style: preserve-3d;
+      overflow: hidden; /* Pour que les textes ne dépassent pas de la neige */
     }
-    /* Texture de neige sur la piste */
-    .slope:before {
+    /* Reflet glacé sur la piste */
+    .panel-surface:before {
         content:""; position:absolute; inset:0;
-        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.15'/%3E%3C/svg%3E");
-        opacity: 0.6; mix-blend-mode: overlay;
+        background: linear-gradient(45deg, transparent 40%, rgba(255,255,255,0.4) 50%, transparent 60%);
+        background-size: 200% 200%; filter: blur(10px); opacity: 0.7; mix-blend-mode: overlay;
     }
 
-    .gate{
-      position:absolute; width:130px; padding:10px; border-radius:10px;
-      color:#fff; font-size:.8rem; font-weight:800; text-align:center;
-      text-shadow:0 1px 3px rgba(0,0,0,.6);
-      box-shadow:0 10px 30px rgba(0,0,0,.3);
-      transform: translateZ(20px); /* Les portes ressortent de la piste */
-    }
-    .gate:before, .gate:after{ content:""; position:absolute; top:-15px; width:6px; height:50px; background:#fff; border-radius:3px; z-index: -1; }
-    .gate:before{left:10px; transform: rotate(-5deg);}
-    .gate:after{right:10px; transform: rotate(5deg);}
-    .gate.red{background:linear-gradient(135deg,#ff4764,#d91a3d);}
-    .gate.blue{background:linear-gradient(135deg,#479eff,#1a6dd9);}
+    /* Textes sur la neige */
+    h1{ margin:0; font-size: clamp(2rem, 6vw, 5rem); font-weight: 900; text-transform: uppercase; letter-spacing: -1px; text-shadow: 0 5px 15px rgba(0,0,0,0.3); position:relative; z-index: 2;}
+    p.lead{ font-size: 1.2rem; font-weight: 600; color: rgba(0,0,0,0.7); margin-top: 10px; position:relative; z-index: 2;}
 
-    /* Countdown Styles */
-    .countdown{ margin-top:20px; display:flex; gap:12px; }
-    .timebox{ background: rgba(0,0,0,.3); border:1px solid rgba(255,255,255,.15); border-radius:18px; padding:14px; min-width:110px; text-align: center; }
-    .num{ font-size:2rem; font-weight:900; display:block; }
-    .lab{ font-size:.75rem; text-transform:uppercase; color:rgba(255,255,255,.5); letter-spacing: 1px;}
-    .finishBadge{ display:inline-block; margin-top: 16px; padding: 8px 16px; background: var(--mint); color: var(--bg0); font-weight: 800; border-radius: 99px; box-shadow: 0 0 30px var(--mint);}
+    /* --- LES VRAIES PORTES 3D (Assemblage complexe) --- */
+    .gate-assembly {
+        position: absolute;
+        transform-style: preserve-3d;
+        z-index: 10;
+        /* On les soulève légèrement du sol */
+        transform: translateZ(5px); 
+    }
+
+    /* 1. L'ombre au sol réaliste */
+    .gate-shadow {
+        position: absolute; top: 95%; left: -10%; width: 120%; height: 20px;
+        background: rgba(0,0,0,0.4);
+        filter: blur(10px);
+        transform: rotateX(90deg) translateZ(-2px); /* Plat sur le sol */
+        border-radius: 50%;
+    }
+
+    /* 2. Les Piquets (épaisseur) */
+    .pole {
+        position: absolute; top:0; width: 8px; height: 120px;
+        /* Création d'un cylindre "fake" avec des dégradés */
+        background: linear-gradient(90deg, #999, #fff, #999);
+        border-radius: 4px;
+        box-shadow: 0 0 5px rgba(0,0,0,0.5);
+    }
+    .pole.left { left: 0; }
+    .pole.right { right: 0; }
+    /* Embout du piquet */
+    .pole:after { content:""; position:absolute; top:-5px; left:-2px; width:12px; height:12px; background:#333; border-radius:50%; transform: rotateX(90deg); }
+
+    /* 3. Le Drapeau (tissu) */
+    .flag {
+        position: absolute; top: 15px; left: 6px; right: 6px; height: 80px;
+        display: grid; place-items: center;
+        color: white; font-weight: 900; font-size: 1rem; text-transform: uppercase; letter-spacing: 1px;
+        text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        /* Légère courbure pour le vent */
+        transform: translateZ(2px) rotateY(5deg);
+        border-radius: 4px;
+        /* Texture de tissu nylon */
+        background-image: repeating-linear-gradient(45deg, transparent 0, transparent 2px, rgba(0,0,0,0.1) 3px);
+        box-shadow: inset 0 0 20px rgba(0,0,0,0.2);
+    }
+    .gate-assembly.red .flag { background-color: var(--pink); background: linear-gradient(135deg, #ff6b95, var(--pink)); box-shadow: 0 10px 30px rgba(255, 71, 133, 0.4); }
+    .gate-assembly.blue .flag { background-color: var(--blue); background: linear-gradient(135deg, #479eff, var(--blue)); box-shadow: 0 10px 30px rgba(36, 119, 255, 0.4);}
+
+    /* --- Compte à rebours final --- */
+    .finish-box {
+        background: rgba(20, 30, 50, 0.9);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255,255,255,0.2);
+        padding: 40px; border-radius: 30px;
+        text-align: center;
+        box-shadow: var(--shadow-cine);
+        transform: rotateX(-10deg); /* Face à la caméra */
+    }
+    .countdown-flex { display: flex; gap: 20px; justify-content: center; margin-top: 30px;}
+    .time-unit { background: rgba(0,0,0,0.3); padding: 20px; border-radius: 15px; border: 1px solid rgba(255,255,255,0.1); min-width: 100px;}
+    .t-num { font-size: 3rem; font-weight: 900; display: block; background: linear-gradient(to bottom, #fff, #ccc); -webkit-background-clip: text; -webkit-text-fill-color: transparent;}
+    .t-label { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 2px; color: rgba(255,255,255,0.6); }
   </style>
 </head>
 
 <body>
 
   <div class="hud">
-    <div class="chip">
-      <i class="dot"></i>
-      <div>
-        <strong id="hudTitle">Départ imminent</strong><br/>
-        <span id="hudSub">Pousse sur les bâtons (scrolle)</span>
+    <div class="chip-glass" style="flex:1; max-width: 300px;">
+      <div style="flex:1">
+        <strong style="display:block; font-size:1.1rem;">A-Team Descent</strong>
+        <span id="hudSub" style="opacity:0.7; font-size:0.9rem;">Dans le portillon...</span>
       </div>
     </div>
-    <div class="bar"><i id="prog"></i></div>
-    <div class="chip" style="min-width:auto;">
-      <strong id="parisClock">--:--</strong>
-      <span class="pill" style="margin-left:10px">LIVE</span>
+    <div class="bar-container"><div class="bar-fill" id="prog"></div></div>
+    <div class="chip-glass">
+        <i class="dot-live"></i>
+        <strong id="parisClock">--:--</strong>
     </div>
   </div>
 
@@ -231,76 +200,85 @@
   </div>
 
   <div class="viewport">
-    <div class="camera" id="camera">
+    <div class="fog-layer"></div> <div class="camera" id="camera">
 
       <div class="layer" style="transform: translate(-50%,-50%) translateZ(0px);">
-        <div class="panel">
-          <span class="kicker"><b>STARTHOUSE</b> · A-Team Winter mission</span>
-          <h1>Dans le portillon de départ.</h1>
-          <p>Le tracé est prêt. La neige est fraîche. Scrolle pour t'élancer dans la pente. Sens les carres mordre la neige.</p>
-          <div class="slope" style="min-height: 180px; background: linear-gradient(170deg, #eef, #cce);">
-             <div style="position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); color: #557; font-weight: 800; letter-spacing: 2px;">▼ GO ▼</div>
+        <div class="panel-surface" style="min-height: 600px;">
+          <h1>Starthouse.</h1>
+          <p class="lead">Le silence avant la tempête. Scrolle pour t'élancer.</p>
+          <div style="position: absolute; bottom: 50px; left: 50%; transform: translateX(-50%); color: rgba(0,0,0,0.4); font-weight: 900; font-size: 3rem; letter-spacing: 5px;">▼ GO ▼</div>
+        </div>
+      </div>
+
+      <div class="layer" style="transform: translate(-50%,-50%) translateZ(-2000px);">
+        <div class="panel-surface" style="min-height: 800px;">
+          <div class="gate-assembly red" style="top:10%; left:15%; width: 160px;">
+              <div class="gate-shadow"></div> <div class="pole left"></div> <div class="flag">Focus ❤️</div> <div class="pole right"></div> </div>
+
+           <div class="gate-assembly blue" style="top:60%; right:10%; width: 200px;">
+              <div class="gate-shadow"></div>
+              <div class="pole left"></div>
+              <div class="flag">Vitesse Pure ⚡️</div>
+              <div class="pole right"></div>
           </div>
         </div>
       </div>
 
-      <div class="layer" style="transform: translate(-50%,-50%) translateZ(-1500px);">
-        <div class="panel">
-          <span class="kicker"><b>SECTION 1</b> · Prise de vitesse</span>
-          <h1>Ça accélère fort, Amour.</h1>
-          <p>Reste flex sur les jambes. Les portes s'enchaînent. C'est fluide, c'est nous.</p>
-          <div class="slope">
-            <div class="gate red" style="top:25px;left:10%;">Focus ❤️</div>
-            <div class="gate blue" style="top:110px;right:12%;">Trajectoire pure 💙</div>
+      <div class="layer" style="transform: translate(-50%,-50%) translateZ(-4000px);">
+        <div class="panel-surface" style="min-height: 800px;">
+          <h1 style="text-align: right; color: rgba(0,0,0,0.2); transform: rotate(-5deg);">LE MUR</h1>
+          
+          <div class="gate-assembly blue" style="top:20%; left:30%; width: 180px;">
+              <div class="gate-shadow"></div>
+              <div class="pole left"></div>
+              <div class="flag">Engage ! ❄️</div>
+              <div class="pole right"></div>
           </div>
-        </div>
-      </div>
 
-      <div class="layer" style="transform: translate(-50%,-50%) translateZ(-3000px);">
-        <div class="panel">
-          <span class="kicker"><b>SECTION 2</b> · Le Mur</span>
-          <h1>La pente se raidit !</h1>
-          <p>On engage le haut du corps. "T'es magnifique sur la piste". Accroche-toi, ça secoue un peu.</p>
-          <div class="slope">
-            <div class="gate blue" style="top:20px;left:25%;">Engage ! 🔵</div>
-            <div class="gate red" style="top:90px;right:20%;">A-Team solide 🔴</div>
-            <div class="gate blue" style="top:160px;left:35%;">On ne lâche rien</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="layer" style="transform: translate(-50%,-50%) translateZ(-4500px);">
-        <div class="panel">
-          <span class="kicker"><b>SECTION 3</b> · Partie de glisse</span>
-          <h1>Recherche de vitesse.</h1>
-          <p>Position schuss. On laisse filer les skis à plat. Le vent siffle, la ligne d'arrivée approche.</p>
-          <div class="slope">
-            <div class="gate red" style="top:30px;right:15%;">Tout schuss ✨</div>
-            <div class="gate blue" style="top:120px;left:15%;">Vitesse max</div>
+          <div class="gate-assembly red" style="top:70%; right:25%; width: 180px;">
+              <div class="gate-shadow"></div>
+              <div class="pole left"></div>
+              <div class="flag">A-Team Solide 💪</div>
+              <div class="pole right"></div>
           </div>
         </div>
       </div>
 
       <div class="layer" style="transform: translate(-50%,-50%) translateZ(-6000px);">
-        <div class="panel" style="text-align: center;">
-          <span class="kicker" style="background: var(--mint); color: var(--bg0);"><b>FINISH LINE</b> · Victoire</span>
-          <h1>🏁 Ligne franchie !</h1>
-          <p>Quel run ! Maintenant, on récupère et on regarde le chrono tourner vers ton moment.</p>
-          <div class="finishBadge">Prochaine étape : Samedi 20h00</div>
+        <div class="panel-surface" style="min-height: 800px;">
+           <div class="gate-assembly red" style="top:15%; left:10%; width: 220px;">
+              <div class="gate-shadow"></div>
+              <div class="pole left"></div>
+              <div class="flag">Tout Schuss 🚀</div>
+              <div class="pole right"></div>
+          </div>
+           <div class="gate-assembly blue" style="top:55%; right:10%; width: 200px;">
+              <div class="gate-shadow"></div>
+              <div class="pole left"></div>
+              <div class="flag">Ligne en vue 🏁</div>
+              <div class="pole right"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="layer" style="transform: translate(-50%,-50%) translateZ(-8000px);">
+        <div class="finish-box">
+          <h1 style="color:#fff; text-shadow: 0 0 30px var(--mint);">FINISH LINE</h1>
+          <p style="color:rgba(255,255,255,0.8); font-size: 1.3rem; margin-top: 20px;">Run terminé. Place au chrono.</p>
+          <div style="margin-top: 30px; display:inline-block; padding: 10px 25px; background: var(--mint); color: #000; font-weight: 900; border-radius: 50px; box-shadow: 0 0 40px var(--mint);">
+              RDV Samedi 20h00
+          </div>
           
-          <div class="countdown" id="countdown" style="justify-content: center;">
-            <div class="timebox"><span class="num" id="days">00</span><span class="lab">Jours</span></div>
-            <div class="timebox"><span class="num" id="hours">00</span><span class="lab">Heures</span></div>
-            <div class="timebox"><span class="num" id="minutes">00</span><span class="lab">Min</span></div>
-            <div class="timebox"><span class="num" id="seconds">00</span><span class="lab">Sec</span></div>
+          <div class="countdown-flex" id="countdown">
+            <div class="time-unit"><span class="t-num" id="days">00</span><span class="t-label">Jours</span></div>
+            <div class="time-unit"><span class="t-num" id="hours">00</span><span class="t-label">Heures</span></div>
+            <div class="time-unit"><span class="t-num" id="minutes">00</span><span class="t-label">Min</span></div>
+            <div class="time-unit"><span class="t-num" id="seconds">00</span><span class="t-label">Sec</span></div>
           </div>
         </div>
       </div>
       
-      <div class="layer" style="transform: translate(-50%,-50%) translateZ(-7200px);">
-        <div class="panel" style="opacity: 0.6;">
-          <h1>...</h1>
-        </div>
+       <div class="layer" style="transform: translate(-50%,-50%) translateZ(-9500px);">
       </div>
 
     </div>
@@ -308,75 +286,58 @@
 
 <script>
 /* =========================
-   1) MOTEUR DE DESCENTE POV (Caméra embarquée)
+   MOTEUR PHYSIQUE POV CINÉMA
 ========================= */
 const camera = document.getElementById('camera');
 const prog = document.getElementById('prog');
-const hudTitle = document.getElementById('hudTitle');
 const hudSub = document.getElementById('hudSub');
 
 let maxScroll = document.body.scrollHeight - window.innerHeight;
-// La distance totale du parcours en pixels Z
-const totalDistance = 7200; 
+const totalDistance = 9500; // Distance Z totale augmentée
 
 window.addEventListener('resize', () => {
   maxScroll = document.body.scrollHeight - window.innerHeight;
 });
 
-// On active la neige après un court délai pour l'effet d'entrée
-setTimeout(() => document.body.classList.add('skiing'), 500);
+setTimeout(() => document.body.classList.add('skiing'), 1000);
 
 window.addEventListener('scroll', () => {
   const scrolled = window.scrollY;
-  // Progression de 0 à 1
   const progress = Math.min(scrolled / maxScroll, 1);
   
-  // --- C'EST ICI QUE LA MAGIE POV OPÈRE ---
+  // --- MOUVEMENTS DE CAMÉRA RENFORCÉS ---
   
-  // 1. Avancée principale (Z)
+  // Z : Avancée
   const zMove = progress * totalDistance;
   
-  // 2. Oscillation latérale (X) - Simule les virages
-  // On utilise sin() pour faire des vagues gauche/droite. 
-  // 'progress * 15' gère la fréquence des virages. '120' gère l'amplitude en pixels.
-  const swayX = Math.sin(progress * 15) * 120;
+  // X : Virages plus larges et plus fluides
+  // Frequency réduite (12), Amplitude augmentée (180px)
+  const swayX = Math.sin(progress * 12) * 180;
   
-  // 3. Oscillation verticale (Y) - Simule les bosses et le terrain
-  // Fréquence plus rapide (* 25) mais amplitude plus faible (40px)
-  const bobY = Math.cos(progress * 25) * 40;
+  // Y : Bosses plus percutantes
+  // Frequency haute (30), Amplitude (50px) + un petit rebond aléatoire
+  const bobY = Math.cos(progress * 30) * 50 + (Math.sin(progress*100)*5);
   
-  // 4. Inclinaison de la caméra (Rotation Z) dans les virages
-  // Quand on tourne à gauche, on penche la tête à gauche.
-  const tiltZ = Math.cos(progress * 15) * 5; // +/- 5 degrés
+  // Rotation Z (Inclinaison dans le virage) : Plus forte
+  const tiltZ = Math.sin(progress * 12) * 8; // +/- 8 degrés
 
-  // Application de tous les mouvements à la caméra
-  // L'ordre est important : on bouge d'abord, on tourne ensuite.
-  camera.style.transform = `translate3d(${swayX}px, ${bobY}px, ${zMove}px) rotateZ(${tiltZ}deg)`;
+  // Rotation X (Regard vers le bas/haut selon les bosses) : Nouveau !
+  const tiltX = Math.cos(progress * 30) * 3;
+
+  camera.style.transform = `translate3d(${swayX}px, ${bobY}px, ${zMove}px) rotateZ(${tiltZ}deg) rotateX(${tiltX}deg)`;
   
-  
-  // --- MISE À JOUR DU HUD ---
+  // --- HUD ---
   prog.style.width = (progress * 100) + '%';
   
-  if(progress < 0.05) {
-      hudTitle.innerText = "Départ imminent";
-      hudSub.innerText = "Pousse pour t'élancer.";
-  } else if(progress < 0.3) {
-      hudTitle.innerText = "Section 1 : Mise en action";
-      hudSub.innerText = "Prends le rythme.";
-  } else if(progress < 0.6) {
-       hudTitle.innerText = "Section 2 : Le Mur";
-       hudSub.innerText = "Accroche-toi, ça secoue !";
-  } else if (progress < 0.85) {
-       hudTitle.innerText = "Section 3 : Glisse";
-       hudSub.innerText = "Recherche de vitesse...";
-  } else {
-       hudTitle.innerText = "🏁 Arrivée !";
-       hudSub.innerText = "Bien joué la A-Team.";
-  }
+  if(progress < 0.02) hudSub.innerText = "Pousse fort pour lancer le run.";
+  else if(progress < 0.25) hudSub.innerText = "Section 1 : Prise de carre.";
+  else if(progress < 0.50) hudSub.innerText = "Section 2 : Le Mur, reste compact !";
+  else if (progress < 0.80) hudSub.innerText = "Section 3 : Glisse max vers l'arrivée.";
+  else hudSub.innerText = "Victoire. Respire.";
 });
 
 /* =========================
-   2) HORLOGE & COMPTE À REBOURS (inchangé)
+   HORLOGE & COMPTE À REBOURS
 ========================= */
 const parisClock = document.getElementById('parisClock');
 const targetDate = new Date('2026-03-01T00:00:00+01:00').getTime();
