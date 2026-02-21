@@ -3,271 +3,225 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Mission : Hélène ✨ - Final Cut</title>
+  <title>Mission : Hélène ✨ - Édition PS5</title>
 
   <style>
     :root{
-      --bg0:#020204; /* Noir plus profond */
+      --bg0:#010103;
       --pink:#ff4785;
-      --blue:#2477ff;
-      --mint:#75f3c6;
-      /* Ombres beaucoup plus marquées pour le contraste cinéma */
-      --shadow-cine: 0 50px 100px rgba(0,0,0,0.8), 0 20px 40px rgba(0,0,0,0.6);
+      --blue:#00f0ff; /* Bleu plus "cyber/gaming" */
+      --mint:#00ff88;
+      --shadow-cine: 0 50px 100px rgba(0,0,0,0.9), 0 20px 40px rgba(0,0,0,0.7);
     }
 
     *{box-sizing:border-box;}
     html,body{height:100%;}
     body{
       margin:0;
-      height: 14000px; /* Descente encore plus longue */
+      height: 18000px; /* Piste immense pour prendre de la vitesse */
       background:var(--bg0);
       color:#fff;
-      font-family:-apple-system,BlinkMacSystemFont,Arial;
+      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
       overflow-x:hidden;
-      overscroll-behavior-y: none; 
+      overscroll-behavior-y: none;
     }
 
-    /* --- HUD (Style épuré) --- */
+    /* --- HUD GAMING --- */
     .hud{
       position:fixed; top:20px; left:20px; right:20px; z-index:100;
-      display:flex; gap:15px; align-items:center; pointer-events:none;
-      text-shadow: 0 2px 5px rgba(0,0,0,0.8);
+      display:grid; grid-template-columns: 1fr auto 1fr; gap:15px; align-items:start; pointer-events:none;
     }
+    .hud-left { display: flex; flex-direction: column; gap: 10px; }
+    .hud-right { display: flex; flex-direction: column; align-items: flex-end; gap: 10px; }
+    
     .chip-glass{
-      background: rgba(0,0,0,0.6);
-      backdrop-filter: blur(16px) saturate(1.2);
-      border: 1px solid rgba(255,255,255,0.15);
-      padding: 12px 18px; border-radius: 12px;
-      display:flex; align-items:center; gap:12px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+      background: rgba(0, 10, 20, 0.75);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(0, 240, 255, 0.3);
+      padding: 12px 18px; border-radius: 8px;
+      box-shadow: 0 0 20px rgba(0, 240, 255, 0.1), inset 0 0 10px rgba(0, 240, 255, 0.1);
+      text-transform: uppercase; letter-spacing: 1px;
     }
-    .dot-live{ width:10px; height:10px; background:red; border-radius:50%; box-shadow:0 0 15px red; animation: pulse 1s infinite alternate;}
-    @keyframes pulse { from{opacity:0.6} to{opacity:1}}
-    .bar-container{ flex:1; height:8px; background:rgba(255,255,255,0.1); border-radius:4px; overflow:hidden; }
-    .bar-fill{ height:100%; width:0%; background:linear-gradient(90deg, var(--pink), var(--blue)); transition: width 0.1s linear; }
+    
+    /* Vitesse & Altimètre */
+    .telemetry { font-family: "Courier New", monospace; font-weight: 900; font-size: 2.2rem; margin: 0; line-height: 1; text-shadow: 0 0 10px var(--blue);}
+    .telemetry-label { font-size: 0.7rem; color: var(--blue); letter-spacing: 2px; }
+    
+    /* Barre de progression style F1 */
+    .bar-container{ grid-column: 2; width: 300px; height:6px; background:rgba(255,255,255,0.1); border-radius:3px; overflow:hidden; margin-top: 15px; position: relative;}
+    .bar-fill{ height:100%; width:0%; background:linear-gradient(90deg, var(--blue), var(--pink)); box-shadow: 0 0 10px var(--pink);}
 
-    /* --- VIEWPORT & AMBIANCE CINÉMA --- */
+    /* --- EFFETS VISUELS "MOTEUR GRAPHIQUE" --- */
     .viewport{
       position:fixed; inset:0;
-      /* Perspective très forte pour l'immersion grand angle */
-      perspective: 800px; 
-      background: linear-gradient(180deg, #0a0a14 0%, #1a2035 40%, #eef 100%);
+      perspective: 600px; /* FOV de base, modifié en JS */
+      background: linear-gradient(180deg, #050510 0%, #0a1025 40%, #d0e0ff 100%);
       overflow:hidden;
+      transition: perspective 0.1s linear; /* Transition douce du FOV */
     }
-    /* VIGNETTAGE CINÉMA : Assombrit fortement les coins */
+    
+    /* Vignettage & Lens Flare */
     .viewport:after {
         content: ""; position: absolute; inset: 0; z-index: 50; pointer-events: none;
-        background: radial-gradient(circle at center, transparent 30%, rgba(0,0,0,0.8) 90%);
-        mix-blend-mode: multiply;
-    }
-    /* BROUILLARD ATMOSPHÉRIQUE : Donne la profondeur */
-    .fog-layer {
-        position: absolute; inset:0; z-index: 2; pointer-events: none;
-        background: linear-gradient(0deg, rgba(230,240,255,0.8) 0%, transparent 40%);
+        background: radial-gradient(circle at center top, rgba(255,255,255,0.1) 0%, transparent 40%),
+                    radial-gradient(circle at center, transparent 40%, rgba(0,0,0,0.9) 100%);
+        mix-blend-mode: overlay;
     }
 
-    /* --- NEIGE AMÉLIORÉE --- */
-    .snow-container { position: fixed; inset: -100%; pointer-events: none; z-index: 1; transform-style: preserve-3d;}
-    .snow-layer {
-        position: absolute; inset:0; background-repeat: repeat;
-        opacity:0; transition: opacity 1s ease-in;
-        animation-timing-function: linear; animation-iteration-count: infinite;
+    /* Speed Lines (Lignes de vent) */
+    .speed-lines {
+        position: fixed; inset: 0; z-index: 40; pointer-events: none; opacity: 0;
+        background-image: radial-gradient(circle, transparent 50%, rgba(255,255,255,0.1) 80%);
+        transition: opacity 0.2s;
     }
-    body.skiing .snow-layer { opacity: 1; }
-    .snow-far { background-size: 60px 60px; background-image: radial-gradient(circle, rgba(255,255,255,0.7) 1px, transparent 2px); animation: snowfall 25s infinite; transform: translateZ(-200px) scale(2); opacity: 0.4!important;}
-    .snow-mid { background-size: 120px 120px; background-image: radial-gradient(circle, rgba(255,255,255,0.9) 2px, transparent 3px); animation: snowfall 15s infinite; }
-    .snow-near { background-size: 180px 180px; background-image: radial-gradient(circle, #fff 3px, transparent 5px); animation: snowfall 7s infinite; transform: translateZ(100px); }
-    @keyframes snowfall {
-        0% { background-position: 0px 0px; }
-        100% { background-position: 50px 1000px; }
+    .speed-lines::before {
+        content: ""; position: absolute; inset: -50%;
+        background: conic-gradient(from 0deg, transparent 0deg, rgba(255,255,255,0.2) 2deg, transparent 4deg, transparent 45deg, rgba(255,255,255,0.2) 47deg, transparent 49deg);
+        animation: spin 0.5s linear infinite;
+        -webkit-mask-image: radial-gradient(circle, transparent 40%, black 100%);
+    }
+    @keyframes spin { 100% { transform: rotate(360deg); } }
+
+    /* Brouillard Atmosphérique Volumétrique */
+    .fog-layer {
+        position: absolute; inset:0; z-index: 2; pointer-events: none;
+        background: linear-gradient(0deg, rgba(200,220,255,0.9) 0%, transparent 60%);
     }
 
     /* --- CAMÉRA --- */
     .camera{ position:absolute; inset:0; transform-style:preserve-3d; will-change:transform; }
 
-    /* --- PANNEAUX DE PISTE (Le sol) --- */
-    .layer{ position:absolute; top:50%; left:50%; width:min(1200px, 95vw); transform-style:preserve-3d; transform-origin: center center -1000px; }
+    /* --- PANNEAUX DE PISTE --- */
+    .layer{ position:absolute; top:50%; left:50%; width:min(1400px, 98vw); transform-style:preserve-3d; transform-origin: center center -1500px; }
 
     .panel-surface{
-      position:relative;
-      /* Inclinaison réaliste de la piste */
-      transform: rotateX(15deg);
-      background: linear-gradient(170deg, rgba(220,235,255,1) 0%, rgba(180,200,230,1) 100%);
-      /* Texture de glace/neige damée */
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.4' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.3'/%3E%3C/svg%3E");
-      border-radius: 30px;
-      padding: 40px;
-      /* Ombre portée sur le sol "en dessous" */
-      box-shadow: 0 40px 80px rgba(0,0,0,0.5);
-      transform-style: preserve-3d;
-      overflow: hidden; /* Pour que les textes ne dépassent pas de la neige */
+      position:relative; transform: rotateX(12deg);
+      background: linear-gradient(170deg, rgba(240,245,255,1) 0%, rgba(190,210,240,1) 100%);
+      border-radius: 20px; padding: 50px;
+      box-shadow: 0 30px 100px rgba(0,0,20,0.6);
+      transform-style: preserve-3d; overflow: hidden;
     }
-    /* Reflet glacé sur la piste */
     .panel-surface:before {
         content:""; position:absolute; inset:0;
-        background: linear-gradient(45deg, transparent 40%, rgba(255,255,255,0.4) 50%, transparent 60%);
-        background-size: 200% 200%; filter: blur(10px); opacity: 0.7; mix-blend-mode: overlay;
+        background-image: repeating-linear-gradient(0deg, transparent, transparent 4px, rgba(0,0,0,0.03) 4px, rgba(0,0,0,0.03) 8px);
+        opacity: 0.5; z-index: 0; pointer-events: none;
     }
 
-    /* Textes sur la neige */
-    h1{ margin:0; font-size: clamp(2rem, 6vw, 5rem); font-weight: 900; text-transform: uppercase; letter-spacing: -1px; text-shadow: 0 5px 15px rgba(0,0,0,0.3); position:relative; z-index: 2;}
-    p.lead{ font-size: 1.2rem; font-weight: 600; color: rgba(0,0,0,0.7); margin-top: 10px; position:relative; z-index: 2;}
+    h1{ margin:0; font-size: clamp(3rem, 8vw, 7rem); font-weight: 900; text-transform: uppercase; font-style: italic; letter-spacing: -2px; color: #111; position:relative; z-index: 2;}
+    p.lead{ font-size: 1.5rem; font-weight: 700; color: rgba(0,0,0,0.6); margin-top: 10px; position:relative; z-index: 2; text-transform: uppercase;}
 
-    /* --- LES VRAIES PORTES 3D (Assemblage complexe) --- */
-    .gate-assembly {
-        position: absolute;
-        transform-style: preserve-3d;
-        z-index: 10;
-        /* On les soulève légèrement du sol */
-        transform: translateZ(5px); 
-    }
-
-    /* 1. L'ombre au sol réaliste */
-    .gate-shadow {
-        position: absolute; top: 95%; left: -10%; width: 120%; height: 20px;
-        background: rgba(0,0,0,0.4);
-        filter: blur(10px);
-        transform: rotateX(90deg) translateZ(-2px); /* Plat sur le sol */
-        border-radius: 50%;
-    }
-
-    /* 2. Les Piquets (épaisseur) */
-    .pole {
-        position: absolute; top:0; width: 8px; height: 120px;
-        /* Création d'un cylindre "fake" avec des dégradés */
-        background: linear-gradient(90deg, #999, #fff, #999);
-        border-radius: 4px;
-        box-shadow: 0 0 5px rgba(0,0,0,0.5);
-    }
+    /* --- PORTES 3D NEXT-GEN --- */
+    .gate-assembly { position: absolute; transform-style: preserve-3d; z-index: 10; transform: translateZ(5px); }
+    .gate-shadow { position: absolute; top: 98%; left: -20%; width: 140%; height: 30px; background: rgba(0,0,0,0.5); filter: blur(15px); transform: rotateX(90deg) translateZ(-1px); border-radius: 50%; }
+    
+    .pole { position: absolute; top:0; width: 10px; height: 140px; background: linear-gradient(90deg, #666, #fff, #444); border-radius: 5px; box-shadow: 5px 0 10px rgba(0,0,0,0.3); }
     .pole.left { left: 0; }
     .pole.right { right: 0; }
-    /* Embout du piquet */
-    .pole:after { content:""; position:absolute; top:-5px; left:-2px; width:12px; height:12px; background:#333; border-radius:50%; transform: rotateX(90deg); }
-
-    /* 3. Le Drapeau (tissu) */
+    
     .flag {
-        position: absolute; top: 15px; left: 6px; right: 6px; height: 80px;
-        display: grid; place-items: center;
-        color: white; font-weight: 900; font-size: 1rem; text-transform: uppercase; letter-spacing: 1px;
-        text-shadow: 0 2px 4px rgba(0,0,0,0.5);
-        /* Légère courbure pour le vent */
-        transform: translateZ(2px) rotateY(5deg);
-        border-radius: 4px;
-        /* Texture de tissu nylon */
-        background-image: repeating-linear-gradient(45deg, transparent 0, transparent 2px, rgba(0,0,0,0.1) 3px);
-        box-shadow: inset 0 0 20px rgba(0,0,0,0.2);
+        position: absolute; top: 15px; left: 8px; right: 8px; height: 90px;
+        display: grid; place-items: center; text-align: center;
+        color: white; font-weight: 900; font-size: 1.2rem; text-transform: uppercase;
+        transform: translateZ(2px) rotateY(8deg); border-radius: 4px;
+        box-shadow: inset 0 0 30px rgba(0,0,0,0.3);
     }
-    .gate-assembly.red .flag { background-color: var(--pink); background: linear-gradient(135deg, #ff6b95, var(--pink)); box-shadow: 0 10px 30px rgba(255, 71, 133, 0.4); }
-    .gate-assembly.blue .flag { background-color: var(--blue); background: linear-gradient(135deg, #479eff, var(--blue)); box-shadow: 0 10px 30px rgba(36, 119, 255, 0.4);}
+    .gate-assembly.red .flag { background: linear-gradient(135deg, #ff1744, #d50000); box-shadow: 0 0 40px rgba(255, 23, 68, 0.6); }
+    .gate-assembly.blue .flag { background: linear-gradient(135deg, #00e5ff, #00b0ff); box-shadow: 0 0 40px rgba(0, 229, 255, 0.6); color: #000; }
 
-    /* --- Compte à rebours final --- */
+    /* --- FINISH LINE --- */
     .finish-box {
-        background: rgba(20, 30, 50, 0.9);
-        backdrop-filter: blur(20px);
-        border: 1px solid rgba(255,255,255,0.2);
-        padding: 40px; border-radius: 30px;
-        text-align: center;
-        box-shadow: var(--shadow-cine);
-        transform: rotateX(-10deg); /* Face à la caméra */
+        background: rgba(5, 10, 20, 0.95); backdrop-filter: blur(30px);
+        border: 2px solid var(--blue); border-top: 6px solid var(--pink);
+        padding: 50px; border-radius: 20px; text-align: center;
+        box-shadow: var(--shadow-cine), 0 0 100px rgba(0,240,255,0.2);
+        transform: rotateX(-5deg);
     }
-    .countdown-flex { display: flex; gap: 20px; justify-content: center; margin-top: 30px;}
-    .time-unit { background: rgba(0,0,0,0.3); padding: 20px; border-radius: 15px; border: 1px solid rgba(255,255,255,0.1); min-width: 100px;}
-    .t-num { font-size: 3rem; font-weight: 900; display: block; background: linear-gradient(to bottom, #fff, #ccc); -webkit-background-clip: text; -webkit-text-fill-color: transparent;}
-    .t-label { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 2px; color: rgba(255,255,255,0.6); }
+    .countdown-flex { display: flex; gap: 25px; justify-content: center; margin-top: 40px;}
+    .time-unit { background: rgba(255,255,255,0.05); padding: 25px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); min-width: 120px;}
+    .t-num { font-size: 4rem; font-weight: 900; font-family: "Courier New", monospace; color: var(--blue); text-shadow: 0 0 20px var(--blue); display: block; line-height: 1;}
+    .t-label { font-size: 0.9rem; font-weight: 700; text-transform: uppercase; letter-spacing: 3px; color: #aaa; margin-top: 10px; display: block;}
   </style>
 </head>
 
 <body>
 
   <div class="hud">
-    <div class="chip-glass" style="flex:1; max-width: 300px;">
-      <div style="flex:1">
-        <strong style="display:block; font-size:1.1rem;">A-Team Descent</strong>
-        <span id="hudSub" style="opacity:0.7; font-size:0.9rem;">Dans le portillon...</span>
+    <div class="hud-left">
+      <div class="chip-glass">
+        <span class="telemetry-label">SPEED / KM/H</span>
+        <p class="telemetry" id="speedometer">0</p>
+      </div>
+      <div class="chip-glass" style="background: transparent; border: none; box-shadow: none;">
+        <span id="hudSub" style="color: var(--pink); font-weight: 900;">DÉPART</span>
       </div>
     </div>
+
     <div class="bar-container"><div class="bar-fill" id="prog"></div></div>
-    <div class="chip-glass">
-        <i class="dot-live"></i>
-        <strong id="parisClock">--:--</strong>
+
+    <div class="hud-right">
+      <div class="chip-glass">
+        <span class="telemetry-label">ALTITUDE</span>
+        <p class="telemetry" id="altimeter">2500m</p>
+      </div>
+      <div class="chip-glass" style="display: flex; gap: 10px; align-items: center;">
+        <i style="width:10px; height:10px; background:var(--mint); border-radius:50%; box-shadow: 0 0 10px var(--mint);"></i>
+        <span id="parisClock" style="font-weight: 900; font-family: monospace; font-size: 1.2rem;">--:--</span>
+      </div>
     </div>
   </div>
 
-  <div class="snow-container">
-      <div class="snow-layer snow-far"></div>
-      <div class="snow-layer snow-mid"></div>
-      <div class="snow-layer snow-near"></div>
-  </div>
+  <div class="speed-lines" id="speedLines"></div>
 
-  <div class="viewport">
-    <div class="fog-layer"></div> <div class="camera" id="camera">
+  <div class="viewport" id="viewport">
+    <div class="fog-layer"></div>
+    <div class="camera" id="camera">
 
       <div class="layer" style="transform: translate(-50%,-50%) translateZ(0px);">
-        <div class="panel-surface" style="min-height: 600px;">
-          <h1>Starthouse.</h1>
-          <p class="lead">Le silence avant la tempête. Scrolle pour t'élancer.</p>
-          <div style="position: absolute; bottom: 50px; left: 50%; transform: translateX(-50%); color: rgba(0,0,0,0.4); font-weight: 900; font-size: 3rem; letter-spacing: 5px;">▼ GO ▼</div>
+        <div class="panel-surface" style="min-height: 700px;">
+          <h1>Ready?</h1>
+          <p class="lead">Le moteur physique est activé. Scrolle pour slider.</p>
+          <div style="position: absolute; bottom: 80px; left: 50%; transform: translateX(-50%); font-weight: 900; font-size: 4rem; color: var(--pink);">▼</div>
         </div>
       </div>
 
-      <div class="layer" style="transform: translate(-50%,-50%) translateZ(-2000px);">
-        <div class="panel-surface" style="min-height: 800px;">
-          <div class="gate-assembly red" style="top:10%; left:15%; width: 160px;">
-              <div class="gate-shadow"></div> <div class="pole left"></div> <div class="flag">Focus ❤️</div> <div class="pole right"></div> </div>
-
-           <div class="gate-assembly blue" style="top:60%; right:10%; width: 200px;">
-              <div class="gate-shadow"></div>
-              <div class="pole left"></div>
-              <div class="flag">Vitesse Pure ⚡️</div>
-              <div class="pole right"></div>
+      <div class="layer" style="transform: translate(-50%,-50%) translateZ(-3000px);">
+        <div class="panel-surface" style="min-height: 900px;">
+          <div class="gate-assembly red" style="top:15%; left:20%; width: 220px;">
+              <div class="gate-shadow"></div><div class="pole left"></div><div class="flag">Combo x1</div><div class="pole right"></div>
           </div>
-        </div>
-      </div>
-
-      <div class="layer" style="transform: translate(-50%,-50%) translateZ(-4000px);">
-        <div class="panel-surface" style="min-height: 800px;">
-          <h1 style="text-align: right; color: rgba(0,0,0,0.2); transform: rotate(-5deg);">LE MUR</h1>
-          
-          <div class="gate-assembly blue" style="top:20%; left:30%; width: 180px;">
-              <div class="gate-shadow"></div>
-              <div class="pole left"></div>
-              <div class="flag">Engage ! ❄️</div>
-              <div class="pole right"></div>
-          </div>
-
-          <div class="gate-assembly red" style="top:70%; right:25%; width: 180px;">
-              <div class="gate-shadow"></div>
-              <div class="pole left"></div>
-              <div class="flag">A-Team Solide 💪</div>
-              <div class="pole right"></div>
+          <div class="gate-assembly blue" style="top:65%; right:15%; width: 260px;">
+              <div class="gate-shadow"></div><div class="pole left"></div><div class="flag">A-Team Drift</div><div class="pole right"></div>
           </div>
         </div>
       </div>
 
       <div class="layer" style="transform: translate(-50%,-50%) translateZ(-6000px);">
-        <div class="panel-surface" style="min-height: 800px;">
-           <div class="gate-assembly red" style="top:15%; left:10%; width: 220px;">
-              <div class="gate-shadow"></div>
-              <div class="pole left"></div>
-              <div class="flag">Tout Schuss 🚀</div>
-              <div class="pole right"></div>
+        <div class="panel-surface" style="min-height: 1000px;">
+          <h1 style="text-align: right; transform: rotate(-5deg); opacity: 0.1; font-size: 12rem;">ICE</h1>
+          <div class="gate-assembly blue" style="top:25%; left:35%; width: 200px;">
+              <div class="gate-shadow"></div><div class="pole left"></div><div class="flag">Apex Hit</div><div class="pole right"></div>
           </div>
-           <div class="gate-assembly blue" style="top:55%; right:10%; width: 200px;">
-              <div class="gate-shadow"></div>
-              <div class="pole left"></div>
-              <div class="flag">Ligne en vue 🏁</div>
-              <div class="pole right"></div>
+          <div class="gate-assembly red" style="top:75%; right:30%; width: 240px;">
+              <div class="gate-shadow"></div><div class="pole left"></div><div class="flag">Boost Max</div><div class="pole right"></div>
           </div>
         </div>
       </div>
 
-      <div class="layer" style="transform: translate(-50%,-50%) translateZ(-8000px);">
-        <div class="finish-box">
-          <h1 style="color:#fff; text-shadow: 0 0 30px var(--mint);">FINISH LINE</h1>
-          <p style="color:rgba(255,255,255,0.8); font-size: 1.3rem; margin-top: 20px;">Run terminé. Place au chrono.</p>
-          <div style="margin-top: 30px; display:inline-block; padding: 10px 25px; background: var(--mint); color: #000; font-weight: 900; border-radius: 50px; box-shadow: 0 0 40px var(--mint);">
-              RDV Samedi 20h00
+      <div class="layer" style="transform: translate(-50%,-50%) translateZ(-9000px);">
+        <div class="panel-surface" style="min-height: 1000px;">
+           <div class="gate-assembly red" style="top:20%; left:15%; width: 280px;">
+              <div class="gate-shadow"></div><div class="pole left"></div><div class="flag">Hyper Speed</div><div class="pole right"></div>
           </div>
+           <div class="gate-assembly blue" style="top:70%; right:20%; width: 280px;">
+              <div class="gate-shadow"></div><div class="pole left"></div><div class="flag">Perfect Line</div><div class="pole right"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="layer" style="transform: translate(-50%,-50%) translateZ(-12000px);">
+        <div class="finish-box">
+          <h1 style="color:#fff; text-shadow: 0 0 40px var(--blue); font-size: 5rem;">FINISH</h1>
+          <p style="color: var(--mint); font-size: 1.5rem; font-weight: 900; text-transform: uppercase; margin-top: 10px;">Nouveau Record Enregistré</p>
           
           <div class="countdown-flex" id="countdown">
             <div class="time-unit"><span class="t-num" id="days">00</span><span class="t-label">Jours</span></div>
@@ -278,63 +232,112 @@
         </div>
       </div>
       
-       <div class="layer" style="transform: translate(-50%,-50%) translateZ(-9500px);">
-      </div>
+       <div class="layer" style="transform: translate(-50%,-50%) translateZ(-14000px);"></div>
 
     </div>
   </div>
 
 <script>
-/* =========================
-   MOTEUR PHYSIQUE POV CINÉMA
-========================= */
+/* =========================================
+   MOTEUR PHYSIQUE PS5 (LERP + GAMELOOP)
+========================================= */
 const camera = document.getElementById('camera');
 const prog = document.getElementById('prog');
 const hudSub = document.getElementById('hudSub');
+const speedometer = document.getElementById('speedometer');
+const altimeter = document.getElementById('altimeter');
+const speedLines = document.getElementById('speedLines');
+const viewport = document.getElementById('viewport');
+
+// Variables de physique
+let targetScrollY = 0; // La cible (là où est la molette)
+let currentScrollY = 0; // La position réelle de la caméra
+const lerpFactor = 0.08; // Inertie (plus c'est bas, plus c'est lourd/fluide)
+let velocity = 0; // Vitesse calculée
 
 let maxScroll = document.body.scrollHeight - window.innerHeight;
-const totalDistance = 9500; // Distance Z totale augmentée
+const totalDistance = 14000; 
 
-window.addEventListener('resize', () => {
-  maxScroll = document.body.scrollHeight - window.innerHeight;
+window.addEventListener('resize', () => { maxScroll = document.body.scrollHeight - window.innerHeight; });
+
+// On écoute le scroll uniquement pour mettre à jour la cible
+window.addEventListener('scroll', () => {
+  targetScrollY = window.scrollY;
 });
 
-setTimeout(() => document.body.classList.add('skiing'), 1000);
+// LA BOUCLE DE JEU (60/120 FPS selon l'écran)
+function gameLoop() {
+  // 1. Calcul du LERP (la caméra rattrape doucement le scroll)
+  let diff = targetScrollY - currentScrollY;
+  currentScrollY += diff * lerpFactor;
+  
+  // 2. Calcul de la vitesse brute
+  velocity = Math.abs(diff);
+  
+  // 3. Conversion en km/h "Fake" pour le HUD (capé à 140)
+  let kmh = Math.min(140, Math.floor(velocity * 1.5));
+  speedometer.innerText = kmh;
+  
+  // 4. Calcul de progression (0 à 1)
+  const progress = Math.min(currentScrollY / maxScroll, 1);
+  
+  // 5. Altimètre (de 2500m à 1200m)
+  let currentAlt = Math.floor(2500 - (progress * 1300));
+  altimeter.innerText = currentAlt + "m";
 
-window.addEventListener('scroll', () => {
-  const scrolled = window.scrollY;
-  const progress = Math.min(scrolled / maxScroll, 1);
+  // --- EFFETS CAMÉRA NEXT-GEN ---
   
-  // --- MOUVEMENTS DE CAMÉRA RENFORCÉS ---
-  
-  // Z : Avancée
+  // Avancée Z
   const zMove = progress * totalDistance;
   
-  // X : Virages plus larges et plus fluides
-  // Frequency réduite (12), Amplitude augmentée (180px)
-  const swayX = Math.sin(progress * 12) * 180;
+  // Virages ultra smooths
+  const swayX = Math.sin(progress * 15) * 200;
   
-  // Y : Bosses plus percutantes
-  // Frequency haute (30), Amplitude (50px) + un petit rebond aléatoire
-  const bobY = Math.cos(progress * 30) * 50 + (Math.sin(progress*100)*5);
+  // Tremblement de caméra lié à la vitesse (Camera Shake)
+  let shakeX = 0;
+  let shakeY = 0;
+  if (kmh > 60) {
+      // Plus on va vite, plus ça tape
+      let intensity = (kmh - 60) / 10; 
+      shakeX = (Math.random() - 0.5) * intensity;
+      shakeY = (Math.random() - 0.5) * intensity;
+  }
   
-  // Rotation Z (Inclinaison dans le virage) : Plus forte
-  const tiltZ = Math.sin(progress * 12) * 8; // +/- 8 degrés
+  // Bosses de terrain
+  const bobY = (Math.cos(progress * 40) * 40) + shakeY;
+  
+  // Inclinaisons
+  const tiltZ = Math.sin(progress * 15) * 10;
+  const tiltX = Math.cos(progress * 40) * 2;
 
-  // Rotation X (Regard vers le bas/haut selon les bosses) : Nouveau !
-  const tiltX = Math.cos(progress * 30) * 3;
-
-  camera.style.transform = `translate3d(${swayX}px, ${bobY}px, ${zMove}px) rotateZ(${tiltZ}deg) rotateX(${tiltX}deg)`;
+  // Application de la matrice 3D
+  camera.style.transform = `translate3d(${swayX + shakeX}px, ${bobY}px, ${zMove}px) rotateZ(${tiltZ}deg) rotateX(${tiltX}deg)`;
   
-  // --- HUD ---
+  // --- EFFETS VISUELS DYNAMIQUES ---
+  
+  // Effet FOV (Vitesse Warp)
+  // De base 600px, s'étire jusqu'à 300px à très haute vitesse
+  let targetFov = 600 - (kmh * 2); 
+  viewport.style.perspective = Math.max(300, targetFov) + 'px';
+  
+  // Apparition des Speed Lines
+  speedLines.style.opacity = kmh > 80 ? (kmh - 80) / 60 : 0;
+
+  // --- HUD MISE À JOUR ---
   prog.style.width = (progress * 100) + '%';
   
-  if(progress < 0.02) hudSub.innerText = "Pousse fort pour lancer le run.";
-  else if(progress < 0.25) hudSub.innerText = "Section 1 : Prise de carre.";
-  else if(progress < 0.50) hudSub.innerText = "Section 2 : Le Mur, reste compact !";
-  else if (progress < 0.80) hudSub.innerText = "Section 3 : Glisse max vers l'arrivée.";
-  else hudSub.innerText = "Victoire. Respire.";
-});
+  if(progress < 0.05) hudSub.innerText = "DÉPART";
+  else if(progress < 0.3) hudSub.innerText = "SECTEUR 1";
+  else if(progress < 0.6) hudSub.innerText = "SECTEUR 2 : LE MUR";
+  else if (progress < 0.9) hudSub.innerText = "SECTEUR 3 : GLISSE";
+  else hudSub.innerText = "ARRIVÉE !";
+
+  // On boucle à l'infini
+  requestAnimationFrame(gameLoop);
+}
+
+// Lancement du moteur
+requestAnimationFrame(gameLoop);
 
 /* =========================
    HORLOGE & COMPTE À REBOURS
@@ -344,7 +347,7 @@ const targetDate = new Date('2026-03-01T00:00:00+01:00').getTime();
 
 function updateTime() {
   const now = new Date();
-  parisClock.innerText = now.toLocaleTimeString('fr-FR', {timeZone: 'Europe/Paris', hour:'2-digit', minute:'2-digit'});
+  parisClock.innerText = now.toLocaleTimeString('fr-FR', {timeZone: 'Europe/Paris', hour:'2-digit', minute:'2-digit', second:'2-digit'});
   
   const diff = targetDate - now.getTime();
   if (diff > 0) {
