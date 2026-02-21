@@ -1,239 +1,268 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Alerte Anniversaire 3D</title>
-  <style>
-    body {
-      margin: 0;
-      height: 500vh;
-      background-color: #050505;
-      color: white;
-      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-      overflow-x: hidden;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>L'Odyssée Temporelle</title>
+    <style>
+        /* --- CONFIGURATION GLOBALE --- */
+        body {
+            margin: 0;
+            /* On triple la longueur du voyage ! */
+            height: 1500vh;
+            background-color: #000;
+            color: white;
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            overflow-x: hidden;
+        }
 
-    .viewport {
-      position: fixed;
-      inset: 0;
-      perspective: 1000px;
-      overflow: hidden;
-      background: radial-gradient(circle at center, #1a1025 0%, #000 100%);
-    }
+        /* La fenêtre sur le monde */
+        .viewport {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            perspective: 1000px;
+            overflow: hidden;
+        }
 
-    .camera {
-      position: absolute;
-      inset: 0;
-      transform-style: preserve-3d;
-      will-change: transform;
-    }
+        /* --- GESTION DES ARRIÈRE-PLANS (BIOMES) --- */
+        .background-layer {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            transition: opacity 1.5s ease-in-out; /* Transitions douces entre les mondes */
+            z-index: -2;
+        }
+        #bg-space {
+            background: radial-gradient(circle at center, #1a1025 0%, #000000 100%);
+            opacity: 1;
+        }
+        #bg-surf {
+            background: linear-gradient(to bottom, #4facfe 0%, #00f2fe 100%);
+            opacity: 0;
+        }
+        #bg-mountain {
+            background: linear-gradient(to bottom, #e6e9f0 0%, #eef1f5 100%);
+            opacity: 0;
+        }
 
-    .layer {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 100vw;
-      text-align: center;
-      transform-style: preserve-3d;
-    }
+        /* --- LA CAMÉRA ET LES TEXTES --- */
+        .camera {
+            position: absolute; width: 100%; height: 100%;
+            transform-style: preserve-3d;
+            transition: transform 0.1s ease-out;
+            z-index: 10;
+        }
 
-    h1, h2 {
-      text-shadow: 0 0 20px rgba(255, 105, 180, 0.5);
-      margin: 0;
-    }
-    h1 { font-size: 3rem; }
-    h2 { font-size: 2rem; color: #ff9a9e; }
-    .scroll-indicator { margin-top: 20px; font-size: 2rem; animation: bounce 2s infinite; }
+        .layer {
+            position: absolute; top: 50%; left: 50%; width: 100vw; text-align: center;
+            transform-style: preserve-3d;
+            text-shadow: 0 0 20px rgba(0,0,0,0.5);
+        }
 
-    @keyframes bounce {
-      0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
-      40% { transform: translateY(20px); }
-      60% { transform: translateY(10px); }
-    }
+        h1 { font-size: 4rem; margin: 0; }
+        h2 { font-size: 2.5rem; color: #ff9a9e; margin: 0; }
+        h3 { font-size: 2rem; color: white; margin: 0; }
 
-    .countdown-container {
-      display: flex;
-      gap: 30px;
-      justify-content: center;
-      margin-top: 40px;
-      flex-wrap: wrap;
-    }
+        /* Textes spécifiques aux biomes */
+        .surf-text h2 { color: #003366; text-shadow: 0 0 10px rgba(255,255,255,0.8); }
+        .mountain-text h2 { color: #2c3e50; text-shadow: 0 0 10px rgba(255,255,255,0.8); }
+        .mountain-text h1 { color: #e74c3c; }
 
-    .time-box {
-      background: rgba(255, 255, 255, 0.05);
-      backdrop-filter: blur(15px);
-      padding: 30px;
-      border-radius: 20px;
-      border: 1px solid rgba(255, 105, 180, 0.3);
-      box-shadow: 0 0 50px rgba(255, 105, 180, 0.2), inset 0 0 20px rgba(255, 255, 255, 0.05);
-      min-width: 120px;
-    }
 
-    .number {
-      font-size: 5rem;
-      font-weight: 900;
-      background: linear-gradient(to right, #ff9a9e, #fecfef);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      display: block;
-    }
+        /* --- SYSTÈMES DE PARTICULES --- */
+        .particle-container {
+            position: absolute; width: 100%; height: 100%;
+            transform-style: preserve-3d;
+            transition: opacity 1s ease-in-out;
+            z-index: -1;
+        }
 
-    .label {
-      font-size: 1.2rem;
-      text-transform: uppercase;
-      letter-spacing: 4px;
-      margin-top: 10px;
-      display: block;
-      color: #a0a0a0;
-    }
+        /* 1. Étoiles (fixes en Z) */
+        .star { position: absolute; width: 3px; height: 3px; background: white; border-radius: 50%; }
 
-    .particles {
-      position: absolute;
-      inset: 0;
-      transform-style: preserve-3d;
-      pointer-events: none;
-    }
+        /* 2. Bulles (montent vers le haut) */
+        .bubble {
+            position: absolute; width: 10px; height: 10px;
+            background: rgba(255,255,255,0.3); border: 1px solid rgba(255,255,255,0.5);
+            border-radius: 50%;
+            animation: riseUp 4s infinite linear;
+        }
+        @keyframes riseUp { 
+            from { transform: translateY(100vh) translateZ(var(--pZ)); opacity:0; } 
+            50% { opacity: 1; }
+            to { transform: translateY(-100vh) translateZ(var(--pZ)); opacity:0; } 
+        }
 
-    .particle {
-      position: absolute;
-      width: 4px;
-      height: 4px;
-      border-radius: 50%;
-      box-shadow: 0 0 10px currentColor;
-      opacity: 0.9;
-    }
-  </style>
+        /* 3. Neige (tombe vers le bas) */
+        .snowflake {
+            position: absolute; width: 6px; height: 6px; background: white; border-radius: 50%;
+            filter: blur(2px);
+            animation: fallDown 3s infinite linear;
+        }
+        @keyframes fallDown { 
+            from { transform: translateY(-100vh) translateZ(var(--pZ)); } 
+            to { transform: translateY(100vh) translateZ(var(--pZ)); } 
+        }
+
+        /* --- LE COMPTEUR FINAL --- */
+        .countdown-container {
+            display: flex; gap: 30px; justify-content: center; margin-top: 40px; color: #2c3e50;
+        }
+        .time-box {
+            background: rgba(255, 255, 255, 0.2); backdrop-filter: blur(15px);
+            padding: 30px; border-radius: 20px; border: 2px solid white;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2); min-width: 120px;
+        }
+        .number { font-size: 5rem; font-weight: 900; color: #e74c3c; display: block; }
+        .label { font-size: 1.2rem; text-transform: uppercase; letter-spacing: 4px; margin-top: 10px; display: block; color: #2c3e50; }
+    </style>
 </head>
 <body>
 
-  <div class="viewport">
-    <div class="camera" id="camera">
-      <div class="particles" id="particles"></div>
+    <div class="viewport">
+        <div id="bg-space" class="background-layer"></div>
+        <div id="bg-surf" class="background-layer"></div>
+        <div id="bg-mountain" class="background-layer"></div>
 
-      <div class="layer" style="transform: translate(-50%, -50%) translateZ(0px);">
-        <h1>Le temps file...</h1>
-        <div class="scroll-indicator">↓ Scrolle pour plonger ↓</div>
-      </div>
+        <div id="particles-space" class="particle-container" style="opacity: 1;"></div>
+        <div id="particles-surf" class="particle-container" style="opacity: 0;"></div>
+        <div id="particles-snow" class="particle-container" style="opacity: 0;"></div>
 
-      <div class="layer" style="transform: translate(-50%, -50%) translateZ(-1500px);">
-        <h2>On approche de la date fatidique...</h2>
-      </div>
+        <div class="camera" id="camera">
+            
+            <div class="layer" style="transform: translate(-50%, -50%) translateZ(0px);">
+                <h1>Le grand voyage commence...</h1>
+                <h3>↓ Scrolle pour plonger dans le temps ↓</h3>
+            </div>
+            <div class="layer" style="transform: translate(-50%, -50%) translateZ(-2000px);">
+                <h2>On quitte l'orbite terrestre.</h2>
+            </div>
 
-      <div class="layer" style="transform: translate(-50%, -50%) translateZ(-3000px);">
-        <h2>Prépare-toi psychologiquement.</h2>
-      </div>
+            <div class="layer surf-text" style="transform: translate(-50%, -50%) translateZ(-4500px);">
+                <h2>Changement d'ambiance...</h2>
+                <h3>Session surf en approche.</h3>
+            </div>
+            <div class="layer surf-text" style="transform: translate(-50%, -50%) translateZ(-6500px);">
+                <h2>Garde le cap, la vague est bonne.</h2>
+            </div>
 
-      <div class="layer" style="transform: translate(-50%, -50%) translateZ(-4500px);">
-        <h1 id="title">🎉 Objectif 1er Mars 🎉</h1>
-        <div class="countdown-container" id="countdown">
-          <div class="time-box"><span class="number" id="days">00</span><span class="label">Jours</span></div>
-          <div class="time-box"><span class="number" id="hours">00</span><span class="label">Heures</span></div>
-          <div class="time-box"><span class="number" id="minutes">00</span><span class="label">Minutes</span></div>
-          <div class="time-box"><span class="number" id="seconds">00</span><span class="label">Secondes</span></div>
+             <div class="layer mountain-text" style="transform: translate(-50%, -50%) translateZ(-8500px);">
+                <h2>Brrr... ça se rafraîchit.</h2>
+                <h3>Sommet en vue.</h3>
+            </div>
+
+            <div class="layer mountain-text" style="transform: translate(-50%, -50%) translateZ(-11000px);">
+                <h1>🏔️ Le Sommet du 1er Mars 🏔️</h1>
+                <div class="countdown-container" id="countdown">
+                    <div class="time-box"><span class="number" id="days">00</span><span class="label">Jours</span></div>
+                    <div class="time-box"><span class="number" id="hours">00</span><span class="label">Heures</span></div>
+                    <div class="time-box"><span class="number" id="minutes">00</span><span class="label">Minutes</span></div>
+                    <div class="time-box"><span class="number" id="seconds">00</span><span class="label">Secondes</span></div>
+                </div>
+            </div>
+
         </div>
-      </div>
     </div>
-  </div>
 
-  <script>
-    // 1) SCROLL 3D (smooth via RAF + caméra vers Z négatif)
-    const camera = document.getElementById("camera");
+    <script>
+        // --- CONFIGURATION DU VOYAGE ---
+        const maxZDepth = 11000; // La destination finale en pixels Z
+        const camera = document.getElementById('camera');
+        const bgSpace = document.getElementById('bg-space');
+        const bgSurf = document.getElementById('bg-surf');
+        const bgMountain = document.getElementById('bg-mountain');
+        const partSpace = document.getElementById('particles-space');
+        const partSurf = document.getElementById('particles-surf');
+        const partSnow = document.getElementById('particles-snow');
 
-    const DEPTH = 4500; // doit matcher le dernier calque
-    let targetZ = 0;
-    let currentZ = 0;
-    let targetRot = 0;
-    let currentRot = 0;
+        // --- 1. LE MOTEUR DE SCROLL ET DE TRANSITION ---
+        window.addEventListener('scroll', () => {
+            const scrollY = window.scrollY;
+            const maxScroll = document.body.scrollHeight - window.innerHeight;
+            const scrollFraction = scrollY / maxScroll;
 
-    // Bonus: parallax souris discret
-    let mouseX = 0, mouseY = 0;
-    window.addEventListener("mousemove", (e) => {
-      const nx = (e.clientX / window.innerWidth) * 2 - 1;  // [-1..1]
-      const ny = (e.clientY / window.innerHeight) * 2 - 1;
-      mouseX = nx;
-      mouseY = ny;
-    }, { passive: true });
+            // Position Z actuelle
+            const currentZ = scrollFraction * maxZDepth;
+            
+            // Rotation légère pour le fun
+            const rotate = scrollFraction * 20;
+            camera.style.transform = `translateZ(${currentZ}px) rotateZ(${rotate}deg)`;
 
-    window.addEventListener("scroll", () => {
-      const scrollY = window.scrollY;
-      const maxScroll = document.body.scrollHeight - window.innerHeight;
-      const frac = maxScroll > 0 ? (scrollY / maxScroll) : 0;
+            // --- GESTION DES BIOMES SELON LA POSITION Z ---
+            // On définit des points de bascule approximatifs
 
-      // Avancer dans le tunnel = aller vers le négatif
-      targetZ = -frac * DEPTH;
-      targetRot = frac * 10; // un peu moins “tournis” que 15
-    }, { passive: true });
+            // Etape 1 : Espace pur (0 à 30% du voyage)
+            if (scrollFraction < 0.3) {
+                bgSpace.style.opacity = 1; bgSurf.style.opacity = 0; bgMountain.style.opacity = 0;
+                partSpace.style.opacity = 1; partSurf.style.opacity = 0; partSnow.style.opacity = 0;
+            } 
+            // Etape 2 : Transition Espace -> Surf (30% à 40%)
+            else if (scrollFraction >= 0.3 && scrollFraction < 0.4) {
+                bgSpace.style.opacity = 0; bgSurf.style.opacity = 1;
+                partSpace.style.opacity = 0; partSurf.style.opacity = 1;
+            }
+             // Etape 3 : Surf pur (40% à 65%)
+            else if (scrollFraction >= 0.4 && scrollFraction < 0.65) {
+                 // On s'assure que tout est bon
+                bgSurf.style.opacity = 1; bgMountain.style.opacity = 0;
+                partSurf.style.opacity = 1; partSnow.style.opacity = 0;
+            }
+            // Etape 4 : Transition Surf -> Montagne (65% à 75%)
+            else if (scrollFraction >= 0.65 && scrollFraction < 0.75) {
+                 bgSurf.style.opacity = 0; bgMountain.style.opacity = 1;
+                 partSurf.style.opacity = 0; partSnow.style.opacity = 1;
+            }
+            // Etape 5 : Montagne finale (> 75%)
+            else {
+                 bgMountain.style.opacity = 1;
+                 partSnow.style.opacity = 1;
+            }
+        });
 
-    function animate() {
-      // easing
-      currentZ += (targetZ - currentZ) * 0.08;
-      currentRot += (targetRot - currentRot) * 0.08;
+        // --- 2. GÉNÉRATEUR DE PARTICULES MULTI-BIOMES ---
+        function createParticles(container, count, type) {
+            for(let i = 0; i < count; i++) {
+                const p = document.createElement('div');
+                // On attribue la bonne classe CSS (star, bubble ou snowflake)
+                p.className = type; 
+                
+                // Positionnement X/Y aléatoire large
+                p.style.left = `${Math.random() * 200 - 50}vw`;
+                
+                // Pour les étoiles, position Z fixe étalée sur tout le parcours
+                if (type === 'star') {
+                     p.style.top = `${Math.random() * 200 - 50}vh`;
+                     p.style.transform = `translateZ(-${Math.random() * maxZDepth}px)`;
+                } 
+                // Pour les bulles et la neige, on utilise une variable CSS pour la profondeur Z
+                // afin que l'animation CSS puisse l'utiliser tout en bougeant en Y
+                else {
+                    const zPos = Math.random() * 4000 + 2000; // Profondeur relative devant la caméra
+                    p.style.setProperty('--pZ', `-${zPos}px`);
+                    // Décalage de l'animation pour ne pas qu'elles bougent toutes en même temps
+                    p.style.animationDelay = `${Math.random() * 5}s`;
+                }
+                container.appendChild(p);
+            }
+        }
 
-      // micro-tilt souris (cinéma, pas manège)
-      const tiltX = mouseY * 2; // deg
-      const tiltY = mouseX * 2;
+        createParticles(partSpace, 200, 'star');    // Des étoiles fixes
+        createParticles(partSurf, 100, 'bubble');   // Des bulles qui montent
+        createParticles(partSnow, 250, 'snowflake');// De la neige qui tombe
 
-      camera.style.transform =
-        `translateZ(${currentZ}px) rotateZ(${currentRot}deg) rotateX(${tiltX}deg) rotateY(${tiltY}deg)`;
-
-      requestAnimationFrame(animate);
-    }
-    animate();
-
-    // 2) PARTICULES
-    const particlesContainer = document.getElementById("particles");
-    const colors = ["#ffffff", "#ff9a9e", "#fecfef"];
-
-    for (let i = 0; i < 180; i++) {
-      const p = document.createElement("div");
-      p.className = "particle";
-
-      p.style.left = `${Math.random() * 200 - 50}vw`;
-      p.style.top = `${Math.random() * 200 - 50}vh`;
-
-      const z = Math.random() * -6000 + 1000; // [1000 .. -5000]
-      p.style.transform = `translateZ(${z}px)`;
-
-      const c = colors[(Math.random() * colors.length) | 0];
-      p.style.color = c;
-
-      // petit random sur taille/opacité pour éviter l’effet “papier peint”
-      const s = Math.random() * 3 + 2;
-      p.style.width = `${s}px`;
-      p.style.height = `${s}px`;
-      p.style.opacity = `${Math.random() * 0.5 + 0.4}`;
-
-      particlesContainer.appendChild(p);
-    }
-
-    // 3) COUNTDOWN (date non-ambigüe)
-    // Mars = 2 (0=janvier)
-    const targetDate = new Date(2026, 2, 1, 0, 0, 0).getTime();
-
-    const pad2 = (n) => String(n).padStart(2, "0");
-
-    const timer = setInterval(() => {
-      const now = Date.now();
-      const distance = targetDate - now;
-
-      if (distance <= 0) {
-        clearInterval(timer);
-        document.getElementById("title").innerText = "🎂 C'est le jour J ! 🎂";
-        document.getElementById("countdown").innerHTML = "<h2>Tu as intérêt à avoir ton cadeau.</h2>";
-        return;
-      }
-
-      const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-      const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-      document.getElementById("days").innerText = pad2(days);
-      document.getElementById("hours").innerText = pad2(hours);
-      document.getElementById("minutes").innerText = pad2(minutes);
-      document.getElementById("seconds").innerText = pad2(seconds);
-    }, 1000);
-  </script>
+        // --- 3. LE COMPTEUR (Inchangé) ---
+        const targetDate = new Date("March 1, 2026 00:00:00").getTime();
+        const timer = setInterval(function() {
+            const now = new Date().getTime();
+            const distance = targetDate - now;
+            if (distance < 0) {
+                clearInterval(timer);
+                document.getElementById("countdown").innerHTML = "<h1 style='color:#e74c3c;'>🎉 JOYEUX ANNIVERSAIRE ! 🎉</h1>";
+                return;
+            }
+            document.getElementById("days").innerText = Math.floor(distance / (1000 * 60 * 60 * 24)).toString().padStart(2, '0');
+            document.getElementById("hours").innerText = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)).toString().padStart(2, '0');
+            document.getElementById("minutes").innerText = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60)).toString().padStart(2, '0');
+            document.getElementById("seconds").innerText = Math.floor((distance % (1000 * 60)) / 1000).toString().padStart(2, '0');
+        }, 1000);
+    </script>
 </body>
 </html>
