@@ -858,7 +858,6 @@ DTSTAMP:${toICSDateUTC(Date.now())}
 DTSTART:${toICSDateUTC(dtStart)}
 DTEND:${toICSDateUTC(dtEnd)}
 SUMMARY:🎉 Objectif 1er Mars
-DESCRIPTION:Mission voyage : Naples + Procida + Côte Amalfitaine (Europe/Paris).
 END:VEVENT
 END:VCALENDAR`;
   const blob = new Blob([ics], { type:"text/calendar;charset=utf-8" });
@@ -878,8 +877,6 @@ document.getElementById("copyBtn").addEventListener("click", async () => {
 Je t’ai codé une descente de ski pilotée au scroll (oui).
 Et à la fin : mission débloquée.
 
-Naples + Procida + Côte Amalfitaine.
-4 jours : énergie, douceur, vue, et une surprise “signature”.
 
 Tu acceptes la mission ? ✨`;
   try{
