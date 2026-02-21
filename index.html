@@ -25,7 +25,7 @@
     html,body{height:100%;}
     body{
       margin:0;
-      height:780vh; /* beaucoup de scroll = “film” */
+      height:900vh; /* beaucoup de scroll = “film” */
       background:var(--bg0);
       color:#fff;
       font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial;
@@ -96,6 +96,58 @@
       transform-style:preserve-3d;
       will-change:transform;
     }
+    .sceneBackdrop{
+      position:absolute;
+      inset:0;
+      z-index:0;
+      transition: background 700ms ease, filter 700ms ease;
+      background: linear-gradient(180deg, #dcecff 0%, #8bb4dc 45%, #3f6587 100%);
+    }
+    .scene-start{
+      background: linear-gradient(180deg, #eff6ff 0%, #b9d2ef 45%, #5d7ea1 100%);
+    }
+    .scene-mid{
+      background: linear-gradient(180deg, #d8ebff 0%, #8eb2d4 38%, #456582 100%);
+    }
+    .scene-lower{
+      background: linear-gradient(180deg, #c7e0f7 0%, #7ea6c9 35%, #2f587a 100%);
+    }
+    .scene-finish{
+      background: linear-gradient(180deg, #a8d5ff 0%, #5ea0cf 40%, #18507e 100%);
+    }
+    .snow{
+      position:absolute;
+      inset:-20% 0 0;
+      pointer-events:none;
+      z-index:1;
+      opacity:.48;
+      transition:opacity 500ms ease;
+      background-image: radial-gradient(circle, rgba(255,255,255,.92) 1px, transparent 1.8px);
+      background-size: 26px 26px;
+      animation: snowfall 7s linear infinite;
+    }
+    @keyframes snowfall{
+      to{ transform: translateY(120px) translateX(-20px); }
+    }
+    .snow.soft{opacity:.2;}
+
+    .slope{
+      position:absolute;
+      inset:0;
+      z-index:1;
+      pointer-events:none;
+      display:grid;
+      place-items:center;
+    }
+    .slope:before{
+      content:"";
+      width:min(58vw, 680px);
+      height:100%;
+      background:linear-gradient(180deg, rgba(255,255,255,.85), rgba(225,240,255,.70));
+      clip-path:polygon(47% 0%, 53% 0%, 69% 100%, 31% 100%);
+      box-shadow:inset 0 0 40px rgba(255,255,255,.35);
+      opacity:.42;
+    }
 
     /* Stars */
     .particles{
@@ -120,6 +172,49 @@
       opacity:.0;
       pointer-events:none;
       filter: blur(.2px);
+    }
+
+
+    .gates{
+      position:absolute;
+      inset:0;
+      z-index:2;
+      pointer-events:none;
+      transform-style:preserve-3d;
+    }
+    .gate3d{
+      position:absolute;
+      left:50%;
+      width:360px;
+      height:120px;
+      transform-style:preserve-3d;
+      transform:translateX(-50%);
+    }
+    .pole{
+      position:absolute;
+      width:8px;
+      height:110px;
+      border-radius:8px;
+      top:0;
+      box-shadow:0 0 20px rgba(0,0,0,.25);
+    }
+    .pole.left{left:16px;}
+    .pole.right{right:16px;}
+    .pole.red{background:#ff4f7c;}
+    .pole.blue{background:#5ab3ff;}
+    .gate-msg{
+      position:absolute;
+      left:50%;
+      top:22px;
+      transform:translateX(-50%);
+      padding:8px 14px;
+      border-radius:999px;
+      font-size:.84rem;
+      color:white;
+      background:rgba(7,13,24,.72);
+      border:1px solid rgba(255,255,255,.22);
+      white-space:nowrap;
+      backdrop-filter:blur(8px);
     }
 
     /* Layers */
@@ -410,6 +505,61 @@
       margin-top:10px;
       opacity:.95;
     }
+
+
+    .poem{
+      margin-top:16px;
+      font-size:1rem;
+      color:rgba(255,255,255,.86);
+      min-height:1.6em;
+      letter-spacing:.2px;
+      text-shadow:0 0 16px rgba(255,107,214,.18);
+    }
+
+    .journeyTrack{
+      margin-top:16px;
+      display:grid;
+      gap:10px;
+    }
+    .journeyStop{
+      position:relative;
+      padding:14px 14px 14px 44px;
+      border-radius:16px;
+      border:1px solid rgba(255,255,255,.12);
+      background:rgba(0,0,0,.22);
+    }
+    .journeyStop:before{
+      content:"";
+      position:absolute;
+      left:16px;
+      top:17px;
+      width:14px;
+      height:14px;
+      border-radius:999px;
+      background:linear-gradient(135deg,var(--mint),var(--rose));
+      box-shadow:0 0 16px rgba(117,243,198,.4);
+    }
+    .journeyStop b{display:block; font-size:1rem;}
+    .journeyStop span{color:rgba(255,255,255,.72); font-size:.92rem;}
+
+    .postcardWall{
+      margin-top:16px;
+      display:grid;
+      grid-template-columns:repeat(3,minmax(0,1fr));
+      gap:12px;
+    }
+    .postcard{
+      padding:12px;
+      border-radius:16px;
+      border:1px solid rgba(255,255,255,.14);
+      background:linear-gradient(160deg, rgba(255,255,255,.12), rgba(255,255,255,.03));
+      min-height:132px;
+    }
+    .postcard h4{margin:0;font-size:1rem;}
+    .postcard p{margin-top:8px;font-size:.92rem;line-height:1.45;}
+    @media (max-width:900px){
+      .postcardWall{grid-template-columns:1fr;}
+    }
   </style>
 </head>
 
@@ -420,7 +570,7 @@
     <div class="chip">
       <i class="dot"></i>
       <div>
-        <strong id="hudTitle">Navigation : séquence 0/6</strong><br/>
+        <strong id="hudTitle">Navigation : séquence 0/7</strong><br/>
         <span id="hudSub">Scrolle — le plan se dévoile.</span>
       </div>
     </div>
@@ -435,6 +585,10 @@
   </div>
 
   <div class="viewport">
+    <div class="sceneBackdrop scene-start" id="sceneBackdrop"></div>
+    <div class="snow" id="snow"></div>
+    <div class="slope"></div>
+    <div class="gates" id="gates"></div>
     <div class="camera" id="camera">
       <div class="particles" id="particles"></div>
       <div class="streak" id="streak"></div>
@@ -442,118 +596,64 @@
       <!-- LAYER 0 -->
       <div class="layer" style="transform: translate(-50%,-50%) translateZ(0px);">
         <div class="panel">
-          <span class="kicker"><b>PROJET SECRET</b> · Transmission chiffrée</span>
-          <h1>Hélène, j’ai une proposition.</h1>
-          <h2>Un voyage. Un vrai. Et un site qui le prouve.</h2>
+          <span class="kicker"><b>SLALOM MODE</b> · Chausse tes skis</span>
+          <h1>Amour, départ au sommet.</h1>
+          <h2>Chaque scroll = une porte de slalom à passer.</h2>
           <p>
-            Scrolle : tu traverses un “tunnel” et tu débloques des indices.
-            À la fin… tu tombes sur le plan complet.
+            Tu descends la piste, tu prends les virages rouges et bleus,
+            et tout en bas t’attend la ligne d’arrivée avec le compteur final.
           </p>
           <div class="scrollHint">
             <div class="arrow">↓</div>
-            <div>Plonge. Je gère le reste.</div>
+            <div>A-Team sur les skis. On garde le flow jusqu’en bas.</div>
           </div>
-          <div class="mono">Astuce : souris = léger vertige (cinéma, pas manège).</div>
+          <p class="poem" id="poemLine">✦ Respire, vise la prochaine porte, et fonce avec Amour.</p>
+          <div class="mono">Objectif lisible : arrivée + timer vers 01/03/2026 00:00 (Paris).</div>
         </div>
       </div>
 
       <!-- LAYER 1 -->
       <div class="layer" style="transform: translate(-50%,-50%) translateZ(-1300px);">
         <div class="panel">
-          <span class="kicker"><b>INDICE #1</b> · Ce n’est pas un resto</span>
-          <h1>Je veux t’emmener là où le temps ralentit.</h1>
-          <p>
-            Un endroit où tu peux être brillante, fonceuse, et… incroyablement tranquille en même temps.
-            Spoiler : il y aura de l’eau, des ruelles, du soleil, et une cuisine qui attaque directement la dopamine.
-          </p>
-          <div class="portal">
-            <div class="txt">
-              <b>Portail en cours d’ouverture…</b>
-              <span>Destination encore masquée</span>
-            </div>
-          </div>
+          <span class="kicker"><b>PORTE #1</b> · Rouge</span>
+          <h1>Bien chaussée, bien lancée.</h1>
+          <p>Petit mot d’amour: “Tu glisses avec grâce, Amour. Continue, t’es magnifique.”</p>
         </div>
       </div>
 
       <!-- LAYER 2 -->
       <div class="layer" style="transform: translate(-50%,-50%) translateZ(-2600px);">
         <div class="panel">
-          <span class="kicker"><b>INDICE #2</b> · Niveau “carte postale”</span>
-          <h1>Une ville vivante. Vraie. Un peu folle.</h1>
-          <p>
-            Une ville qui te ressemble : élégante, intense, pas tiède.
-            Et autour… des îles et une côte à faire taire n’importe quel PowerPoint.
-          </p>
-          <div class="grid">
-            <div class="card">
-              <h3>Ce que je vise <span class="pill">expérience</span></h3>
-              <ul class="list">
-                <li><i class="tick"></i> Matins doux (café + vue)</li>
-                <li><i class="tick"></i> Une île “hors du monde”</li>
-                <li><i class="tick"></i> Un coucher de soleil niveau cinéma</li>
-                <li><i class="tick"></i> Zéro logistique dans ta tête</li>
-              </ul>
-            </div>
-            <div class="card">
-              <h3>Ce que je promets <span class="pill">anti-stress</span></h3>
-              <ul class="list">
-                <li><i class="tick"></i> Plan clair</li>
-                <li><i class="tick"></i> Rythme respirable</li>
-                <li><i class="tick"></i> Une surprise “wow”</li>
-              </ul>
-            </div>
-          </div>
+          <span class="kicker"><b>PORTE #2</b> · Bleue</span>
+          <h1>Virage propre, regard loin.</h1>
+          <p>Motiv’ A-Team: “Ne freine pas ton éclat. Une porte de plus, on est ensemble.”</p>
         </div>
       </div>
 
       <!-- LAYER 3 -->
       <div class="layer" style="transform: translate(-50%,-50%) translateZ(-3900px);">
         <div class="panel">
-          <span class="kicker"><b>RÉVÉLATION</b> · Destination dévoilée</span>
-          <h1>Naples + Procida + Côte Amalfitaine.</h1>
-          <h2>Un trip intense, beau, et parfaitement orchestré.</h2>
-          <p>
-            Naples pour l’énergie (et la meilleure pizza du système solaire),
-            Procida pour le calme coloré, et la côte pour la magie.
-          </p>
-
-          <div class="grid">
-            <div class="card">
-              <h3>Itinéraire “ciné” <span class="pill">4 jours</span></h3>
-              <ul class="list">
-                <li><i class="tick"></i> J1 · Arrivée + ruelles + dîner “wow”</li>
-                <li><i class="tick"></i> J2 · Procida (slow-life + couleurs)</li>
-                <li><i class="tick"></i> J3 · Amalfi / Positano (vue + dolce vita)</li>
-                <li><i class="tick"></i> J4 · Musée / shopping + retour</li>
-              </ul>
-            </div>
-            <div class="card">
-              <h3>Le moment signature <span class="pill">surprise</span></h3>
-              <p style="margin-top:10px;">
-                Une table réservée au bon endroit, au bon timing,
-                avec une vue qui fait bugger la rationalité.
-              </p>
-              <p class="fine">
-                (Oui : j’ai déjà des idées précises. Non : je ne spoil pas ici.)
-              </p>
-            </div>
-          </div>
-
-          <div class="portal">
-            <div class="txt">
-              <b>Portail stabilisé ✅</b>
-              <span>Tu viens de débloquer le plan.</span>
-            </div>
-          </div>
+          <span class="kicker"><b>PORTE #3</b> · Rouge</span>
+          <h1>Tu tiens la ligne parfaite.</h1>
+          <p>Petit mot d’amour: “Ton sourire vaut toutes les médailles, garde la cadence.”</p>
         </div>
       </div>
 
-      <!-- LAYER 4 : Countdown + accept -->
+      <!-- LAYER 4 -->
       <div class="layer" style="transform: translate(-50%,-50%) translateZ(-5200px);">
         <div class="panel">
-          <span class="kicker"><b>OBJECTIF</b> · 1er mars (heure de Paris)</span>
-          <h1 id="title">🎉 Compte à rebours 🎉</h1>
-          <p>Parce que certaines dates méritent un dispositif complet.</p>
+          <span class="kicker"><b>PORTE #4</b> · Bleue</span>
+          <h1>Derniers appuis avant la ligne.</h1>
+          <p>Motiv’ finale: “A-Team à fond. Encore un enchaînement, et c’est gagné.”</p>
+        </div>
+      </div>
+
+      <!-- LAYER 5 -->
+      <div class="layer" style="transform: translate(-50%,-50%) translateZ(-6500px);">
+        <div class="panel">
+          <span class="kicker"><b>LIGNE D’ARRIVÉE</b> · Samedi soir + minuit</span>
+          <h1 id="title">🎿 Arrivée validée : compteur final</h1>
+          <p>Première surprise : samedi 28/02 à 20h. Puis cap vers minuit.</p>
 
           <div class="countdown" id="countdown">
             <div class="timebox"><span class="num" id="days">00</span><span class="lab">Jours</span></div>
@@ -563,44 +663,21 @@
           </div>
 
           <div class="ctaRow">
-            <button class="btn" id="acceptBtn">✅ J’accepte la mission</button>
-            <button class="btn secondary" id="icsBtn">📅 Ajouter au calendrier</button>
-            <button class="btn secondary" id="copyBtn">📨 Copier l’invitation</button>
+            <button class="btn" id="acceptBtn">✅ Je passe la ligne (A-Team)</button>
+            <button class="btn secondary" id="icsBtn">📅 Ajouter samedi 20h à l’agenda</button>
+            <button class="btn secondary" id="copyBtn">📨 Copier le plan</button>
           </div>
 
-          <div class="fine" id="fineText">
-            PS : si tu appuies sur “J’accepte”, il se passe un truc. Oui, j’ai codé l’ego.
-          </div>
+          <div class="fine" id="fineText">Rappel: première surprise à 20h samedi soir. Compteur principal vers 01/03/2026 00:00 (Paris).</div>
         </div>
       </div>
 
-      <!-- LAYER 5 : “Boarding pass” -->
-      <div class="layer" style="transform: translate(-50%,-50%) translateZ(-6500px);">
+      <!-- LAYER 6 -->
+      <div class="layer" style="transform: translate(-50%,-50%) translateZ(-7800px);">
         <div class="panel">
-          <span class="kicker"><b>BOARDING PASS</b> · version romantique</span>
-          <h1>Billet de voyage : délivré.</h1>
-          <h2>Destination : Naples / Procida / Amalfi</h2>
-          <div class="grid">
-            <div class="card">
-              <h3>Détails <span class="pill">propre</span></h3>
-              <ul class="list">
-                <li><i class="tick"></i> Mode : “zéro charge mentale”</li>
-                <li><i class="tick"></i> Rythme : intense + doux</li>
-                <li><i class="tick"></i> KPI : ton sourire (100%)</li>
-              </ul>
-              <p class="fine">Ce site est la preuve matérielle que je suis déjà dans l’exécution.</p>
-            </div>
-            <div class="card">
-              <h3>Dernière question <span class="pill">simple</span></h3>
-              <p style="margin-top:10px;">
-                Tu préfères que je révèle la surprise “signature” avant…
-                ou seulement au moment où tu la vis ?
-              </p>
-              <p class="fine">
-                (Ne réponds pas ici. Réponds en me regardant. C’est mieux.)
-              </p>
-            </div>
-          </div>
+          <span class="kicker"><b>FINISH</b> · 01/03/2026 à 00:00</span>
+          <h1>Tu as descendu toute la piste. 🏁</h1>
+          <p>Lisible, net, élégant: on comprend direct qu’on chausse les skis. Et on célèbre.</p>
         </div>
       </div>
 
@@ -612,7 +689,10 @@
    1) 3D CAMERA (bon sens)
 ========================= */
 const camera = document.getElementById("camera");
-const DEPTH = 6500; // profondeur max de la séquence (dernier layer z=-6500)
+const DEPTH = 7800; // profondeur max de la séquence (dernier layer z=-7800)
+const sceneBackdrop = document.getElementById("sceneBackdrop");
+const snow = document.getElementById("snow");
+const gates = document.getElementById("gates");
 let targetZ = 0, currentZ = 0;
 let targetRot = 0, currentRot = 0;
 
@@ -637,17 +717,40 @@ function tickCam(){
 
   const tiltX = mouseY * 2.2;
   const tiltY = mouseX * 2.2;
+  const frac = Math.max(0, Math.min(1, currentZ / DEPTH));
+  const turn = Math.sin(frac * Math.PI * 5) * 9;
+  const drift = Math.sin(frac * Math.PI * 7) * 120;
 
   camera.style.transform = `
+    translateX(${drift}px)
     translateZ(${currentZ}px)
-    rotateZ(${currentRot}deg)
-    rotateX(${tiltX}deg)
-    rotateY(${tiltY}deg)
+    rotateZ(${currentRot + turn * 0.25}deg)
+    rotateX(${tiltX + 1.6}deg)
+    rotateY(${tiltY + turn}deg)
   `;
 
   requestAnimationFrame(tickCam);
 }
 tickCam();
+
+[
+  { z: -1100, x: -160, color: "red", msg: "Amour, garde la ligne ✨" },
+  { z: -2300, x: 140, color: "blue", msg: "A-Team: focus et style" },
+  { z: -3600, x: -120, color: "red", msg: "Tu brilles à chaque virage" },
+  { z: -4900, x: 170, color: "blue", msg: "Encore un effort, championne" },
+  { z: -6200, x: -90, color: "red", msg: "Ligne d’arrivée droit devant" }
+].forEach((g) => {
+  const el = document.createElement("div");
+  el.className = "gate3d";
+  el.style.top = "50%";
+  el.style.transform = `translateX(-50%) translateX(${g.x}px) translateY(-60px) translateZ(${g.z}px)`;
+  el.innerHTML = `
+    <span class="pole left ${g.color}"></span>
+    <span class="pole right ${g.color}"></span>
+    <span class="gate-msg">${g.msg}</span>
+  `;
+  gates.appendChild(el);
+});
 
 /* =========================
    2) HUD progress + “chapters”
@@ -661,18 +764,26 @@ function updateHud(){
   const frac = maxScroll > 0 ? (scrollY / maxScroll) : 0;
   prog.style.width = (frac * 100).toFixed(1) + "%";
 
-  // 6 séquences
-  const chapter = Math.min(6, Math.max(0, Math.floor(frac * 6.2)));
-  hudTitle.textContent = `Navigation : séquence ${chapter}/6`;
+  // 7 séquences
+  const chapter = Math.min(7, Math.max(0, Math.floor(frac * 7.2)));
+  hudTitle.textContent = `Navigation : séquence ${chapter}/7`;
   const subs = [
-    "Scrolle — le plan se dévoile.",
-    "Indice #1 : on quitte le quotidien.",
-    "Indice #2 : on vise l’exception.",
-    "Révélation : destination trouvée.",
-    "Objectif : date verrouillée.",
-    "Boarding pass : prêt à décoller.",
-    "Fin : ça commence pour de vrai."
+    "Départ slalom : chausse les skis.",
+    "Porte rouge : amour + rythme.",
+    "Porte bleue : appui et précision.",
+    "Porte rouge : relance et confiance.",
+    "Porte bleue : dernière section.",
+    "Arrivée : samedi 20h puis minuit.",
+    "Finish : 01/03 00:00."
   ];
+
+  sceneBackdrop.className = "sceneBackdrop " + (
+    frac < 0.25 ? "scene-start" :
+    frac < 0.5 ? "scene-mid" :
+    frac < 0.78 ? "scene-lower" :
+    "scene-finish"
+  );
+  snow.classList.toggle("soft", frac > 0.72);
   hudSub.textContent = subs[chapter] || subs[0];
 
   requestAnimationFrame(updateHud);
@@ -692,6 +803,20 @@ function updateParisTime(){
   setTimeout(updateParisTime, 5000);
 }
 updateParisTime();
+
+const poemLines = [
+  "✦ Respire, vise la prochaine porte, et fonce avec Amour.",
+  "✦ Slalom 2026: propre, lisible, élégant.",
+  "✦ A-Team sur la piste: rouge, bleue, rouge, bleue.",
+  "✦ Samedi 20h première surprise, puis minuit en beauté."
+];
+const poemEl = document.getElementById("poemLine");
+let poemIndex = 0;
+setInterval(() => {
+  poemIndex = (poemIndex + 1) % poemLines.length;
+  poemEl.animate([{ opacity: 0.2, transform: "translateY(4px)" }, { opacity: 1, transform: "translateY(0)" }], { duration: 420, easing: "ease-out" });
+  poemEl.textContent = poemLines[poemIndex];
+}, 3200);
 
 /* =========================
    4) Particles + streak
@@ -734,7 +859,7 @@ function fireStreak(){
 fireStreak();
 
 /* =========================
-   5) Countdown FIXÉ Europe/Paris (minuit 1er mars 2026)
+   5) Countdown FIXÉ Europe/Paris (1 mars 2026 à 00h00)
 ========================= */
 function getZonedTimestamp({ year, monthIndex, day, hour=0, minute=0, second=0, timeZone }) {
   const utcGuess = Date.UTC(year, monthIndex, day, hour, minute, second);
@@ -774,9 +899,9 @@ const timer = setInterval(()=>{
 
   if(d <= 0){
     clearInterval(timer);
-    document.getElementById("title").textContent = "🎂 C’est le jour J ! 🎂";
+    document.getElementById("title").textContent = "🏁 Minuit atteint : Joyeux anniversaire";
     document.getElementById("countdown").innerHTML = `<p style="margin-top:14px;font-size:1.15rem;color:rgba(255,255,255,.85)">
-      Aujourd’hui, c’est toi la priorité absolue. ❤️
+      Minuit validé. Première surprise déjà lancée à 20h samedi soir. ❤️
     </p>`;
     return;
   }
@@ -803,8 +928,8 @@ function toICSDateUTC(ms){
 }
 
 document.getElementById("icsBtn").addEventListener("click", () => {
-  const dtStart = targetDate;
-  const dtEnd = targetDate + 60*60*1000;
+  const dtStart = getZonedTimestamp({ year: 2026, monthIndex: 1, day: 28, hour:20, minute:0, second:0, timeZone:"Europe/Paris" });
+  const dtEnd = dtStart + 2*60*60*1000;
 
   const uid = (crypto.randomUUID ? crypto.randomUUID() : (Date.now()+"@mission"));
   const ics =
@@ -817,8 +942,8 @@ UID:${uid}
 DTSTAMP:${toICSDateUTC(Date.now())}
 DTSTART:${toICSDateUTC(dtStart)}
 DTEND:${toICSDateUTC(dtEnd)}
-SUMMARY:🎉 Objectif 1er Mars
-DESCRIPTION:Déploiement surprise (Europe/Paris).
+SUMMARY:🎿 Première surprise - samedi 28 février 20h
+DESCRIPTION:Début de soirée anniversaire à 20h (Paris). Le compteur principal va jusqu'au 01/03/2026 00:00.
 END:VEVENT
 END:VCALENDAR`;
 
@@ -826,7 +951,7 @@ END:VCALENDAR`;
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
-  a.download = "objectif-1er-mars.ics";
+  a.download = "anniversaire-28-fevrier-20h.ics";
   a.click();
   URL.revokeObjectURL(url);
 });
@@ -835,10 +960,11 @@ document.getElementById("copyBtn").addEventListener("click", async () => {
   const msg =
 `Hélène ❤️
 
-J’ai une proposition : Naples + Procida + Côte Amalfitaine.
-4 jours : énergie, douceur, vue, et une surprise “signature”.
+Samedi 28/02 à 20h: première surprise.
+Puis on file ensemble jusqu'à 00h00 (Paris) pour le cap du 01/03/2026.
+Mode slalom: rouges, bleues, ligne d'arrivée.
 
-Tu acceptes la mission ? ✨`;
+A-Team + Amour. Tu valides ? ✨`;
 
   try{
     await navigator.clipboard.writeText(msg);
@@ -928,7 +1054,7 @@ document.getElementById("acceptBtn").addEventListener("click", () => {
   hb.style.background = "rgba(117,243,198,.15)";
   hb.style.borderColor = "rgba(117,243,198,.35)";
 
-  pulseText("Mission validée. Prochaine étape : la surprise. ✨");
+  pulseText("Ligne passée. A-Team + Amour jusqu’à minuit. ✨");
 });
 </script>
 </body>
