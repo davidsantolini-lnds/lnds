@@ -41,10 +41,15 @@ body {
 }
 
 .brand {
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  color: var(--text);
+  display: inline-flex;
+  align-items: center;
   text-decoration: none;
+}
+
+.brand img {
+  width: 118px;
+  height: auto;
+  display: block;
 }
 
 .menu-toggle {
@@ -92,7 +97,16 @@ body {
   min-height: calc(100vh - 140px);
   display: grid;
   place-items: center;
+  align-content: center;
+  gap: 1.2rem;
   text-align: center;
+}
+
+.hero-logo {
+  width: min(360px, 72vw);
+  height: auto;
+  display: block;
+  filter: drop-shadow(0 10px 25px rgba(0, 0, 0, 0.3));
 }
 
 .hero-card {
@@ -102,17 +116,6 @@ body {
   border-radius: 24px;
   padding: clamp(1.2rem, 4vw, 2.4rem);
   box-shadow: 0 16px 40px rgba(0, 0, 0, 0.25);
-}
-
-.hero-title {
-  width: fit-content;
-  margin: 0 auto;
-}
-
-.hero h1 {
-  font-size: clamp(2.7rem, 8vw, 5rem);
-  margin: 0;
-  letter-spacing: 0.12em;
 }
 
 .tagline {
