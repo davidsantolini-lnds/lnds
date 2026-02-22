@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Contact - LNDS</title>
+  <title>Je possède une entreprise - LNDS</title>
   <link rel="stylesheet" href="assets/css/styles.css" />
 </head>
 <body>
@@ -22,10 +22,14 @@
     </nav>
   </header>
 
-  <main class="main center">
+  <main class="main">
     <section class="panel">
-      <h1><a class="btn" href="mailto:david.santolini@gmail.com?subject=Contact%20LNDS">Contact LNDS</a></h1>
-      <p>Cliquez pour ouvrir votre application e-mail.</p>
+      <h1>Je possède une entreprise</h1>
+      <form>
+        <label for="company-name">Nom de l'entreprise</label>
+        <input id="company-name" name="companyName" type="text" placeholder="Ex: LNDS SAS" required />
+        <button type="submit">Continuer</button>
+      </form>
       <p><a class="link-btn" href="index.html">Retour à l'accueil</a></p>
     </section>
   </main>
