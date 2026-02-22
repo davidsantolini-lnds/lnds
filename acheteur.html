@@ -38,3 +38,49 @@
   <script src="assets/js/main.js"></script>
 </body>
 </html>
+<form id="lndsForm">
+  <input name="email" type="email" placeholder="Email (optionnel)" />
+  <input name="budget" placeholder="Budget (ex: 500k–2M)" />
+  <input name="secteur" placeholder="Secteur" />
+  <textarea name="notes" placeholder="Notes"></textarea>
+  <button type="submit">Envoyer</button>
+</form>
+
+<p id="status"></p>
+
+<script>
+  const form = document.getElementById("lndsForm");
+  const statusEl = document.getElementById("status");
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    statusEl.textContent = "Envoi...";
+
+    const fd = new FormData(form);
+
+    const payload = {
+      budget: fd.get("budget"),
+      secteur: fd.get("secteur"),
+      notes: fd.get("notes"),
+      type: "acquereur"
+    };
+
+    const res = await fetch("/api/submit", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        form_slug: "buyer-intake-v1",
+        email: fd.get("email"),
+        payload
+      })
+    });
+
+    if (res.ok) {
+      statusEl.textContent = "✅ Envoyé";
+      form.reset();
+    } else {
+      const err = await res.json().catch(() => ({}));
+      statusEl.textContent = "❌ " + (err.error || "Erreur");
+    }
+  });
+</script>
