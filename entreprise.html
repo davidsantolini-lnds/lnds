@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>LNDS</title>
+  <title>Scorer mon entreprise - LNDS</title>
   <link rel="stylesheet" href="assets/css/styles.css" />
 </head>
 <body>
@@ -20,13 +20,16 @@
     </nav>
   </header>
 
-  <main class="main hero">
-    <h1>LNDS</h1>
-    <p>Une base simple, jeune et classe, en bleu nuit et blanc, pour lancer votre nouveau projet.</p>
-    <div class="actions">
-      <a class="btn" href="entreprise.html">Scorer mon entreprise</a>
-      <a class="link-btn" href="acheteur.html">Scorer mon profil acheteur</a>
-    </div>
+  <main class="main">
+    <section class="panel">
+      <h1>Scorer mon entreprise</h1>
+      <form>
+        <label for="company-name">Nom de l'entreprise</label>
+        <input id="company-name" name="companyName" type="text" placeholder="Ex: LNDS SAS" required />
+        <button type="submit">Continuer</button>
+      </form>
+      <p><a class="link-btn" href="index.html">Retour à l'accueil</a></p>
+    </section>
   </main>
 
   <footer>© LNDS</footer>
