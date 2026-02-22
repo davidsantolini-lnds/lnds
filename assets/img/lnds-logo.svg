@@ -1,9 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 860" role="img" aria-labelledby="title desc">
-  <title id="title">Logo LNDS</title>
-  <desc id="desc">Logo LNDS avec deux pics stylisés et baseline</desc>
-  <rect width="860" height="860" fill="#071a3d"/>
-  <path d="M125 355 L390 210 L510 330 L460 360 L390 300 L200 390 Z" fill="#f3c969"/>
-  <path d="M300 385 L545 235 L730 360 L680 390 L550 300 L380 390 Z" fill="#64a9ff"/>
-  <text x="430" y="560" text-anchor="middle" fill="#ffffff" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="160" font-weight="700" letter-spacing="4">LNDS</text>
-  <text x="430" y="670" text-anchor="middle" fill="#ffffff" font-family="Inter,Segoe UI,Arial,sans-serif" font-size="66" font-weight="600">L'exigence devient la norme</text>
-</svg>
